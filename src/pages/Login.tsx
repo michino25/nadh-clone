@@ -1,25 +1,52 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
+interface LoginData {
+  user_name: string;
+  password: string;
+}
 
 export default function Login() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
+
+  const login = async (loginData: LoginData) => {
+    try {
+      const res = await axios.post(
+        "https://lubrytics.com:8443/nadh-api-crm/login",
+        loginData
+      );
+
+      // console.log(res.data);
+      localStorage.setItem("userData", JSON.stringify(res.data));
+      // queryClient.setQueryData(["userData"], res.data);
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const loginMutation = useMutation({
+    mutationFn: (formData: LoginData) => login(formData),
+  });
+
   const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+    loginMutation.mutate(values);
+
+    // console.log("Received values of form: ", values); // {username: 'a', password: 'a'}
   };
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <span className="text-2xl font-semibold text-blue-500 mb-5">Login</span>
-      <Form
-        name="normal_login"
-        className="w-[400px]"
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={onFinish}
-      >
+      <span className="text-4xl font-semibold text-blue-500 mb-10">Login</span>
+      <Form className="w-[400px]" onFinish={onFinish}>
         <Form.Item
-          name="username"
+          name="user_name"
           rules={[
             {
               required: true,
@@ -28,6 +55,7 @@ export default function Login() {
           ]}
         >
           <Input
+            size="large"
             prefix={<UserOutlined className="site-form-item-icon" />}
             placeholder="Username"
           />
@@ -41,7 +69,8 @@ export default function Login() {
             },
           ]}
         >
-          <Input
+          <Input.Password
+            size="large"
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="Password"
@@ -49,7 +78,13 @@ export default function Login() {
         </Form.Item>
 
         <Form.Item>
-          <Button htmlType="submit" className="w-full">
+          <Button
+            size="large"
+            type="primary"
+            ghost
+            htmlType="submit"
+            className="w-full"
+          >
             Log in
           </Button>
         </Form.Item>

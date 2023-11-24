@@ -66,6 +66,7 @@ const Navmenu = () => {
   return (
     <Menu
       onClick={onClick}
+      className="select-none"
       selectedKeys={[current]}
       mode="horizontal"
       items={items}

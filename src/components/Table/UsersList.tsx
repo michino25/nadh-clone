@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import DataTable from "../DataTable";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import Drawer from "../Drawer";
+import DashboardDetail from "../Detail/DashboardDetail";
 import { formatDate, formatName } from "../../../utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "../../../utils/models";
+import { getUser } from "../../../utils/getUser";
 
-const token = import.meta.env.VITE_TOKEN;
+const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -74,18 +74,15 @@ export default function ClientsList() {
     setOpen(false);
   };
 
-  const { isPending, refetch, error, data, status } = useQuery({
+  const { isPending, refetch, error, data } = useQuery({
     queryKey: ["User"],
     queryFn: () =>
       axios
-        .get(
-          `https://lubrytics.com:8443/nadh-api-crm/api/users?perPage=${pageSize}&page=${currentPage}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        .get(api + `users?perPage=${pageSize}&page=${currentPage}`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
         .then((res) => {
           setTotal(res.data.count);
 
@@ -95,7 +92,7 @@ export default function ClientsList() {
             phone: (user.phone as { number: string }).number,
             role: (user.role as { name: string }).name,
             status: user.status ? "Active" : "Inactive",
-            createdAt: formatDate(user.createdAt),
+            createdAt: formatDate(user.createdAt, "ISOdate", "date"),
           }));
         }),
   });
@@ -121,13 +118,17 @@ export default function ClientsList() {
       <DataTable
         titleTable={`System Users List`}
         data={data}
-        setIdDetail={setIdDetail}
         rawColumns={rawColumns}
+        setIdDetail={setIdDetail}
         showDetail={showDrawer}
         paginationOption={paginationOption}
       />
       {userDetail && (
-        <Drawer open={open} userDetail={userDetail} onClose={onClose} />
+        <DashboardDetail
+          open={open}
+          userDetail={userDetail}
+          onClose={onClose}
+        />
       )}
     </>
   );

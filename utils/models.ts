@@ -239,3 +239,302 @@ export interface iCandidate {
     title: { label: string };
   }[];
 }
+
+export interface iJob {
+  id: string;
+  job_id: string;
+  title: {
+    key: number;
+    label: string;
+  };
+  target_date: string;
+  end_date: string;
+  status: number;
+  pic: any[];
+  quantity: number;
+  createdAt: string;
+  // location: {};
+  experience_level: number;
+  remuneration: {
+    extra: string;
+    salary: {
+      to: number | null;
+      from: number | null;
+    };
+    benefit: {
+      bonus: number;
+      extra: string;
+      phone: number;
+      laptop: number;
+      no_holiday: number;
+      phone_text: string;
+      car_parking: number;
+      laptop_text: string;
+      lunch_check: number;
+      health_cover: number;
+      share_option: number;
+      working_hour: number;
+      car_allowance: number;
+      over_thirteen: number;
+      overtime_hour: number;
+      pension_scheme: number;
+      car_parking_text: string;
+      lunch_check_text: string;
+      health_cover_text: string;
+      share_option_text: string;
+      car_allowance_text: string;
+      over_thirteen_text: string;
+    };
+    currency: {
+      id: number;
+      name: string;
+    };
+    review_date: string;
+    future_prospect: string;
+    converted_salary: {
+      EUR: {
+        id: number;
+        name: string;
+        salary: {
+          to: number | null;
+          from: number | null;
+        };
+      };
+      JPY: {
+        id: number;
+        name: string;
+        salary: {
+          to: number | null;
+          from: number | null;
+        };
+      };
+      USD: {
+        id: number;
+        name: string;
+        salary: {
+          to: number | null;
+          from: number | null;
+        };
+      };
+      VND: {
+        id: number;
+        name: string;
+        salary: {
+          to: number | null;
+          from: number | null;
+        };
+      };
+    };
+  };
+  client: {
+    id: string;
+    name: string;
+    code: string;
+    lead_consultants: {
+      client_id: string;
+      consultant_id: string;
+      consultant: {
+        id: string;
+        full_name: string;
+        user_name: string;
+        key: string;
+        label: string;
+        user_id: number;
+      };
+    }[];
+  };
+  recruiters: {
+    id: string;
+    full_name: string;
+    key: string;
+    label: string;
+    user_id: number;
+  }[];
+  consultants: {
+    id: number;
+    job_id: string;
+    consultant_id: string;
+  }[];
+  related_users: {
+    id: string;
+    full_name: string;
+    key: string;
+    label: string;
+    user_id: number;
+  }[];
+  candidate_flows: {
+    id: string;
+    status: number;
+    previous_status: number[];
+    candidate_id: string;
+    createdAt: string;
+    candidate: {
+      id: string;
+      candidate_id: string;
+      full_name: string;
+      histories: any[];
+      // highest_education: {};
+    };
+  }[];
+  status_count: {
+    [key: string]: number;
+  };
+  recent_flow: {
+    id: string;
+    status: number;
+    candidate_id: string;
+    createdAt: string;
+    flow: {
+      id: number;
+      count: number;
+      creator: {
+        id: string;
+        role: {
+          id: number;
+          name: string;
+        };
+        full_name: string;
+        user_name: string;
+      };
+      createdAt: string;
+      current_status: number;
+      previous_status: null;
+    }[];
+    updatedAt: string;
+    candidate: {
+      id: string;
+      // highest_education: {};
+      full_name: string;
+      candidate_id: string;
+      histories: any[];
+    };
+  };
+  year: number;
+  industry: string;
+  salary: string;
+
+  requirement: {
+    // major: {};
+    other: string;
+    // degree: {};
+    skills: any[];
+    industry: {
+      industry: {
+        id: number;
+        name: string;
+        key: number;
+        label: string;
+      };
+      sector: {
+        id: number;
+        name: string;
+        key: number;
+        label: string;
+      };
+    }[];
+    languages: any[];
+    soft_skills: any[];
+    industry_years: number;
+    functions_skills: any[];
+    management_years: number;
+  };
+
+  business_line: {
+    industry: {
+      id: number;
+      name: string;
+      key: number;
+      label: string;
+    };
+    sector: {
+      id: number;
+      name: string;
+      key: number;
+      label: string;
+    };
+    category: {
+      id: number;
+      name: string;
+      key: number;
+      label: string;
+    };
+    primary: number;
+  }[];
+}
+
+export interface iNotification {
+  id: string;
+  notify_master_id: string;
+  title: string;
+  content: string;
+  category: { type: number };
+  target: {
+    ids: number[];
+    type: number;
+    recievers_list: {
+      full_name: string;
+      id: string;
+      user_id: number;
+      user_name: string;
+    }[];
+  };
+  embedded: {
+    link: string;
+  };
+  status: number;
+  creator: {
+    id: number;
+    username: string;
+  };
+  logs: any[];
+  decider: null;
+  scheduling: {
+    type: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface iRole {
+  id: number;
+  name: string;
+  obj_table: string;
+  module_default: {
+    list: {
+      id: number;
+      layout_key: string;
+      name: string;
+      list_action: {
+        id: number;
+        name: string;
+        action_key: string;
+      }[];
+    }[];
+  };
+  action_default: {
+    id: number;
+    action_key: string;
+    name: string;
+    module_id: number;
+  }[];
+  status: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface iUserData {
+  token: string;
+  user_sent: {
+    id: string;
+    user_id: number;
+    email: string;
+    full_name: string;
+    user_name: string;
+    avatar: null | any;
+    type: number;
+    createdAt: string;
+    iat: number;
+    exp: number;
+    role: { name: string };
+  };
+}

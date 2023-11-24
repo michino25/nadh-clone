@@ -7,8 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
 import { iUser, iCandidate } from "../../../utils/models";
+import { getUser } from "../../../utils/getUser";
 
-const token = import.meta.env.VITE_TOKEN;
+const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -60,10 +61,11 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     queryFn: () =>
       axios
         .get(
-          `https://lubrytics.com:8443/nadh-api-crm/api/candidates?perPage=${pageSize}&page=${currentPage}&creator_id=${userDetail?.id}`,
+          api +
+            `candidates?perPage=${pageSize}&page=${currentPage}&creator_id=${userDetail?.id}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${getUser()?.token}`,
             },
           }
         )

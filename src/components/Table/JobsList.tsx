@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import DataTable from "../DataTable";
-import { formatName, formatDate } from "../../../utils/format";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
-import { iClient, iUser } from "../../../utils/models";
+import { iJob, iUser } from "../../../utils/models";
+import { formatDate } from "../../../utils/format";
 import { getUser } from "../../../utils/getUser";
 
 const api = import.meta.env.VITE_API_URL;
@@ -13,43 +13,27 @@ const api = import.meta.env.VITE_API_URL;
 const rawColumns = [
   {
     title: "ID",
-    key: "client_id",
+    key: "job_id",
   },
   {
-    title: "Trade Name",
-    key: "name",
-  },
-  {
-    title: "City",
-    key: "city",
-  },
-  {
-    title: "Lead Consultant",
-    key: "lead_consultant",
-  },
-  {
-    title: "Tax Code",
-    key: "tax_code",
+    title: "Expire Date",
+    key: "end_date",
   },
   {
     title: "Industry",
     key: "industry",
   },
   {
-    title: "Jobs",
-    key: "jobs_count",
+    title: "Year of services",
+    key: "year",
   },
   {
-    title: "Updated by",
-    key: "updated_by",
-  },
-  {
-    title: "Updated on",
-    key: "updated_on",
+    title: "Salary Range",
+    key: "salary",
   },
 ];
 
-export default function ClientsList({ userDetail }: { userDetail: iUser }) {
+export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -68,12 +52,12 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   };
 
   const { data, refetch, status, isPending } = useQuery({
-    queryKey: ["Clients", userDetail?.id],
+    queryKey: ["Jobs", userDetail?.id],
     queryFn: () =>
       axios
         .get(
           api +
-            `clients?perPage=${pageSize}&page=${currentPage}&lead_consultant=${userDetail?.id}`,
+            `jobs?perPage=${pageSize}&page=${currentPage}&mapping_by_recruiters=${userDetail?.id}`,
           {
             headers: {
               Authorization: `Bearer ${getUser()?.token}`,
@@ -83,17 +67,12 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         .then((res) => {
           setTotal(res.data.count);
 
-          return res.data.data.map((client: iClient) => ({
-            ...client,
-            city: client.address?.country?.label,
-            lead_consultant: formatName(client.lead_consultants[0]?.full_name),
-            updated_by: formatName(client.meta?.lastUpdated?.user?.full_name),
-            updated_on: formatDate(
-              client.meta?.lastUpdated?.time,
-              "timestamp",
-              "date"
-            ),
-            industry: client.business_line[0]?.sector?.name,
+          return res.data.data.map((job: iJob) => ({
+            ...job,
+            year: job.requirement.industry_years,
+            industry: job.business_line[0]?.industry.name,
+            end_date: formatDate(job.end_date, "ISOdate", "date"),
+            salary: "Negotiation",
           }));
         }),
     enabled: !!userDetail?.id,
@@ -113,7 +92,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   return (
     data && (
       <DataTable
-        titleTable={`Clients List`}
+        titleTable={`Jobs List`}
         data={data}
         setIdDetail={() => {}}
         showDetail={() => {}}
