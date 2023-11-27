@@ -11,6 +11,8 @@ import BlankLayout from "./layouts/BlankLayout";
 import MainLayout from "./layouts/MainLayout";
 import Test from "./pages/Test";
 import { useEffect } from "react";
+import CandidatesDetail from "./pages/CandidatesDetail";
+import CandidateAdd from "./pages/CandidateAdd";
 
 export default function App() {
   useEffect(() => {
@@ -34,6 +36,8 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/candidates" element={<Candidates />} />
+        <Route path="/candidate-add" element={<CandidateAdd />} />
+        <Route path="/candidate-detail/:id" element={<CandidatesDetail />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/users" element={<Users />} />

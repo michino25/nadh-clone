@@ -34,12 +34,17 @@ export default function JobsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const [idDetail, setIdDetail] = useState("");
   const [open, setOpen] = useState(false);
   const [notiDetail, setNotiDetail] = useState<iNotification | undefined>();
 
-  const showDrawer = () => {
+  const showDrawer = (idDetail: string) => {
     setOpen(true);
+    if (idDetail) {
+      const notis: iNotification[] = data.filter(
+        (user: iNotification) => user.id === idDetail
+      );
+      setNotiDetail(notis[0]);
+    }
   };
   const onClose = () => {
     setOpen(false);
@@ -82,15 +87,6 @@ export default function JobsList() {
   }, [refetch, currentPage]);
 
   useEffect(() => {
-    if (idDetail) {
-      const notis: iNotification[] = data.filter(
-        (user: iNotification) => user.id === idDetail
-      );
-      setNotiDetail(notis[0]);
-    }
-  }, [idDetail, data]);
-
-  useEffect(() => {
     console.log("Data status:", status);
     console.log("Data:", data);
   }, [data, status]);
@@ -101,9 +97,9 @@ export default function JobsList() {
     data && (
       <>
         <DataTable
+          createBtn={undefined}
           titleTable={`Notification List`}
           data={data}
-          setIdDetail={setIdDetail}
           showDetail={showDrawer}
           rawColumns={rawColumns}
           paginationOption={paginationOption}

@@ -1,29 +1,28 @@
 import { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import {
-  Row,
-  Col,
-  Modal,
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Switch,
-  Upload,
-} from "antd";
+import { Row, Col, Modal, Button, Form } from "antd";
 
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
+import Input from "../DataEntry/Input";
+import InputPassword from "../DataEntry/InputPassword";
+import Birthday from "../DataEntry/Birthday";
+import DataRadio from "../DataEntry/Radio";
+import DataSelect from "../DataEntry/Select";
+import DataUpload from "../DataEntry/Upload";
+import DataDatePicker from "../DataEntry/DatePicker";
 
-const normFile = (e: any) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
+const gender = [
+  {
+    label: "Male",
+    value: "male",
+  },
+  {
+    label: "Female",
+    value: "female",
+  },
+  {
+    label: "Complicated",
+    value: "complicated",
+  },
+];
 
 export default function UserInfo() {
   const [open, setOpen] = useState(false);
@@ -36,27 +35,10 @@ export default function UserInfo() {
 
   return (
     <>
-      <Form
-        // labelCol={{ span: 8 }}
-        // wrapperCol={{ span: 16 }}
-        // layout="horizontal"
-        layout="vertical"
-        className="w-full"
-      >
+      <Form layout="vertical" className="w-full">
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label="Avatar"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-            >
-              <Upload action="/upload.do" listType="picture-card">
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              </Upload>
-            </Form.Item>
+            <DataUpload label="Avatar" />
           </Col>
 
           <Col span={12}>
@@ -95,42 +77,21 @@ export default function UserInfo() {
                   name="form_in_modal"
                   initialValues={{ modifier: "public" }}
                 >
-                  <Form.Item
+                  <InputPassword
                     label="Current password"
                     name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                  <Form.Item
+                    required={true}
+                  />
+                  <InputPassword
                     label="New password"
                     name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                  <Form.Item
+                    required={true}
+                  />
+                  <InputPassword
                     label="Confirm new password"
                     name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
+                    required={true}
+                  />
                 </Form>
               </Modal>
             </Form.Item>
@@ -139,160 +100,87 @@ export default function UserInfo() {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
+            <Input
               label="Full name"
               name="full_name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your fullname!",
-                },
-              ]}
-            >
-              <Input className="" defaultValue={"thanh binh"} />
-            </Form.Item>
+              required={true}
+              defaultValue={"thanh binh"}
+            />
           </Col>
           <Col span={12}>
-            <Form.Item
+            <Input
               label="Username"
               name="user_name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your username!",
-                },
-              ]}
-            >
-              <Input className="" defaultValue={"thanhbinh"} disabled />
-            </Form.Item>
+              required={true}
+              defaultValue={"thanhbinh"}
+            />
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Birthday">
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Select
-                    defaultValue="lucy"
-                    allowClear
-                    options={[{ value: "lucy", label: "Lucy" }]}
-                  />
-                </Col>
-                <Col span={8}>
-                  <Select
-                    defaultValue="lucy"
-                    allowClear
-                    options={[{ value: "lucy", label: "Lucy" }]}
-                  />
-                </Col>
-                <Col span={8}>
-                  <Select
-                    defaultValue="lucy"
-                    allowClear
-                    options={[{ value: "lucy", label: "Lucy" }]}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
+            <Birthday day="01" month="01" year="2023" />
           </Col>
           <Col span={12}>
-            <Form.Item
+            <Input
               label="Mobile Phone"
               name="phone"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your username!",
-                },
+              required={true}
+              defaultValue={"0909888999"}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <DataRadio label="Gender" data={gender} />
+          </Col>
+          <Col span={12}>
+            <DataRadio
+              label="Status"
+              data={[
+                { label: "Active", value: "active" },
+                { label: "Inactive", value: "inactive" },
               ]}
-            >
-              <Input className="" defaultValue={"thanhbinh"} />
-            </Form.Item>
+            />
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Gender">
-              <Radio.Group>
-                <Radio value="apple"> Male </Radio>
-                <Radio value="pear"> Female </Radio>
-                <Radio value="pear"> Complicated </Radio>
-              </Radio.Group>
-            </Form.Item>
+            <Input
+              label="Email"
+              name="email"
+              required={true}
+              defaultValue={"thanhbinh@lubrytics.com"}
+            />
           </Col>
           <Col span={12}>
-            <Form.Item label="Status">
-              <Radio.Group>
-                <Radio value="apple"> Active </Radio>
-                <Radio value="pear"> Inactive </Radio>
-              </Radio.Group>
-            </Form.Item>
+            <Input
+              label="Address"
+              name="address"
+              required={true}
+              defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+            />
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
+            <DataSelect
               label="Role"
               name="role"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your fullname!",
-                },
+              required={true}
+              defaultValue="manager"
+              data={[
+                { label: "Manager", value: "manager" },
+                { label: "Staff", value: "staff" },
               ]}
-            >
-              <Select defaultValue="demo">
-                <Select.Option value="demo">Manager</Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}></Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Email"
-              name="full_name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your fullname!",
-                },
-              ]}
-            >
-              <Input className="" defaultValue={"thanhbinh@lubrytics.com"} />
-            </Form.Item>
+            />
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Address"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your username!",
-                },
-              ]}
-            >
-              <Input
-                className=""
-                defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
-                disabled
-              />
-            </Form.Item>
+            <DataDatePicker label="Created on" />
           </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Created on">
-              <DatePicker className="w-full" />
-            </Form.Item>
-          </Col>
-          <Col span={12}></Col>
         </Row>
 
         <Form.Item className="flex justify-end space-x-2">

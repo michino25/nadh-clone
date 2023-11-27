@@ -64,13 +64,15 @@ const Navmenu = () => {
   };
 
   return (
-    <Menu
-      onClick={onClick}
-      className="select-none"
-      selectedKeys={[current]}
-      mode="horizontal"
-      items={items}
-    />
+    <div className="px-4 bg-white">
+      <Menu
+        onClick={onClick}
+        className="select-none"
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={items}
+      />
+    </div>
   );
 };
 export default Navmenu;

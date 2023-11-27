@@ -87,14 +87,21 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     console.log("Data:", data);
   }, [data, status]);
 
+  const createBtn = {
+    handler: () => {
+      console.log("create");
+    },
+    title: "Create Job",
+  };
+
   if (isPending) return <Skeleton active />;
 
   return (
     data && (
       <DataTable
         titleTable={`Jobs List`}
+        createBtn={createBtn}
         data={data}
-        setIdDetail={() => {}}
         showDetail={() => {}}
         rawColumns={rawColumns}
         paginationOption={paginationOption}

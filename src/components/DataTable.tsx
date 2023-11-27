@@ -20,8 +20,8 @@ interface DataTableProps {
   titleTable: string;
   data: any[];
   rawColumns: Column[];
-  showDetail: () => void;
-  setIdDetail: (id: string) => void;
+  createBtn: { handler: () => void; title: string } | undefined;
+  showDetail: (id: string) => void;
   paginationOption?: {
     currentPage: number;
     handlePageChange: (page: number) => void;
@@ -35,7 +35,7 @@ const DataTable: React.FC<DataTableProps> = ({
   data,
   rawColumns,
   showDetail,
-  setIdDetail,
+  createBtn,
   paginationOption,
 }) => {
   const [searchText, setSearchText] = useState("");
@@ -204,8 +204,7 @@ const DataTable: React.FC<DataTableProps> = ({
       render: (id: string) => (
         <button
           onClick={() => {
-            showDetail();
-            setIdDetail(id);
+            showDetail(id);
           }}
         >
           <EyeOutlined />
@@ -219,7 +218,12 @@ const DataTable: React.FC<DataTableProps> = ({
       <span className="text-xl font-bold">
         {titleTable} ({paginationOption?.total})
       </span>
+
       <Flex gap="middle">
+        {createBtn && (
+          <Button onClick={createBtn.handler}>{createBtn.title}</Button>
+        )}
+
         <Dropdown
           menu={{
             items,

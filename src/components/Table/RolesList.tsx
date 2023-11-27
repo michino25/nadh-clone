@@ -80,9 +80,9 @@ export default function RolesList() {
   return (
     data && (
       <DataTable
+        createBtn={undefined}
         titleTable={`Notification List`}
         data={data}
-        setIdDetail={() => {}}
         showDetail={() => {}}
         rawColumns={rawColumns}
         paginationOption={paginationOption}

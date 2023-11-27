@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import UsersList from "../components/Table/UsersList";
+import DashboardUserList from "../components/Table/DashboardUserList";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../utils/getUser";
 
@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex w-full p-5">
-      <UsersList />
+      <DashboardUserList />
     </div>
   );
 }

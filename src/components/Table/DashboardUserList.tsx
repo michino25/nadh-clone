@@ -45,7 +45,7 @@ const rawColumns = [
   },
 ];
 
-export default function ClientsList() {
+export default function DashboardUserList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -104,13 +104,6 @@ export default function ClientsList() {
     refetch();
   }, [refetch, currentPage]);
 
-  const createBtn = {
-    handler: () => {
-      console.log("create");
-    },
-    title: "Create User",
-  };
-
   if (isPending) return <Skeleton active />;
 
   if (error) return "An error has occurred: " + error.message;
@@ -120,7 +113,7 @@ export default function ClientsList() {
     <>
       <DataTable
         titleTable={`System Users List`}
-        createBtn={createBtn}
+        createBtn={undefined}
         data={data}
         rawColumns={rawColumns}
         showDetail={showDrawer}

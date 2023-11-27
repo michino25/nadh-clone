@@ -108,14 +108,21 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     console.log("Data:", data);
   }, [data, status]);
 
+  const createBtn = {
+    handler: () => {
+      console.log("create");
+    },
+    title: "Create Client",
+  };
+
   if (isPending) return <Skeleton active />;
 
   return (
     data && (
       <DataTable
         titleTable={`Clients List`}
+        createBtn={createBtn}
         data={data}
-        setIdDetail={() => {}}
         showDetail={() => {}}
         rawColumns={rawColumns}
         paginationOption={paginationOption}

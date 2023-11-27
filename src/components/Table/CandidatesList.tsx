@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
 import { iUser, iCandidate } from "../../../utils/models";
 import { getUser } from "../../../utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -39,6 +40,8 @@ const rawColumns = [
 ];
 
 export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
+  const navigate = useNavigate();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -86,9 +89,21 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     enabled: !!userDetail?.id,
   });
 
+  const goDetail = (id: string) => {
+    const candidates = data.filter((item: iCandidate) => item.id === id);
+    navigate(`/candidate-detail/${candidates[0].candidate_id}`);
+  };
+
   useEffect(() => {
     refetch();
   }, [userDetail, refetch, currentPage]);
+
+  const createBtn = {
+    handler: () => {
+      navigate(`/candidate-add`);
+    },
+    title: "Create Candidate",
+  };
 
   if (isPending) return <Skeleton active />;
 
@@ -96,8 +111,8 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     <DataTable
       titleTable={`Candidates List`}
       data={data}
-      setIdDetail={() => {}}
-      showDetail={() => {}}
+      createBtn={createBtn}
+      showDetail={goDetail}
       rawColumns={rawColumns}
       paginationOption={paginationOption}
     />
