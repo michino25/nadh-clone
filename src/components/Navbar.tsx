@@ -16,9 +16,7 @@ export default function Navbar() {
   const [user, setUser] = useState<iUserData>();
   const [searchShow, setSearchShow] = useState(false);
 
-  const [idDetail, setIdDetail] = useState("");
   const [open, setOpen] = useState(false);
-  const [userDetail, setUserDetail] = useState<iUserData | undefined>();
 
   const showDrawer = () => {
     setOpen(true);
@@ -168,9 +166,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {open && (
-        <UserInfoDetail open={open} userDetail={userDetail} onClose={onClose} />
-      )}
+      {open && <UserInfoDetail open={open} onClose={onClose} />}
     </>
   );
 }

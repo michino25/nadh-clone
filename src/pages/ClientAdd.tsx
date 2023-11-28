@@ -1,7 +1,6 @@
 import Step from "../components/DataDisplay/Step";
 import { Link } from "react-router-dom";
 import { Col, Row, Button, Form } from "antd";
-import { useState } from "react";
 
 import Input from "../components/DataEntry/Input";
 import DataSelect from "../components/DataEntry/Select";

@@ -194,7 +194,7 @@ const DataTable: React.FC<DataTableProps> = ({
       .map((column) => ({
         ...column,
         dataIndex: column.key,
-        ...getColumnSearchProps(column.key),
+        ...getColumnSearchProps(column.key as keyof iUser),
       }));
 
     columns.push({

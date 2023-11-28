@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+// import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Col, Row, Button, Form, Modal } from "antd";
 import { useState } from "react";
 
@@ -28,7 +29,7 @@ const createSelectData = (data: string[]) => {
 };
 
 export default function Candidates() {
-  const { id } = useParams();
+  // const { id } = useParams();
 
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();

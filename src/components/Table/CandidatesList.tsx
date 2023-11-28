@@ -59,7 +59,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, refetch, status, isPending } = useQuery({
+  const { data, refetch, isPending } = useQuery({
     queryKey: ["Candidates", userDetail?.id],
     queryFn: () =>
       axios

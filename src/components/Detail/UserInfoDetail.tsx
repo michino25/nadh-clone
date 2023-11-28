@@ -1,19 +1,15 @@
 import { Drawer, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { formatName } from "../../../utils/format";
-import { iUserData } from "../../../utils/models";
-import { useState } from "react";
 import UserInfo from "../Form/UserInfo";
 
 // const api = import.meta.env.VITE_API_URL;
 
 export default function UserInfoDetail({
   open,
-  userDetail,
   onClose,
 }: {
   open: boolean;
-  userDetail: iUserData | undefined;
   onClose: () => void;
 }) {
   // const [noti, setNoti] = useState(userDetail);
