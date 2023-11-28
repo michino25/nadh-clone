@@ -3,8 +3,9 @@ import { Form, Input } from "antd";
 interface iDataInput {
   label: string;
   name: string;
-  required: boolean;
+  required?: boolean;
   defaultValue?: string | number;
+  disabled?: boolean;
 }
 
 export default function DataInput({
@@ -12,6 +13,7 @@ export default function DataInput({
   name,
   required,
   defaultValue,
+  disabled,
 }: iDataInput) {
   return (
     <Form.Item
@@ -24,7 +26,7 @@ export default function DataInput({
         },
       ]}
     >
-      <Input className="" defaultValue={defaultValue} />
+      <Input className="" defaultValue={defaultValue} disabled={disabled} />
     </Form.Item>
   );
 }

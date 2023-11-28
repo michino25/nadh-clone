@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
 import { iClient, iUser } from "../../../utils/models";
 import { getUser } from "../../../utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -52,6 +53,7 @@ const rawColumns = [
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
@@ -108,9 +110,14 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     console.log("Data:", data);
   }, [data, status]);
 
+  const goDetail = (id: string) => {
+    const clients = data.filter((item: iClient) => item.id === id);
+    navigate(`/client-detail/${clients[0].client_id}`);
+  };
+
   const createBtn = {
     handler: () => {
-      console.log("create");
+      navigate(`/client-add`);
     },
     title: "Create Client",
   };
@@ -123,7 +130,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         titleTable={`Clients List`}
         createBtn={createBtn}
         data={data}
-        showDetail={() => {}}
+        showDetail={goDetail}
         rawColumns={rawColumns}
         paginationOption={paginationOption}
       />

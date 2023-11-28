@@ -3,7 +3,7 @@ import { Form, Select } from "antd";
 interface iDataInput {
   label: string;
   name: string;
-  required: boolean;
+  required?: boolean;
   defaultValue?: string | number;
   data: { label: string; value: string }[];
 }

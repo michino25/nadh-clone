@@ -48,7 +48,7 @@ for (let i = 1; i <= 10; i++) {
 }
 
 const defaultTitle = () => "Here is title";
-const defaultFooter = () => "Here is footer";
+// const defaultFooter = () => "Here is footer";
 
 export default function DataTable() {
   const tableColumns = columns.map((item) => ({ ...item }));

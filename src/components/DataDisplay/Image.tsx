@@ -6,15 +6,15 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
 } from "@ant-design/icons";
-import React from "react";
 import { Image, Space } from "antd";
 
-const src =
-  "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png";
-
-export default function DataImage() {
-  // or you can download flipped and rotated image
-  // https://codesandbox.io/s/zi-ding-yi-gong-ju-lan-antd-5-7-0-forked-c9jvmp
+export default function DataImage({
+  src,
+  size,
+}: {
+  src: string;
+  size: number;
+}) {
   const onDownload = () => {
     fetch(src)
       .then((response) => response.blob())
@@ -32,7 +32,9 @@ export default function DataImage() {
 
   return (
     <Image
-      width={200}
+      className="rounded-lg overflow-hidden"
+      width={size}
+      height={size}
       src={src}
       preview={{
         toolbarRender: (

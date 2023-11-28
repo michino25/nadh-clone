@@ -2,11 +2,11 @@ import DataTable from "../DataTable";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import DashboardDetail from "../Detail/DashboardDetail";
 import { formatDate, formatName } from "../../../utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "../../../utils/models";
 import { getUser } from "../../../utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -48,6 +48,7 @@ const rawColumns = [
 export default function ClientsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
@@ -61,20 +62,6 @@ export default function ClientsList() {
     currentPage,
     handlePageChange,
     total,
-  };
-
-  const [open, setOpen] = useState(false);
-  const [userDetail, setUserDetail] = useState<iUser | undefined>();
-
-  const showDrawer = (idDetail: string) => {
-    setOpen(true);
-    if (idDetail) {
-      const users: iUser[] = data.filter((user: iUser) => user.id === idDetail);
-      setUserDetail(users[0]);
-    }
-  };
-  const onClose = () => {
-    setOpen(false);
   };
 
   const { isPending, refetch, error, data } = useQuery({
@@ -104,9 +91,14 @@ export default function ClientsList() {
     refetch();
   }, [refetch, currentPage]);
 
+  const goDetail = (id: string) => {
+    const users = data.filter((item: iUser) => item.id === id);
+    navigate(`/user-detail/${users[0].user_id}`);
+  };
+
   const createBtn = {
     handler: () => {
-      console.log("create");
+      navigate(`/user-add`);
     },
     title: "Create User",
   };
@@ -123,16 +115,9 @@ export default function ClientsList() {
         createBtn={createBtn}
         data={data}
         rawColumns={rawColumns}
-        showDetail={showDrawer}
+        showDetail={goDetail}
         paginationOption={paginationOption}
       />
-      {userDetail && (
-        <DashboardDetail
-          open={open}
-          userDetail={userDetail}
-          onClose={onClose}
-        />
-      )}
     </>
   );
 }

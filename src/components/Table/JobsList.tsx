@@ -7,6 +7,7 @@ import { Skeleton } from "antd";
 import { iJob, iUser } from "../../../utils/models";
 import { formatDate } from "../../../utils/format";
 import { getUser } from "../../../utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -36,6 +37,7 @@ const rawColumns = [
 export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
@@ -89,7 +91,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
 
   const createBtn = {
     handler: () => {
-      console.log("create");
+      navigate(`/job-add`);
     },
     title: "Create Job",
   };

@@ -1,23 +1,18 @@
-import Step from "../components/DataDisplay/Step";
 import { Link } from "react-router-dom";
 import { Col, Row, Button, Form } from "antd";
-import { useState } from "react";
 
-import Input from "../components/DataEntry/Input";
+import InputNumber from "../components/DataEntry/InputNumber";
 import DataSelect from "../components/DataEntry/Select";
+import CoordinateSelect from "../components/DataEntry/CoordinateSelect";
 import Birthday from "../components/DataEntry/Birthday";
-import DataRadio from "../components/DataEntry/Radio";
-import DataDatePicker from "../components/DataEntry/DatePicker";
-import MultiSelect from "../components/DataEntry/MultiSelect";
+import DataInput from "../components/DataEntry/Input";
 
 interface ItemProps {
   label: string;
   value: string;
 }
 
-const options: ItemProps[] = [];
-
-const data = [
+const titles = [
   "Finance & Accounting (F&A)",
   "Accounting and Auditing",
   "Internal Control and Compliance",
@@ -156,116 +151,168 @@ const data = [
   "Employer Branding",
 ];
 
-for (let i = 0; i < data.length; i++) {
-  options.push({
-    label: data[i],
-    value: i.toString(),
-  });
-}
+const departments = [
+  "CS Department",
+  "Digital",
+  "FE",
+  "Finance",
+  "HR",
+  "IT",
+  "Marketing",
+  "Sales",
+];
 
-export default function CadidateAdd() {
-  const [value, setValue] = useState<string[]>([]);
+const types = [
+  "Full-time",
+  "Contract",
+  "Part-time",
+  "Internship",
+  "Temporary",
+  "Other",
+];
+
+const experiences = [
+  "Internship Level",
+  "Entry Level",
+  "Associate Level",
+  "Mid-senior Level",
+  "Director",
+  "Executive",
+];
+
+const users = [
+  "Thanh Binh",
+  "Test Marketing",
+  "Hr Test",
+  "Marketing Thy",
+  "Marketing 1",
+  "Hr Test",
+  "Hr Thydo",
+  "Hr Test",
+  "Hr Thy",
+  "Marketing Test",
+];
+
+const createSelectData = (data: string[]) => {
+  const selectData: ItemProps[] = [];
+  for (let i = 0; i < data.length; i++) {
+    selectData.push({
+      label: data[i],
+      value: i.toString(),
+    });
+  }
+  return selectData;
+};
+
+const industryData: string[] = [
+  "Corporate Strategy",
+  "Legal",
+  "Risk Management",
+  "Corporate Communications",
+];
+
+const sectorData = {
+  "Corporate Strategy": ["Investment Management", "Accounting"],
+  Legal: ["Banking", "Insurance"],
+  "Risk Management": ["Consulting", "Legal Services"],
+  "Corporate Communications": ["Business Advisory", "Human Resources"],
+};
+
+const subsectorData = {
+  "Investment Management": [
+    "Asset Management",
+    "Portfolio Management",
+    "Wealth Management",
+  ],
+  Accounting: ["Audit Services", "Tax Advisory", "Financial Reporting"],
+  Banking: ["Retail Banking", "Corporate Banking", "Investment Banking"],
+  Insurance: [
+    "Life Insurance",
+    "Property and Casualty Insurance",
+    "Reinsurance",
+  ],
+  Consulting: ["Management Consulting", "IT Consulting", "Strategy Consulting"],
+  "Legal Services": ["Corporate Law", "Litigation", "Intellectual Property"],
+  "Business Advisory": [
+    "Business Planning",
+    "Market Research",
+    "Risk Assessment",
+  ],
+  "Human Resources": [
+    "Talent Acquisition",
+    "Employee Relations",
+    "Training and Development",
+  ],
+  "Supply Chain Strategy": [
+    "Network Design",
+    "Risk Assessment",
+    "Sustainability Planning",
+  ],
+  Logistics: ["Transportation", "Distribution", "Warehouse Management"],
+  Procurement: ["Supplier Management", "Contract Negotiation", "Sourcing"],
+  "Inventory Management": [
+    "Stock Control",
+    "Demand Forecasting",
+    "Order Fulfillment",
+  ],
+  "Demand Planning": [
+    "Forecast Accuracy Analysis",
+    "Demand Sensing",
+    "Collaborative Planning",
+  ],
+};
+
+export default function ClientAdd() {
+  // const [value, setValue] = useState<string[]>([]);
 
   return (
     <div className="px-12 pb-2">
       <div className="">
-        <Link to={"/candidates"}>Candidates List</Link>
-        <span> / Create Candidate</span>
+        <Link to={"/clients"}>Jobs List</Link>
+        <span> / Create Job</span>
       </div>
 
-      <p className="mb-4 font-bold text-xl">Create Candidate</p>
-
-      <Step
-        current={0}
-        data={[
-          "Personal Information",
-          "Skills and Industry",
-          "Education and Certificat",
-          "Working History",
-          "Remunertion and Rewards",
-          "Finish",
-        ]}
-      />
+      <p className="mb-4 font-bold text-xl">Create Job</p>
 
       <div className="p-4 my-6 bg-white rounded-lg">
-        <p className="mb-4 font-bold text-lg">Personal Information</p>
-
         <Form layout="vertical" className="w-full">
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="First Name"
-                name="full_name"
-                required={true}
-                defaultValue={"thanh binh"}
-              />
-            </Col>
-            <Col span={12}>
-              <Input
-                label="Last Name"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
-              />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Input
-                label="Middle Name"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
+              <DataSelect
+                label="Title"
+                name="status"
+                required
+                defaultValue="1"
+                data={createSelectData(titles)}
               />
             </Col>
             <Col span={12}>
               <DataSelect
-                label="Primary status"
+                label="Department"
                 name="status"
+                required
+                defaultValue="1"
+                data={createSelectData(departments)}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <InputNumber
+                label="Quantity"
+                name="user_name"
                 required={true}
-                defaultValue="active"
-                data={[
-                  { label: "Active", value: "active" },
-                  { label: "Inactive", value: "inactive" },
-                ]}
-              />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Birthday day="01" month="01" year="2023" />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <DataRadio
-                label="Gender"
-                data={[
-                  {
-                    label: "Male",
-                    value: "male",
-                  },
-                  {
-                    label: "Female",
-                    value: "female",
-                  },
-                  {
-                    label: "Complicated",
-                    value: "complicated",
-                  },
-                ]}
+                defaultValue={""}
               />
             </Col>
             <Col span={12}>
-              <DataRadio
-                label="Marital Status"
-                data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
+              <DataSelect
+                label="Type"
+                name="status"
+                required
+                defaultValue="1"
+                data={createSelectData(types)}
               />
             </Col>
           </Row>
@@ -273,69 +320,63 @@ export default function CadidateAdd() {
           <Row gutter={16}>
             <Col span={12}>
               <DataSelect
-                label="Ready to move"
+                label="Experience Level"
                 name="status"
-                required={true}
-                defaultValue="yes"
-                data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
+                required
+                defaultValue="1"
+                data={createSelectData(experiences)}
               />
             </Col>
             <Col span={12}>
-              <Input
-                label="Source"
-                name="user_name"
-                required={true}
-                defaultValue={"Source ne"}
+              <DataSelect
+                label="Client's Name"
+                name="status"
+                required
+                defaultValue="1"
+                data={createSelectData(users)}
               />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Created by"
-                name="user_name"
-                required={true}
-                defaultValue={"Quynh Thi"}
-                disabled
-              />
+              <Birthday label="Opening Date" day="01" month="01" year="2023" />
             </Col>
             <Col span={12}>
-              <DataDatePicker label="Created on" disabled />
+              <DataInput label="Location" name="location" />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Email"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh@lubrytics.com"}
+              <DataSelect
+                label="Search Consultant"
+                name="status"
+                required
+                defaultValue="1"
+                data={createSelectData(users)}
               />
             </Col>
             <Col span={12}>
-              <Input
-                label="Address"
-                name="user_name"
-                required={true}
-                defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+              <DataSelect
+                label="Mapping by"
+                name="status"
+                defaultValue="1"
+                data={createSelectData(users)}
               />
             </Col>
           </Row>
 
-          <Row>
-            <MultiSelect
-              label="Position Applied"
-              name="position"
-              required={false}
-              value={value}
-              setValue={setValue}
-              options={options}
-            />
+          <Row gutter={16}>
+            <Col span={12}>
+              <CoordinateSelect
+                label="Industry"
+                name="industry"
+                firstData={industryData}
+                secondData={sectorData}
+                thirdData={subsectorData}
+              />
+            </Col>
           </Row>
 
           <Form.Item className="flex justify-end space-x-2">

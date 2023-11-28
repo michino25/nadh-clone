@@ -4,6 +4,7 @@ interface iDataInput {
   day: string;
   month: string;
   year: string;
+  label?: string;
 }
 
 interface Option {
@@ -39,9 +40,9 @@ const createYearsArray = (): Option[] => {
   return yearsArray;
 };
 
-export default function Birthday({ day, month, year }: iDataInput) {
+export default function Birthday({ day, month, year, label }: iDataInput) {
   return (
-    <Form.Item label="Birthday">
+    <Form.Item label={label ? label : "Birthday"}>
       <Row gutter={16}>
         <Col span={8}>
           <Select defaultValue={day} allowClear options={createDaysArray()} />

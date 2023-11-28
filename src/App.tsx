@@ -11,8 +11,13 @@ import BlankLayout from "./layouts/BlankLayout";
 import MainLayout from "./layouts/MainLayout";
 import Test from "./pages/Test";
 import { useEffect } from "react";
-import CandidatesDetail from "./pages/CandidatesDetail";
+import CandidateDetail from "./pages/CandidateDetail";
 import CandidateAdd from "./pages/CandidateAdd";
+import ClientAdd from "./pages/ClientAdd";
+import JobAdd from "./pages/JobAdd";
+import UserAdd from "./pages/UserAdd";
+import UserDetail from "./pages/UserDetail";
+import ClientDetail from "./pages/ClientDetail";
 
 export default function App() {
   useEffect(() => {
@@ -35,12 +40,22 @@ export default function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/candidates" element={<Candidates />} />
         <Route path="/candidate-add" element={<CandidateAdd />} />
-        <Route path="/candidate-detail/:id" element={<CandidatesDetail />} />
+        <Route path="/candidate-detail/:id" element={<CandidateDetail />} />
+
         <Route path="/clients" element={<Clients />} />
+        <Route path="/client-add" element={<ClientAdd />} />
+        <Route path="/client-detail/:id" element={<ClientDetail />} />
+
         <Route path="/jobs" element={<Jobs />} />
+        <Route path="/job-add" element={<JobAdd />} />
+
         <Route path="/users" element={<Users />} />
+        <Route path="/user-add" element={<UserAdd />} />
+        <Route path="/user-detail/:id" element={<UserDetail />} />
+
         <Route path="/notify" element={<Notify />} />
         <Route path="/group-user" element={<GroupUser />} />
       </Route>

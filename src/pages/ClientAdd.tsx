@@ -5,10 +5,7 @@ import { useState } from "react";
 
 import Input from "../components/DataEntry/Input";
 import DataSelect from "../components/DataEntry/Select";
-import Birthday from "../components/DataEntry/Birthday";
-import DataRadio from "../components/DataEntry/Radio";
-import DataDatePicker from "../components/DataEntry/DatePicker";
-import MultiSelect from "../components/DataEntry/MultiSelect";
+import CoordinateSelect from "../components/DataEntry/CoordinateSelect";
 
 interface ItemProps {
   label: string;
@@ -156,6 +153,64 @@ const data = [
   "Employer Branding",
 ];
 
+const industryData: string[] = [
+  "Corporate Strategy",
+  "Legal",
+  "Risk Management",
+  "Corporate Communications",
+];
+
+const sectorData = {
+  "Corporate Strategy": ["Investment Management", "Accounting"],
+  Legal: ["Banking", "Insurance"],
+  "Risk Management": ["Consulting", "Legal Services"],
+  "Corporate Communications": ["Business Advisory", "Human Resources"],
+};
+
+const subsectorData = {
+  "Investment Management": [
+    "Asset Management",
+    "Portfolio Management",
+    "Wealth Management",
+  ],
+  Accounting: ["Audit Services", "Tax Advisory", "Financial Reporting"],
+  Banking: ["Retail Banking", "Corporate Banking", "Investment Banking"],
+  Insurance: [
+    "Life Insurance",
+    "Property and Casualty Insurance",
+    "Reinsurance",
+  ],
+  Consulting: ["Management Consulting", "IT Consulting", "Strategy Consulting"],
+  "Legal Services": ["Corporate Law", "Litigation", "Intellectual Property"],
+  "Business Advisory": [
+    "Business Planning",
+    "Market Research",
+    "Risk Assessment",
+  ],
+  "Human Resources": [
+    "Talent Acquisition",
+    "Employee Relations",
+    "Training and Development",
+  ],
+  "Supply Chain Strategy": [
+    "Network Design",
+    "Risk Assessment",
+    "Sustainability Planning",
+  ],
+  Logistics: ["Transportation", "Distribution", "Warehouse Management"],
+  Procurement: ["Supplier Management", "Contract Negotiation", "Sourcing"],
+  "Inventory Management": [
+    "Stock Control",
+    "Demand Forecasting",
+    "Order Fulfillment",
+  ],
+  "Demand Planning": [
+    "Forecast Accuracy Analysis",
+    "Demand Sensing",
+    "Collaborative Planning",
+  ],
+};
+
 for (let i = 0; i < data.length; i++) {
   options.push({
     label: data[i],
@@ -163,49 +218,42 @@ for (let i = 0; i < data.length; i++) {
   });
 }
 
-export default function CadidateAdd() {
-  const [value, setValue] = useState<string[]>([]);
+export default function ClientAdd() {
+  // const [value, setValue] = useState<string[]>([]);
 
   return (
     <div className="px-12 pb-2">
       <div className="">
-        <Link to={"/candidates"}>Candidates List</Link>
-        <span> / Create Candidate</span>
+        <Link to={"/clients"}>Clients List</Link>
+        <span> / Create Client</span>
       </div>
 
-      <p className="mb-4 font-bold text-xl">Create Candidate</p>
+      <p className="mb-4 font-bold text-xl">Create Client</p>
 
       <Step
         current={0}
-        data={[
-          "Personal Information",
-          "Skills and Industry",
-          "Education and Certificat",
-          "Working History",
-          "Remunertion and Rewards",
-          "Finish",
-        ]}
+        data={["Client Information", "Contact Person", "Finish"]}
       />
 
       <div className="p-4 my-6 bg-white rounded-lg">
-        <p className="mb-4 font-bold text-lg">Personal Information</p>
+        <p className="mb-4 font-bold text-lg">Client Information</p>
 
         <Form layout="vertical" className="w-full">
           <Row gutter={16}>
             <Col span={12}>
               <Input
-                label="First Name"
+                label="Trade Name"
                 name="full_name"
                 required={true}
-                defaultValue={"thanh binh"}
+                defaultValue={""}
               />
             </Col>
             <Col span={12}>
               <Input
-                label="Last Name"
+                label="Client's Shortened Name"
                 name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
+                required={false}
+                defaultValue={""}
               />
             </Col>
           </Row>
@@ -213,59 +261,18 @@ export default function CadidateAdd() {
           <Row gutter={16}>
             <Col span={12}>
               <Input
-                label="Middle Name"
+                label="Phone Number"
                 name="user_name"
                 required={true}
-                defaultValue={"thanhbinh"}
+                defaultValue={""}
               />
             </Col>
             <Col span={12}>
-              <DataSelect
-                label="Primary status"
-                name="status"
-                required={true}
-                defaultValue="active"
-                data={[
-                  { label: "Active", value: "active" },
-                  { label: "Inactive", value: "inactive" },
-                ]}
-              />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Birthday day="01" month="01" year="2023" />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <DataRadio
-                label="Gender"
-                data={[
-                  {
-                    label: "Male",
-                    value: "male",
-                  },
-                  {
-                    label: "Female",
-                    value: "female",
-                  },
-                  {
-                    label: "Complicated",
-                    value: "complicated",
-                  },
-                ]}
-              />
-            </Col>
-            <Col span={12}>
-              <DataRadio
-                label="Marital Status"
-                data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
+              <Input
+                label="Fax"
+                name="user_name"
+                required={false}
+                defaultValue={""}
               />
             </Col>
           </Row>
@@ -273,38 +280,31 @@ export default function CadidateAdd() {
           <Row gutter={16}>
             <Col span={12}>
               <DataSelect
-                label="Ready to move"
+                label="Lead consultant"
                 name="status"
                 required={true}
-                defaultValue="yes"
+                defaultValue="1"
                 data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
+                  { label: "Thanh Binh", value: "1" },
+                  { label: "Test Marketing", value: "2" },
+                  { label: "Hr Test", value: "3" },
+                  { label: "Marketing Thy", value: "4" },
+                  { label: "Marketing 1", value: "5" },
+                  { label: "Hr Test", value: "6" },
+                  { label: "Hr Thydo", value: "7" },
+                  { label: "Hr Test", value: "8" },
+                  { label: "Hr Thy", value: "9" },
+                  { label: "Marketing Test", value: "10" },
                 ]}
               />
             </Col>
             <Col span={12}>
               <Input
-                label="Source"
+                label="Tax code"
                 name="user_name"
                 required={true}
-                defaultValue={"Source ne"}
+                defaultValue={""}
               />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Input
-                label="Created by"
-                name="user_name"
-                required={true}
-                defaultValue={"Quynh Thi"}
-                disabled
-              />
-            </Col>
-            <Col span={12}>
-              <DataDatePicker label="Created on" disabled />
             </Col>
           </Row>
 
@@ -313,7 +313,6 @@ export default function CadidateAdd() {
               <Input
                 label="Email"
                 name="user_name"
-                required={true}
                 defaultValue={"thanhbinh@lubrytics.com"}
               />
             </Col>
@@ -321,21 +320,83 @@ export default function CadidateAdd() {
               <Input
                 label="Address"
                 name="user_name"
-                required={true}
                 defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
               />
             </Col>
           </Row>
 
-          <Row>
-            <MultiSelect
-              label="Position Applied"
-              name="position"
-              required={false}
-              value={value}
-              setValue={setValue}
-              options={options}
-            />
+          <Row gutter={16}>
+            <Col span={12}>
+              <DataSelect
+                label="Parent Company"
+                name="status"
+                required={true}
+                defaultValue="1"
+                data={[
+                  { label: "SCHNEIDER ELECTRIC", value: "1" },
+                  { label: "MEKONG CAPITAL", value: "2" },
+                  { label: "GRAB", value: "3" },
+                  { label: "FPT SOFTWARE", value: "4" },
+                  { label: "EXXON MOBIL", value: "5" },
+                ]}
+              />
+            </Col>
+            <Col span={12}>
+              <DataSelect
+                label="Status"
+                name="status"
+                required={true}
+                defaultValue="1"
+                data={[
+                  { label: "Active", value: "1" },
+                  { label: "Blacklist", value: "2" },
+                  { label: "Off-limit", value: "3" },
+                  { label: "Inactive", value: "4" },
+                ]}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <DataSelect
+                label="CPA"
+                name="status"
+                defaultValue="1"
+                data={[
+                  { label: "Retained Plus", value: "1" },
+                  { label: "Retained Minus", value: "2" },
+                  { label: "New", value: "3" },
+                  { label: "Prospecting", value: "4" },
+                  { label: "Lost", value: "5" },
+                ]}
+              />
+            </Col>
+            <Col span={12}>
+              <DataSelect
+                label="Type"
+                name="status"
+                defaultValue="1"
+                data={[
+                  { label: "Type A", value: "1" },
+                  { label: "Type B", value: "2" },
+                  { label: "Type C", value: "3" },
+                  { label: "Type D", value: "4" },
+                ]}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <CoordinateSelect
+                label="Industry"
+                name="industry"
+                firstData={industryData}
+                secondData={sectorData}
+                thirdData={subsectorData}
+              />
+            </Col>
           </Row>
 
           <Form.Item className="flex justify-end space-x-2">

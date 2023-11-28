@@ -234,9 +234,11 @@ const DataTable: React.FC<DataTableProps> = ({
             onDeselect: handleMenuSelect,
           }}
         >
-          <Button className="flex items-center justify-center">
-            Custom Column
-            <CaretDownOutlined />
+          <Button>
+            <div className="flex items-center justify-center">
+              <span className="pr-1">Custom Column</span>
+              <CaretDownOutlined />
+            </div>
           </Button>
         </Dropdown>
 
