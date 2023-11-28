@@ -26,7 +26,7 @@ export default function App() {
       const tailWindStyleTag = [...head.querySelectorAll("style")].find(
         (style) => style.innerHTML.includes("tailwind")
       );
-      head.insertAdjacentElement("afterbegin", tailWindStyleTag as Element);
+      head.insertAdjacentHTML("afterbegin", tailWindStyleTag?.outerHTML || "");
     }
   }, []);
 
