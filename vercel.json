@@ -1,0 +1,82 @@
+{
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/"
+    },
+    {
+      "src": "/login",
+      "dest": "/"
+    },
+    {
+      "src": "/test",
+      "dest": "/"
+    },
+
+    {
+      "src": "/dashboard",
+      "dest": "/"
+    },
+
+    {
+      "src": "/candidates",
+      "dest": "/"
+    },
+    {
+      "src": "/candidate-add",
+      "dest": "/"
+    },
+    {
+      "src": "/candidate-detail/([a-z0-9]+)/?",
+      "dest": "/"
+    },
+
+    {
+      "src": "/clients",
+      "dest": "/"
+    },
+    {
+      "src": "/client-add",
+      "dest": "/"
+    },
+    {
+      "src": "/client-detail/([a-z0-9]+)/?",
+      "dest": "/"
+    },
+
+    {
+      "src": "/jobs",
+      "dest": "/"
+    },
+    {
+      "src": "/job-add",
+      "dest": "/"
+    },
+    {
+      "src": "/job-detail/([a-z0-9]+)/?",
+      "dest": "/"
+    },
+
+    {
+      "src": "/users",
+      "dest": "/"
+    },
+    {
+      "src": "/user-add",
+      "dest": "/"
+    },
+    {
+      "src": "/user-detail/([a-z0-9]+)/?",
+      "dest": "/"
+    },
+
+    {
+      "src": "/notify",
+      "dest": "/"
+    },
+    {
+      "src": "/group-user",
+      "dest": "/"
+    }
+  ]
+}
