@@ -191,7 +191,7 @@ export default function Candidates() {
       <div className="px-8 my-5">
         <div className="flex-col space-y-4">
           <div id="part-1" className="p-6 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Overview</p>
+            <p className="mb-4 font-bold text-lg">NGUYEN THANH NAM</p>
             <TextArea label="" placeholder="54524" />
           </div>
           <div id="part-2" className="flex">
