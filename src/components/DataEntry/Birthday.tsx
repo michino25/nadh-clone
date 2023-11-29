@@ -1,9 +1,7 @@
 import { Select, Col, Form, Row } from "antd";
 
 interface iDataInput {
-  day: string;
-  month: string;
-  year: string;
+  defaultValue: string | undefined;
   label?: string;
 }
 
@@ -21,7 +19,6 @@ const createDaysArray = (): Option[] => {
   return daysArray;
 };
 
-// Function to create an array of months
 const createMonthsArray = (): Option[] => {
   const monthsArray: Option[] = [];
   for (let i = 1; i <= 12; i++) {
@@ -31,7 +28,6 @@ const createMonthsArray = (): Option[] => {
   return monthsArray;
 };
 
-// Function to create an array of years from 1970 to 2023
 const createYearsArray = (): Option[] => {
   const yearsArray: Option[] = [];
   for (let year = 1970; year <= 2023; year++) {
@@ -40,22 +36,36 @@ const createYearsArray = (): Option[] => {
   return yearsArray;
 };
 
-export default function Birthday({ day, month, year, label }: iDataInput) {
+export default function Birthday({ defaultValue, label }: iDataInput) {
+  const [year, month, day] = defaultValue
+    ? defaultValue.split("-")
+    : [null, null, null];
+
   return (
     <Form.Item label={label ? label : "Birthday"}>
       <Row gutter={16}>
         <Col span={8}>
-          <Select defaultValue={day} allowClear options={createDaysArray()} />
+          <Form.Item name={["birthday", "day"]} initialValue={day}>
+            <Select placeholder="Day" allowClear options={createDaysArray()} />
+          </Form.Item>
         </Col>
         <Col span={8}>
-          <Select
-            defaultValue={month}
-            allowClear
-            options={createMonthsArray()}
-          />
+          <Form.Item name={["birthday", "month"]} initialValue={month}>
+            <Select
+              placeholder="Month"
+              allowClear
+              options={createMonthsArray()}
+            />
+          </Form.Item>
         </Col>
         <Col span={8}>
-          <Select defaultValue={year} allowClear options={createYearsArray()} />
+          <Form.Item name={["birthday", "year"]} initialValue={year}>
+            <Select
+              placeholder="Year"
+              allowClear
+              options={createYearsArray()}
+            />
+          </Form.Item>
         </Col>
       </Row>
     </Form.Item>

@@ -19,6 +19,7 @@ export default function DataSelect({
     <Form.Item
       label={label}
       name={name}
+      initialValue={defaultValue}
       rules={[
         {
           required: required,
@@ -26,9 +27,11 @@ export default function DataSelect({
         },
       ]}
     >
-      <Select defaultValue={defaultValue}>
-        {data.map((item: { label: string; value: string }) => (
-          <Select.Option value={item.value}>{item.label}</Select.Option>
+      <Select>
+        {data?.map((item: { label: string; value: string }) => (
+          <Select.Option key={item.value} value={item.value}>
+            {item.label}
+          </Select.Option>
         ))}
       </Select>
     </Form.Item>

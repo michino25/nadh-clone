@@ -9,26 +9,33 @@ export default function Test() {
     if (user) {
       user.token = token;
       localStorage.setItem("userData", JSON.stringify(user));
-      console.log("success");
+      alert("success");
+      window.location.href = "/";
     } else {
-      console.log("failed");
+      alert("failed");
     }
   };
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="">
-        <div className="flex flex-col gap-1 mb-6 w-2xl">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
+      <div className="flex-col w-[600px]">
+        <div className="flex flex-col gap-1 mb-6">
+          <label
+            htmlFor="message"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
             Token
           </label>
-          <input
+
+          <textarea
+            id="message"
+            rows={4}
+            className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Write your thoughts here..."
             value={token}
             onChange={(e) => setToken(e.target.value)}
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             required
-          />
+          ></textarea>
         </div>
 
         <button

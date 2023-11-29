@@ -1,37 +1,26 @@
-import { RadiusUprightOutlined } from "@ant-design/icons";
-import React, { useMemo } from "react";
-import { Button, notification } from "antd";
-import type { NotificationPlacement } from "antd/es/notification/interface";
+import { useEffect } from "react";
+import { notification } from "antd";
 
-const Context = React.createContext({ name: "Default" });
+interface iData {
+  status: boolean;
+  setStatus: (status: boolean) => void;
+  notiData: { title: string; content: string } | undefined;
+}
 
-const App: React.FC = () => {
+const App = ({ status, setStatus, notiData }: iData) => {
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotification = (placement: NotificationPlacement) => {
-    api.info({
-      message: `Notification ${placement}`,
-      description: (
-        <Context.Consumer>{({ name }) => `Hello, ${name}!`}</Context.Consumer>
-      ),
-      placement,
-    });
-  };
+  useEffect(() => {
+    if (status && notiData) {
+      api.info({
+        message: notiData.title,
+        description: notiData.content,
+      });
+      setStatus(false); // Reset status after opening notification
+    }
+  }, [status, setStatus, api, notiData]);
 
-  const contextValue = useMemo(() => ({ name: "Ant Design" }), []);
-
-  return (
-    <Context.Provider value={contextValue}>
-      {contextHolder}
-      <Button
-        type="primary"
-        onClick={() => openNotification("topRight")}
-        icon={<RadiusUprightOutlined />}
-      >
-        topRight
-      </Button>
-    </Context.Provider>
-  );
+  return <>{contextHolder}</>;
 };
 
 export default App;

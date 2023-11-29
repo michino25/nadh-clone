@@ -1,43 +1,127 @@
 // import { useParams, Link } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { Col, Row, Button, Form, Modal } from "antd";
-import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Col, Row, Button, Form, Skeleton } from "antd";
+import { useEffect, useState } from "react";
 
 import DataUpload from "../components/DataEntry/Upload";
 import Input from "../components/DataEntry/Input";
 import DataSelect from "../components/DataEntry/Select";
 import Birthday from "../components/DataEntry/Birthday";
 import DataRadio from "../components/DataEntry/Radio";
-import InputPassword from "../components/DataEntry/InputPassword";
 import DataDatePicker from "../components/DataEntry/DatePicker";
+import Notification from "../components/DataDisplay/Notification";
 
-interface ItemProps {
-  label: string;
-  value: string;
-}
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUser } from "../../utils/getUser";
+import axios from "axios";
+import ChangePassword from "../components/ChangePassword";
+
+const api = import.meta.env.VITE_API_URL;
+
 const gender = ["Male", "Female", "Complicated"];
 
 const createSelectData = (data: string[]) => {
-  const selectData: ItemProps[] = [];
+  const selectData: any[] = [];
   for (let i = 0; i < data.length; i++) {
     selectData.push({
       label: data[i],
-      value: i.toString(),
+      value: i + 1,
     });
   }
   return selectData;
 };
 
-export default function Candidates() {
-  // const { id } = useParams();
+export default function User() {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
+  const [notiShow, setNotiShow] = useState(false);
+  const [notiData, setNotiData] = useState<{
+    title: string;
+    content: string;
+  }>();
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setOpen(false);
+  const { data, isPending, refetch } = useQuery({
+    queryKey: ["users", id],
+    queryFn: () =>
+      axios
+        .get(api + `users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+
+          return res.data;
+        }),
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, id]);
+
+  const { data: roleData, isPending: rolePending } = useQuery({
+    queryKey: ["roles"],
+    queryFn: () =>
+      axios
+        .get(api + `roles`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+  });
+
+  const updateUser = async (userData: any) => {
+    try {
+      await axios.put(api + `users/${id}`, userData, {
+        headers: {
+          Authorization: `Bearer ${getUser()?.token}`,
+        },
+      });
+
+      // success
+      // console.log(res.data);
+      setNotiData({
+        title: "Update User",
+        content: "Update success",
+      });
+      setNotiShow(true);
+      setTimeout(() => {
+        navigate("/users");
+      }, 1000);
+    } catch (error) {
+      // error
+      // console.error("Update failed", error);
+      setNotiData({
+        title: "Update User",
+        content: "Update failed",
+      });
+      setNotiShow(true);
+    }
   };
+
+  const updateMutation = useMutation({
+    mutationFn: (formData: any) => updateUser(formData),
+  });
+
+  const onFinish = (values: any) => {
+    const data = {
+      ...values,
+      dob: `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`,
+      phone: { number: values.phone, country_id: 1280 },
+    };
+    updateMutation.mutate(data);
+    console.log("Received values of form: ", data); // {username: 'a', password: 'a'}
+  };
+
+  if (isPending || rolePending) return <Skeleton active />;
 
   return (
     <>
@@ -50,67 +134,29 @@ export default function Candidates() {
         <div className="p-4 bg-white rounded-lg">
           <p className="mb-4 font-bold text-lg">System User Detail</p>
 
-          <Form layout="vertical" className="w-full">
+          <Form layout="vertical" className="w-full" onFinish={onFinish}>
             <Row gutter={16}>
               <Col span={12}>
                 <DataUpload label="Avatar" />
               </Col>
 
-              <Col span={12}>
-                <Form.Item className="flex justify-end">
-                  <Button
-                    onClick={() => {
-                      setOpen(true);
-                    }}
-                  >
-                    Change Password
-                  </Button>
-
-                  <Modal
-                    open={open}
-                    title="Change Password"
-                    okText="Save"
-                    cancelText="Cancel"
-                    onCancel={() => {
-                      setOpen(false);
-                    }}
-                    onOk={() => {
-                      form
-                        .validateFields()
-                        .then((values) => {
-                          form.resetFields();
-                          onCreate(values);
-                        })
-                        .catch((info) => {
-                          console.log("Validate Failed:", info);
-                        });
-                    }}
-                  >
-                    <Form
-                      form={form}
-                      layout="vertical"
-                      name="form_in_modal"
-                      initialValues={{ modifier: "public" }}
+              {id == getUser()?.user_sent.user_id ? (
+                <Col span={12}>
+                  <ChangePassword />
+                </Col>
+              ) : (
+                <Col span={12}>
+                  <Form.Item className="flex justify-end">
+                    <Button
+                      onClick={() => {
+                        // setOpen(true);
+                      }}
                     >
-                      <InputPassword
-                        label="Current password"
-                        name="password"
-                        required={true}
-                      />
-                      <InputPassword
-                        label="New password"
-                        name="password"
-                        required={true}
-                      />
-                      <InputPassword
-                        label="Confirm new password"
-                        name="password"
-                        required={true}
-                      />
-                    </Form>
-                  </Modal>
-                </Form.Item>
-              </Col>
+                      Reset Password
+                    </Button>
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
 
             <Row gutter={16}>
@@ -119,7 +165,7 @@ export default function Candidates() {
                   label="Full name"
                   name="full_name"
                   required={true}
-                  defaultValue={"thanh binh"}
+                  defaultValue={data?.full_name}
                 />
               </Col>
               <Col span={12}>
@@ -127,35 +173,43 @@ export default function Candidates() {
                   label="Username"
                   name="user_name"
                   required={true}
-                  defaultValue={"thanhbinh"}
+                  disabled
+                  defaultValue={data?.user_name}
                 />
               </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={12}>
-                <Birthday day="01" month="01" year="2023" />
+                <Birthday defaultValue={data.dob} />
               </Col>
               <Col span={12}>
                 <Input
                   label="Mobile Phone"
                   name="phone"
                   required={true}
-                  defaultValue={"0909888999"}
+                  defaultValue={data?.phone.number}
                 />
               </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={12}>
-                <DataRadio label="Gender" data={createSelectData(gender)} />
+                <DataRadio
+                  name="gender"
+                  defaultValue={data.gender}
+                  label="Gender"
+                  data={createSelectData(gender)}
+                />
               </Col>
               <Col span={12}>
                 <DataRadio
+                  name="status"
+                  defaultValue={data.status}
                   label="Status"
                   data={[
-                    { label: "Active", value: "active" },
-                    { label: "Inactive", value: "inactive" },
+                    { label: "Active", value: 1 },
+                    { label: "Inactive", value: -1 },
                   ]}
                 />
               </Col>
@@ -167,15 +221,16 @@ export default function Candidates() {
                   label="Email"
                   name="email"
                   required={true}
-                  defaultValue={"thanhbinh@lubrytics.com"}
+                  defaultValue={data.email}
                 />
               </Col>
               <Col span={12}>
                 <Input
                   label="Address"
                   name="address"
-                  required={true}
-                  defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+                  placeholder="ex: 2 Hai Trieu, Bitexco Financial Tower"
+                  required={false}
+                  defaultValue={data.address}
                 />
               </Col>
             </Row>
@@ -184,22 +239,37 @@ export default function Candidates() {
               <Col span={12}>
                 <DataSelect
                   label="Role"
-                  name="role"
+                  name="type"
                   required={true}
-                  defaultValue="manager"
-                  data={[
-                    { label: "Manager", value: "manager" },
-                    { label: "Staff", value: "staff" },
-                  ]}
+                  defaultValue={data.role.id}
+                  data={roleData}
                 />
               </Col>
               <Col span={12}>
-                <DataDatePicker disabled label="Created on" />
+                <DataDatePicker
+                  name="createdAt"
+                  required={true}
+                  defaultValue={data.createdAt}
+                  label="Created on"
+                  disabled
+                />
               </Col>
             </Row>
 
             <Form.Item className="flex justify-end space-x-2">
-              <Button className="mr-2">Cancel</Button>
+              {/* <Button
+            className="mr-2"
+            onClick={() => {
+              setModalShow(true);
+              console.log("hello");
+              setNotiData({
+                title: "Update User",
+                content: "Update failed",
+              });
+            }}
+          >
+            Cancel
+          </Button> */}
               <Button type="primary" htmlType="submit">
                 Save
               </Button>
@@ -207,6 +277,12 @@ export default function Candidates() {
           </Form>
         </div>
       </div>
+
+      <Notification
+        status={notiShow}
+        setStatus={setNotiShow}
+        notiData={notiData}
+      />
     </>
   );
 }
