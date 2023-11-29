@@ -9,6 +9,8 @@ import DataSelect from "../DataEntry/Select";
 import DataUpload from "../DataEntry/Upload";
 import DataDatePicker from "../DataEntry/DatePicker";
 
+import Notification from "../DataDisplay/Notification";
+
 const gender = [
   {
     label: "Male",
@@ -189,6 +191,7 @@ export default function UserInfo() {
             Save
           </Button>
         </Form.Item>
+        <Notification />
       </Form>
     </>
   );

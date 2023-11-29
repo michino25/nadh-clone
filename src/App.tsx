@@ -10,7 +10,6 @@ import Login from "./pages/Login";
 import BlankLayout from "./layouts/BlankLayout";
 import MainLayout from "./layouts/MainLayout";
 import Test from "./pages/Test";
-import { useEffect } from "react";
 import CandidateDetail from "./pages/CandidateDetail";
 import CandidateAdd from "./pages/CandidateAdd";
 import ClientAdd from "./pages/ClientAdd";
@@ -20,16 +19,6 @@ import UserDetail from "./pages/UserDetail";
 import ClientDetail from "./pages/ClientDetail";
 
 export default function App() {
-  useEffect(() => {
-    const head = document.querySelector("head");
-    if (head) {
-      const tailWindStyleTag = [...head.querySelectorAll("style")].find(
-        (style) => style.innerHTML.includes("tailwind")
-      );
-      head.insertAdjacentHTML("afterbegin", tailWindStyleTag?.outerHTML || "");
-    }
-  }, []);
-
   return (
     <Routes>
       <Route path="/" element={<BlankLayout />}>

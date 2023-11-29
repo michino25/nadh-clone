@@ -23,3 +23,8 @@ input[type="text"]:focus {
   box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   outline: 0;
 }
+
+/* fix conflict tailwind and antd */
+.ant-btn-primary {
+  background-color: #1677ff;
+}
