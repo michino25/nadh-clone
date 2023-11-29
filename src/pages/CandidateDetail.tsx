@@ -372,13 +372,14 @@ export default function Candidates() {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Birthday day="01" month="01" year="2023" />
+                    <Birthday defaultValue="2023-01-01" />
                   </Col>
                 </Row>
 
                 <Row gutter={16}>
                   <Col span={12}>
                     <DataRadio
+                      name="gender"
                       label="Gender"
                       data={[
                         {
@@ -398,6 +399,7 @@ export default function Candidates() {
                   </Col>
                   <Col span={12}>
                     <DataRadio
+                      name="status"
                       label="Marital Status"
                       data={[
                         { label: "Yes", value: "yes" },
@@ -441,7 +443,11 @@ export default function Candidates() {
                     />
                   </Col>
                   <Col span={12}>
-                    <DataDatePicker label="Created on" disabled />
+                    <DataDatePicker
+                      name="createAt"
+                      label="Created on"
+                      disabled
+                    />
                   </Col>
                 </Row>
 

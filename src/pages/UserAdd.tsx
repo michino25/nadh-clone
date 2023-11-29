@@ -130,7 +130,7 @@ export default function UserAdd() {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Birthday day="01" month="01" year="2023" />
+              <Birthday defaultValue="2023-01-01" />
             </Col>
             <Col span={12}>
               <Input
@@ -144,10 +144,15 @@ export default function UserAdd() {
 
           <Row gutter={16}>
             <Col span={12}>
-              <DataRadio label="Gender" data={createSelectData(gender)} />
+              <DataRadio
+                name="gender"
+                label="Gender"
+                data={createSelectData(gender)}
+              />
             </Col>
             <Col span={12}>
               <DataRadio
+                name="status"
                 label="Status"
                 data={[
                   { label: "Active", value: "active" },

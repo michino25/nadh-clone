@@ -340,7 +340,7 @@ export default function ClientAdd() {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Birthday label="Opening Date" day="01" month="01" year="2023" />
+              <Birthday label="Opening Date" defaultValue="2023-01-01" />
             </Col>
             <Col span={12}>
               <DataInput label="Location" name="location" />
