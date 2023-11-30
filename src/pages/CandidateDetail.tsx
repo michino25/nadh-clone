@@ -27,6 +27,7 @@ import BackToTopButton from "../components/BackToTopButton";
 import axios from "axios";
 import { getUser } from "../../utils/getUser";
 import { useQuery } from "@tanstack/react-query";
+import { formatDate, formatName } from "../../utils/format";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -34,6 +35,20 @@ interface ItemProps {
   label: string;
   value: string;
 }
+
+const primaryStatus = ["Active", "Off - limit", "Blacklist", "Inactive"];
+const gender = ["Male", "Female", "Complicated"];
+
+const createSelectData = (data: string[]) => {
+  const selectData: ItemProps[] = [];
+  for (let i = 0; i < data.length; i++) {
+    selectData.push({
+      label: data[i],
+      value: (i + 1).toString(),
+    });
+  }
+  return selectData;
+};
 
 const options: ItemProps[] = [];
 
@@ -164,9 +179,9 @@ export default function Candidates() {
         }),
   });
 
-  useEffect(() => {
-    refetch();
-  }, [refetch, id]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [refetch, id]);
 
   console.log(candidateData);
 
@@ -227,7 +242,7 @@ export default function Candidates() {
                       label="First Name"
                       name="first_name"
                       required={true}
-                      defaultValue={candidateData.first_name}
+                      defaultValue={formatName(candidateData.first_name)}
                     />
                   </Col>
                   <Col span={12}>
@@ -235,7 +250,7 @@ export default function Candidates() {
                       label="Last Name"
                       name="last_name"
                       required={true}
-                      defaultValue={candidateData.last_name}
+                      defaultValue={formatName(candidateData.last_name)}
                     />
                   </Col>
                 </Row>
@@ -246,7 +261,7 @@ export default function Candidates() {
                       label="Middle Name"
                       name="middle_name"
                       required={true}
-                      defaultValue={candidateData.middle_name}
+                      defaultValue={formatName(candidateData.middle_name)}
                     />
                   </Col>
                   <Col span={12}>
@@ -254,18 +269,15 @@ export default function Candidates() {
                       label="Primary status"
                       name="status"
                       required={true}
-                      defaultValue="active"
-                      data={[
-                        { label: "Active", value: "active" },
-                        { label: "Inactive", value: "inactive" },
-                      ]}
+                      defaultValue={candidateData.priority_status.toString()}
+                      data={createSelectData(primaryStatus)}
                     />
                   </Col>
                 </Row>
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Birthday defaultValue="2023-01-01" />
+                    <Birthday defaultValue={candidateData.dob} />
                   </Col>
                 </Row>
 
@@ -274,29 +286,18 @@ export default function Candidates() {
                     <DataRadio
                       name="gender"
                       label="Gender"
-                      data={[
-                        {
-                          label: "Male",
-                          value: "male",
-                        },
-                        {
-                          label: "Female",
-                          value: "female",
-                        },
-                        {
-                          label: "Complicated",
-                          value: "complicated",
-                        },
-                      ]}
+                      defaultValue={candidateData.gender.toString()}
+                      data={createSelectData(gender)}
                     />
                   </Col>
                   <Col span={12}>
                     <DataRadio
-                      name="status"
+                      name="martial_status"
                       label="Marital Status"
+                      defaultValue={candidateData.extra.martial_status}
                       data={[
-                        { label: "Yes", value: "yes" },
-                        { label: "No", value: "no" },
+                        { label: "Yes", value: 1 },
+                        { label: "No", value: -1 },
                       ]}
                     />
                   </Col>
@@ -308,19 +309,19 @@ export default function Candidates() {
                       label="Ready to move"
                       name="status"
                       required={true}
-                      defaultValue="yes"
+                      defaultValue={candidateData.relocating_willingness.toString()}
                       data={[
-                        { label: "Yes", value: "yes" },
-                        { label: "No", value: "no" },
+                        { label: "Yes", value: "1" },
+                        { label: "No", value: "-1" },
                       ]}
                     />
                   </Col>
                   <Col span={12}>
                     <Input
                       label="Source"
-                      name="user_name"
+                      name="source"
                       required={true}
-                      defaultValue={"Source ne"}
+                      defaultValue={candidateData.source}
                     />
                   </Col>
                 </Row>
@@ -331,7 +332,7 @@ export default function Candidates() {
                       label="Created by"
                       name="user_name"
                       required={true}
-                      defaultValue={"Quynh Thi"}
+                      defaultValue={formatName(candidateData.creator.full_name)}
                       disabled
                     />
                   </Col>
@@ -339,6 +340,7 @@ export default function Candidates() {
                     <DataDatePicker
                       name="createAt"
                       label="Created on"
+                      defaultValue={candidateData.createAt}
                       disabled
                     />
                   </Col>
@@ -348,17 +350,17 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Email"
-                      name="user_name"
+                      name="emails"
                       required={true}
-                      defaultValue={"thanhbinh@lubrytics.com"}
+                      defaultValue={candidateData.emails[0]}
                     />
                   </Col>
                   <Col span={12}>
                     <Input
                       label="Address"
-                      name="user_name"
+                      name="address"
                       required={true}
-                      defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+                      placeholder={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
                     />
                   </Col>
                 </Row>

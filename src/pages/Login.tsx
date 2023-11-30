@@ -2,7 +2,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 interface LoginData {
   user_name: string;
@@ -11,8 +10,6 @@ interface LoginData {
 
 export default function Login() {
   // const queryClient = useQueryClient();
-
-  const navigate = useNavigate();
 
   const login = async (loginData: LoginData) => {
     try {
@@ -23,9 +20,8 @@ export default function Login() {
 
       // console.log(res.data);
       localStorage.setItem("userData", JSON.stringify(res.data));
-      // queryClient.setQueryData(["userData"], res.data);
 
-      navigate("/dashboard");
+      window.location.href = "/dashboard";
     } catch (error) {
       console.error("Login failed", error);
     }

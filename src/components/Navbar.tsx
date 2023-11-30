@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../utils/getUser";
 import { iUserData } from "../../utils/models";
+import axios from "../../utils/axiosConfig";
+
 import {
   BellOutlined,
   SearchOutlined,
@@ -33,6 +35,7 @@ export default function Navbar() {
 
   const logoutHandler = () => {
     localStorage.setItem("userData", "");
+    axios.get("logout");
     navigate("/login");
   };
 

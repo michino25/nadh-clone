@@ -1,14 +1,12 @@
 import DataTable from "../DataTable";
-import axios from "axios";
+// import axios from "axios";
+import axios from "../../../utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardDetail from "../Detail/DashboardDetail";
 import { formatDate, formatName } from "../../../utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "../../../utils/models";
-import { getUser } from "../../../utils/getUser";
-
-const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -77,13 +75,14 @@ export default function DashboardUserList() {
     setOpen(false);
   };
 
-  const { isPending, refetch, error, data } = useQuery({
-    queryKey: ["User"],
+  const { isPending, error, data } = useQuery({
+    queryKey: ["User", currentPage],
     queryFn: () =>
       axios
-        .get(api + `users?perPage=${pageSize}&page=${currentPage}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
+        .get("api/users", {
+          params: {
+            perPage: pageSize,
+            page: currentPage,
           },
         })
         .then((res) => {
@@ -99,10 +98,6 @@ export default function DashboardUserList() {
           }));
         }),
   });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, currentPage]);
 
   if (isPending) return <Skeleton active />;
 

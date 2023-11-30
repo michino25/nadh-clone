@@ -13,7 +13,11 @@ export default function TextArea({
 }: iDataInput) {
   return (
     <Form.Item label={label} initialValue={defaultValue}>
-      <Input.TextArea rows={4} placeholder={placeholder} />
+      <Input.TextArea
+        rows={4}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      />
     </Form.Item>
   );
 }

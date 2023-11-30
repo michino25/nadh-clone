@@ -1,33 +1,20 @@
 import axios from "axios";
+import { getUser } from "./getUser";
 
 const instance = axios.create({
-  baseURL: "https://api.example.com",
+  baseURL: "https://lubrytics.com:8443/nadh-api-crm",
 });
 
-axios.defaults.baseURL = "https://lubrytics.com:8443/nadh-api-crm/api/";
-
-instance.defaults.headers.common["Authorization"] = "AUTH TOKEN FROM INSTANCE";
-
-axios.interceptors.request.use(
-  (config) => {
-    if (!config.headers.Authorization) {
-      const token = JSON.parse(localStorage.getItem("keyCloak")).token;
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+instance.defaults.headers.common["Authorization"] = `Bearer ${
+  getUser()?.token
+}`;
 
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (401 === error.response.status) {
-      window.location = "/login";
+      localStorage.setItem("userData", "");
+      window.location.href = "/login";
 
       return Promise.reject(error);
     } else {
