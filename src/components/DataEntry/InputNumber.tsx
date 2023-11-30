@@ -5,6 +5,7 @@ interface iDataInput {
   name: string;
   required?: boolean;
   defaultValue?: string | number;
+  placeholder?: string;
   disabled?: boolean;
 }
 
@@ -17,6 +18,7 @@ export default function DataInputNumber({
   name,
   required,
   defaultValue,
+  placeholder,
   disabled,
 }: iDataInput) {
   return (
@@ -33,6 +35,7 @@ export default function DataInputNumber({
       <InputNumber
         style={{ width: "100%" }}
         defaultValue={defaultValue}
+        placeholder={placeholder}
         disabled={disabled}
       />
     </Form.Item>

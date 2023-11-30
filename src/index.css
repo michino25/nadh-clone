@@ -6,6 +6,7 @@
 
 * {
   font-family: "Open Sans", sans-serif;
+  --tw-ring-color: #ffffff00 !important;
 }
 
 input[type="text"] {

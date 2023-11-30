@@ -42,7 +42,7 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
     : [null, null, null];
 
   return (
-    <Form.Item label={label ? label : "Birthday"}>
+    <Form.Item className="mb-0" label={label ? label : "Birthday"}>
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item name={["birthday", "day"]} initialValue={day}>

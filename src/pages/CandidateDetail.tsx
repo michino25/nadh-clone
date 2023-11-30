@@ -1,7 +1,16 @@
 import { useParams, Link } from "react-router-dom";
-import { Anchor, Col, Row, Button, Form, Timeline, Collapse } from "antd";
+import {
+  Anchor,
+  Col,
+  Row,
+  Button,
+  Form,
+  Timeline,
+  Collapse,
+  Skeleton,
+} from "antd";
 import type { CollapseProps } from "antd";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Table from "../components/DataDisplay/Table";
 import Image from "../components/DataDisplay/Image";
@@ -15,6 +24,11 @@ import DataRadio from "../components/DataEntry/Radio";
 import DataDatePicker from "../components/DataEntry/DatePicker";
 import MultiSelect from "../components/DataEntry/MultiSelect";
 import BackToTopButton from "../components/BackToTopButton";
+import axios from "axios";
+import { getUser } from "../../utils/getUser";
+import { useQuery } from "@tanstack/react-query";
+
+const api = import.meta.env.VITE_API_URL;
 
 interface ItemProps {
   label: string;
@@ -22,152 +36,6 @@ interface ItemProps {
 }
 
 const options: ItemProps[] = [];
-
-const data = [
-  "Finance & Accounting (F&A)",
-  "Accounting and Auditing",
-  "Internal Control and Compliance",
-  "Corporate Audit",
-  "Due Deligence",
-  "Investment",
-  "Funding",
-  "Fundraising",
-  "Merger & Acquisition (M&A)",
-  "Brokerage",
-  "Porfolio Management",
-  "Financial Planning and Analysis (FP&A)",
-  "Management Accountant (MA)",
-  "Commercial Finance",
-  "Supply Chain Finance",
-  "Financial/Business Analyst",
-  "Finance Reporting",
-  "IFRS (International Financial Reporting Standards)",
-  "U.S. GAAP (Generally Accepted Accounting Principles)",
-  "Finance Controlling",
-  "Cashflow Management",
-  "Taxation",
-  "Financial Statement",
-  "Financial Accounting",
-  "Human Resource (HR)",
-  "Learning & Development",
-  "Performance Management",
-  "HR Communications",
-  "Diversity & Inclusion",
-  "HR Tech / Service Delivery",
-  "Leadership & Succession",
-  "Rewards & Recognition",
-  "Compensation & Job Matrix",
-  "Benefits & Wellbeing",
-  "Employee Experience",
-  "Leadership of HR",
-  "Talent Acquisition",
-  "People Analytics",
-  "HR Change & Trasformation",
-  "HR Solution Design",
-  "Organization Design & Culture",
-  "Business Acumen",
-  "Facilitities & Workplace",
-  "HR Partnership",
-  "Labor Relation",
-  "Information Technology & System (IT&S)",
-  "ERP/SAP",
-  "IT Infrastructure",
-  "IT Help Desk",
-  "IT Software",
-  "IT Hardware",
-  "SAP HANA S4",
-  "IT Networks",
-  "Logistics",
-  "Import & Export",
-  "Transportation & Delivery",
-  "Warehouse & Storage",
-  "Inventory & Stock",
-  "Shipping & Custom Clearance",
-  "Marketing",
-  "Digital Marketing",
-  "CRM",
-  "Product Marketing",
-  "Visual Merchandising",
-  "Consumer & Market Insights",
-  "Customer Shopper Marketing",
-  "Trade Marketing",
-  "Communication /PR /Event /Activation",
-  "Brand/Product Management",
-  "Planning",
-  "Demand Planning",
-  "Production Planning",
-  "Supply Planning",
-  "Procurement",
-  "Vendor Sourcing & Localization",
-  "Capex Procurement",
-  "Indirect Procurement",
-  "Direct Procurement",
-  "Purchase Order (PO) Management",
-  "Contract Negotiation",
-  "Production Operation",
-  "ISO/IEC 27000 (Information Security Management)",
-  "LEAN-Six Sigma",
-  "Kaizen",
-  "ISO 9000 (Quality Management)",
-  "ISO 14000 (Environmental Management)",
-  "ISO 22000 (Food Safety Management)",
-  "GMP (Good Manufacturing Practices)",
-  "TQM (Total Qualityl Management)",
-  "TPM (Total Productive Management)",
-  "HACCP (Hazard Analysis and Critical Control Points)",
-  "OHSAS 18001 (Occupational Health and Safety Assessment Series)",
-  "GPP (Good Pharmacy Practices)",
-  "OEE (Overall Equipment Efficiency)",
-  "OTIF ((On time – In full)",
-  "DIFOT (Delivery in full on time)",
-  'EBIT (Operating Revenue "Operating Expenses (OPEX) + Non-operating Income)',
-  "PBIT (Net profit + Interest + Taxes)",
-  "Project Management",
-  "Green Belt",
-  "Yellow Belt",
-  "PMP/PMI",
-  "Black Belt",
-  "Sales (B2B)",
-  "Business Development",
-  "Aftersales Service",
-  "Technical Service",
-  "Up-selling",
-  "Project Sales",
-  "Technical Sales",
-  "Services Sales",
-  "Dealer Management",
-  "Tele-sales",
-  "Cross-selling",
-  "Sales (B2C)",
-  "Retail Operation",
-  "Route-To-Market",
-  "Channel Development",
-  "Key Account Management",
-  "Distributor Management",
-  "HORECA",
-  "Modern Trate (MT)",
-  "General Trade (GT)",
-  "Tele-sales",
-  "Sales Training",
-  "Business Intelligence",
-  "Commercial Execellence",
-  "Sales Operation",
-  "E-Commerce",
-  "Talent Acquisition",
-  "Candidate Sourcing & Management",
-  "Candidate Interviewing & Assessment",
-  "Candidate Experience",
-  "Candidate Selection & Hiring",
-  "Candidate Onboarding",
-  "Employer Branding",
-];
-
-for (let i = 0; i < data.length; i++) {
-  options.push({
-    label: data[i],
-    value: i.toString(),
-  });
-}
 
 const items: CollapseProps["items"] = [
   {
@@ -273,14 +141,36 @@ const items: CollapseProps["items"] = [
 
 export default function Candidates() {
   const { id } = useParams();
-  const topRef = React.useRef<HTMLDivElement>(null);
-  const [targetOffset, setTargetOffset] = useState<number>();
 
   const [value, setValue] = useState<string[]>([]);
 
+  const {
+    data: candidateData,
+    isPending,
+    refetch,
+  } = useQuery({
+    queryKey: ["candidate", id],
+    queryFn: () =>
+      axios
+        .get(api + `candidates/${id}`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+
+          return res.data;
+        }),
+  });
+
   useEffect(() => {
-    setTargetOffset(topRef.current?.clientHeight);
-  }, []);
+    refetch();
+  }, [refetch, id]);
+
+  console.log(candidateData);
+
+  if (isPending) return <Skeleton active />;
 
   return (
     <>
@@ -289,7 +179,6 @@ export default function Candidates() {
         <Anchor
           className=""
           direction="horizontal"
-          targetOffset={targetOffset}
           items={[
             {
               key: "part-1",
@@ -312,7 +201,8 @@ export default function Candidates() {
           <Link to={"/candidates"}>Candidates List</Link>
           <span>
             {" "}
-            / CDD-000777 - THANH NAM PHAN33 - ACTIVE - REJECTED BY NADH
+            / {candidateData.candidate_id} -{" "}
+            {candidateData.full_name.toUpperCase()}
           </span>
         </div>
       </div>
@@ -322,7 +212,10 @@ export default function Candidates() {
           <div className="flex-col w-2/3 space-y-4">
             <div id="part-1" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Overview</p>
-              <TextArea label="" placeholder="54524" />
+              <TextArea
+                label=""
+                defaultValue={candidateData.overview_text_new}
+              />
             </div>
             <div id="part-2" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
@@ -332,17 +225,17 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="First Name"
-                      name="full_name"
+                      name="first_name"
                       required={true}
-                      defaultValue={"thanh binh"}
+                      defaultValue={candidateData.first_name}
                     />
                   </Col>
                   <Col span={12}>
                     <Input
                       label="Last Name"
-                      name="user_name"
+                      name="last_name"
                       required={true}
-                      defaultValue={"thanhbinh"}
+                      defaultValue={candidateData.last_name}
                     />
                   </Col>
                 </Row>
@@ -351,9 +244,9 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Middle Name"
-                      name="user_name"
+                      name="middle_name"
                       required={true}
-                      defaultValue={"thanhbinh"}
+                      defaultValue={candidateData.middle_name}
                     />
                   </Col>
                   <Col span={12}>

@@ -1,8 +1,9 @@
 import { Form, Input } from "antd";
 
 interface iDataInput {
-  label: string;
+  label?: string;
   name: string;
+  type?: string | undefined;
   placeholder?: string;
   required?: boolean;
   defaultValue?: string | number;
@@ -14,6 +15,7 @@ export default function DataInput({
   name,
   required,
   defaultValue,
+  type,
   placeholder,
   disabled,
 }: iDataInput) {
@@ -24,8 +26,12 @@ export default function DataInput({
       initialValue={defaultValue}
       rules={[
         {
+          type: type as any,
+          message: `The input is not valid ${label}!`,
+        },
+        {
           required: required,
-          message: `Please input your ${label}!`,
+          message: label ? `Please input your ${label}!` : "Missing this field",
         },
       ]}
     >

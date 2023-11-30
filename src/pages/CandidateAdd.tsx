@@ -1,170 +1,170 @@
 import Step from "../components/DataDisplay/Step";
-import { Link } from "react-router-dom";
 import { Col, Row, Button, Form } from "antd";
 import { useState } from "react";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 
 import Input from "../components/DataEntry/Input";
 import DataSelect from "../components/DataEntry/Select";
 import Birthday from "../components/DataEntry/Birthday";
 import DataRadio from "../components/DataEntry/Radio";
-import DataDatePicker from "../components/DataEntry/DatePicker";
 import MultiSelect from "../components/DataEntry/MultiSelect";
+import DynamicFormEmail from "../components/DataEntry/DynamicFormEmail";
+import DynamicFormPhone from "../components/DataEntry/DynamicFormPhone";
+import DynamicFormAddress from "../components/DataEntry/DynamicFormAddress";
+import DataInputNumber from "../components/DataEntry/InputNumber";
+import Notification from "../components/DataDisplay/Notification";
+
+import { getUser } from "../../utils/getUser";
+
+const api = import.meta.env.VITE_API_URL;
 
 interface ItemProps {
   label: string;
   value: string;
 }
 
-const options: ItemProps[] = [];
+const primaryStatus = ["Active", "Off - limit", "Blacklist", "Inactive"];
+const gender = ["Male", "Female", "Complicated"];
 
-const data = [
-  "Finance & Accounting (F&A)",
-  "Accounting and Auditing",
-  "Internal Control and Compliance",
-  "Corporate Audit",
-  "Due Deligence",
-  "Investment",
-  "Funding",
-  "Fundraising",
-  "Merger & Acquisition (M&A)",
-  "Brokerage",
-  "Porfolio Management",
-  "Financial Planning and Analysis (FP&A)",
-  "Management Accountant (MA)",
-  "Commercial Finance",
-  "Supply Chain Finance",
-  "Financial/Business Analyst",
-  "Finance Reporting",
-  "IFRS (International Financial Reporting Standards)",
-  "U.S. GAAP (Generally Accepted Accounting Principles)",
-  "Finance Controlling",
-  "Cashflow Management",
-  "Taxation",
-  "Financial Statement",
-  "Financial Accounting",
-  "Human Resource (HR)",
-  "Learning & Development",
-  "Performance Management",
-  "HR Communications",
-  "Diversity & Inclusion",
-  "HR Tech / Service Delivery",
-  "Leadership & Succession",
-  "Rewards & Recognition",
-  "Compensation & Job Matrix",
-  "Benefits & Wellbeing",
-  "Employee Experience",
-  "Leadership of HR",
-  "Talent Acquisition",
-  "People Analytics",
-  "HR Change & Trasformation",
-  "HR Solution Design",
-  "Organization Design & Culture",
-  "Business Acumen",
-  "Facilitities & Workplace",
-  "HR Partnership",
-  "Labor Relation",
-  "Information Technology & System (IT&S)",
-  "ERP/SAP",
-  "IT Infrastructure",
-  "IT Help Desk",
-  "IT Software",
-  "IT Hardware",
-  "SAP HANA S4",
-  "IT Networks",
-  "Logistics",
-  "Import & Export",
-  "Transportation & Delivery",
-  "Warehouse & Storage",
-  "Inventory & Stock",
-  "Shipping & Custom Clearance",
-  "Marketing",
-  "Digital Marketing",
-  "CRM",
-  "Product Marketing",
-  "Visual Merchandising",
-  "Consumer & Market Insights",
-  "Customer Shopper Marketing",
-  "Trade Marketing",
-  "Communication /PR /Event /Activation",
-  "Brand/Product Management",
-  "Planning",
-  "Demand Planning",
-  "Production Planning",
-  "Supply Planning",
-  "Procurement",
-  "Vendor Sourcing & Localization",
-  "Capex Procurement",
-  "Indirect Procurement",
-  "Direct Procurement",
-  "Purchase Order (PO) Management",
-  "Contract Negotiation",
-  "Production Operation",
-  "ISO/IEC 27000 (Information Security Management)",
-  "LEAN-Six Sigma",
-  "Kaizen",
-  "ISO 9000 (Quality Management)",
-  "ISO 14000 (Environmental Management)",
-  "ISO 22000 (Food Safety Management)",
-  "GMP (Good Manufacturing Practices)",
-  "TQM (Total Qualityl Management)",
-  "TPM (Total Productive Management)",
-  "HACCP (Hazard Analysis and Critical Control Points)",
-  "OHSAS 18001 (Occupational Health and Safety Assessment Series)",
-  "GPP (Good Pharmacy Practices)",
-  "OEE (Overall Equipment Efficiency)",
-  "OTIF ((On time – In full)",
-  "DIFOT (Delivery in full on time)",
-  'EBIT (Operating Revenue "Operating Expenses (OPEX) + Non-operating Income)',
-  "PBIT (Net profit + Interest + Taxes)",
-  "Project Management",
-  "Green Belt",
-  "Yellow Belt",
-  "PMP/PMI",
-  "Black Belt",
-  "Sales (B2B)",
-  "Business Development",
-  "Aftersales Service",
-  "Technical Service",
-  "Up-selling",
-  "Project Sales",
-  "Technical Sales",
-  "Services Sales",
-  "Dealer Management",
-  "Tele-sales",
-  "Cross-selling",
-  "Sales (B2C)",
-  "Retail Operation",
-  "Route-To-Market",
-  "Channel Development",
-  "Key Account Management",
-  "Distributor Management",
-  "HORECA",
-  "Modern Trate (MT)",
-  "General Trade (GT)",
-  "Tele-sales",
-  "Sales Training",
-  "Business Intelligence",
-  "Commercial Execellence",
-  "Sales Operation",
-  "E-Commerce",
-  "Talent Acquisition",
-  "Candidate Sourcing & Management",
-  "Candidate Interviewing & Assessment",
-  "Candidate Experience",
-  "Candidate Selection & Hiring",
-  "Candidate Onboarding",
-  "Employer Branding",
-];
-
-for (let i = 0; i < data.length; i++) {
-  options.push({
-    label: data[i],
-    value: i.toString(),
-  });
-}
+const createSelectData = (data: string[]) => {
+  const selectData: ItemProps[] = [];
+  for (let i = 0; i < data.length; i++) {
+    selectData.push({
+      label: data[i],
+      value: (i + 1).toString(),
+    });
+  }
+  return selectData;
+};
 
 export default function CadidateAdd() {
+  const navigate = useNavigate();
+
+  const [notiShow, setNotiShow] = useState(false);
+  const [notiData, setNotiData] = useState<{
+    title: string;
+    content: string;
+  }>();
+
   const [value, setValue] = useState<string[]>([]);
+
+  const { data: dataDegree } = useQuery({
+    queryKey: ["degree"],
+    queryFn: () =>
+      axios
+        .get(api + `property_values?property_name=degree`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.label,
+            value: item.key + "_" + item.label,
+          }));
+        }),
+  });
+
+  const { data: dataPosition } = useQuery({
+    queryKey: ["position"],
+    queryFn: () =>
+      axios
+        .get(api + `property_values?property_name=position`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.label,
+            value: item.key + "_" + item.label,
+          }));
+        })
+        .then((res) => res.splice(5)),
+  });
+
+  const createCandidate = async (userData: any) => {
+    try {
+      await axios.post(api + `candidates`, userData, {
+        headers: {
+          Authorization: `Bearer ${getUser()?.token}`,
+        },
+      });
+
+      // success
+      // console.log(res.data);
+      setNotiData({
+        title: "Create Candidate",
+        content: "Create success",
+      });
+      setNotiShow(true);
+      setTimeout(() => {
+        navigate("/candidates");
+      }, 1000);
+    } catch (error) {
+      // error
+      // console.error("Create failed", error);
+      setNotiData({
+        title: "Create Candidate",
+        content: "Create failed",
+      });
+      setNotiShow(true);
+    }
+  };
+
+  const createMutation = useMutation({
+    mutationFn: (formData: any) => createCandidate(formData),
+  });
+
+  const onFinish = (values: any) => {
+    const dob =
+      values.birthday.year && values.birthday.month && values.birthday.day
+        ? `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`
+        : null;
+
+    const data = {
+      ...values,
+      addresses: values.addresses.map((item: any) => ({
+        address: item.address,
+        city: { key: item.city.split("_")[0], label: item.city.split("_")[1] },
+        country: {
+          key: item.country.split("_")[0],
+          label: item.country.split("_")[1],
+        },
+        district: {
+          key: item.district.split("_")[0],
+          label: item.district.split("_")[1],
+        },
+      })),
+      dob: dob,
+      gender: parseInt(values.gender),
+      highest_education: {
+        key: values.highest_education.split("_")[0],
+        label: values.highest_education.split("_")[1],
+      },
+      nationality: [],
+      phones: values.phones.map((item: any) => ({
+        number: item,
+        current: -1,
+        phone_code: { key: 1280 },
+      })),
+
+      prefer_position: {
+        positions: values.prefer_position.map((item: any) => ({
+          key: item.split("_")[0],
+          label: item.split("_")[1],
+        })),
+      },
+
+      priority_status: parseInt(values.priority_status),
+      relocating_willingness: parseInt(values.relocating_willingness),
+    };
+    createMutation.mutate(data);
+    console.log("Received values of form: ", data);
+  };
 
   return (
     <div className="px-12 pb-2">
@@ -190,52 +190,32 @@ export default function CadidateAdd() {
       <div className="p-4 my-6 bg-white rounded-lg">
         <p className="mb-4 font-bold text-lg">Personal Information</p>
 
-        <Form layout="vertical" className="w-full">
+        <Form layout="vertical" className="w-full" onFinish={onFinish}>
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="First Name"
-                name="full_name"
-                required={true}
-                defaultValue={"thanh binh"}
-              />
+              <Input label="First Name" name="first_name" required={true} />
             </Col>
             <Col span={12}>
-              <Input
-                label="Last Name"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
-              />
+              <Input label="Last Name" name="last_name" required={true} />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Middle Name"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
-              />
+              <Input label="Middle Name" name="middle_name" />
             </Col>
             <Col span={12}>
               <DataSelect
                 label="Primary status"
-                name="status"
-                required={true}
-                defaultValue="active"
-                data={[
-                  { label: "Active", value: "active" },
-                  { label: "Inactive", value: "inactive" },
-                ]}
+                name="priority_status"
+                data={createSelectData(primaryStatus)}
               />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Birthday defaultValue="2023-01-01" />
+              <Birthday defaultValue="" />
             </Col>
           </Row>
 
@@ -244,29 +224,16 @@ export default function CadidateAdd() {
               <DataRadio
                 name="gender"
                 label="Gender"
-                data={[
-                  {
-                    label: "Male",
-                    value: "male",
-                  },
-                  {
-                    label: "Female",
-                    value: "female",
-                  },
-                  {
-                    label: "Complicated",
-                    value: "complicated",
-                  },
-                ]}
+                data={createSelectData(gender)}
               />
             </Col>
             <Col span={12}>
               <DataRadio
-                name="status"
+                name="martial_status"
                 label="Marital Status"
                 data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
+                  { label: "Yes", value: 1 },
+                  { label: "No", value: -1 },
                 ]}
               />
             </Col>
@@ -276,68 +243,69 @@ export default function CadidateAdd() {
             <Col span={12}>
               <DataSelect
                 label="Ready to move"
-                name="status"
-                required={true}
-                defaultValue="yes"
+                name="relocating_willingness"
+                defaultValue="1"
                 data={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
+                  { label: "Yes", value: "1" },
+                  { label: "No", value: "-1" },
                 ]}
               />
             </Col>
             <Col span={12}>
-              <Input
-                label="Source"
-                name="user_name"
-                required={true}
-                defaultValue={"Source ne"}
+              <Input label="Source" name="source" required={true} />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <DynamicFormEmail name="emails" required={true} />
+            </Col>
+            <Col span={12}>
+              <DynamicFormPhone name="phones" required={true} />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={24}>
+              <DynamicFormAddress name="addresses" />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <MultiSelect
+                label="Position Applied"
+                name="prefer_position"
+                required={false}
+                value={value}
+                setValue={setValue}
+                options={dataPosition ? dataPosition : []}
+              />
+            </Col>
+            <Col span={12}>
+              <DataSelect
+                label="Highest Education"
+                name="highest_education"
+                data={dataDegree ? dataDegree : []}
               />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Created by"
-                name="user_name"
-                required={true}
-                defaultValue={"Quynh Thi"}
-                disabled
+              <DataInputNumber
+                label="Industry Year of Services"
+                placeholder={"0"}
+                name="industry_years"
               />
             </Col>
             <Col span={12}>
-              <DataDatePicker name="createAt" label="Created on" disabled />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Input
-                label="Email"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh@lubrytics.com"}
+              <DataInputNumber
+                label="Year of Management"
+                placeholder={"0"}
+                name="management_years"
               />
             </Col>
-            <Col span={12}>
-              <Input
-                label="Address"
-                name="user_name"
-                required={true}
-                defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <MultiSelect
-              label="Position Applied"
-              name="position"
-              required={false}
-              value={value}
-              setValue={setValue}
-              options={options}
-            />
           </Row>
 
           <Form.Item className="flex justify-end space-x-2">
@@ -348,6 +316,12 @@ export default function CadidateAdd() {
           </Form.Item>
         </Form>
       </div>
+
+      <Notification
+        status={notiShow}
+        setStatus={setNotiShow}
+        notiData={notiData}
+      />
     </div>
   );
 }

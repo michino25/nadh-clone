@@ -1,17 +1,23 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { Row, Col, Modal, Button, Form } from "antd";
+import { Row, Col, Button, Form, Skeleton } from "antd";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUser } from "../../utils/getUser";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 import Input from "../components/DataEntry/Input";
-import InputPassword from "../components/DataEntry/InputPassword";
 import Birthday from "../components/DataEntry/Birthday";
 import DataRadio from "../components/DataEntry/Radio";
 import DataSelect from "../components/DataEntry/Select";
 import DataUpload from "../components/DataEntry/Upload";
 
+import Notification from "../components/DataDisplay/Notification";
+import { useState } from "react";
+
+const api = import.meta.env.VITE_API_URL;
+
 interface ItemProps {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 const createSelectData = (data: string[]) => {
@@ -19,7 +25,7 @@ const createSelectData = (data: string[]) => {
   for (let i = 0; i < data.length; i++) {
     selectData.push({
       label: data[i],
-      value: i.toString(),
+      value: i + 1,
     });
   }
   return selectData;
@@ -28,13 +34,81 @@ const createSelectData = (data: string[]) => {
 const gender = ["Male", "Female", "Complicated"];
 
 export default function UserAdd() {
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setOpen(false);
+  const [notiShow, setNotiShow] = useState(false);
+  const [notiData, setNotiData] = useState<{
+    title: string;
+    content: string;
+  }>();
+
+  const { data: roleData, isPending: rolePending } = useQuery({
+    queryKey: ["roles"],
+    queryFn: () =>
+      axios
+        .get(api + `roles`, {
+          headers: {
+            Authorization: `Bearer ${getUser()?.token}`,
+          },
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+  });
+
+  const createUser = async (userData: any) => {
+    try {
+      await axios.post(api + `users`, userData, {
+        headers: {
+          Authorization: `Bearer ${getUser()?.token}`,
+        },
+      });
+
+      // success
+      // console.log(res.data);
+      setNotiData({
+        title: "Create User",
+        content: "Create success",
+      });
+      setNotiShow(true);
+      setTimeout(() => {
+        navigate("/users");
+      }, 1000);
+    } catch (error) {
+      // error
+      // console.error("Create failed", error);
+      setNotiData({
+        title: "Create User",
+        content: "Create failed",
+      });
+      setNotiShow(true);
+    }
   };
+
+  const createMutation = useMutation({
+    mutationFn: (formData: any) => createUser(formData),
+  });
+
+  const onFinish = (values: any) => {
+    const dob =
+      values.birthday.year && values.birthday.month && values.birthday.day
+        ? `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`
+        : null;
+
+    const data = {
+      ...values,
+      mediafiles: { avatar: "" },
+      dob: dob,
+      phone: { number: values.phone, country_id: 1280 },
+    };
+    createMutation.mutate(data);
+    console.log("Received values of form: ", data);
+  };
+
+  if (rolePending) return <Skeleton active />;
 
   return (
     <div className="px-12 pb-2">
@@ -46,99 +120,30 @@ export default function UserAdd() {
       <p className="mb-4 font-bold text-xl">Create User</p>
 
       <div className="p-4 my-6 bg-white rounded-lg">
-        <Form layout="vertical" className="w-full">
+        <Form layout="vertical" className="w-full" onFinish={onFinish}>
           <Row gutter={16}>
             <Col span={12}>
               <DataUpload label="Avatar" />
             </Col>
 
-            <Col span={12}>
-              <Form.Item className="flex justify-end">
-                <Button
-                  onClick={() => {
-                    setOpen(true);
-                  }}
-                >
-                  Reset Password
-                </Button>
+            <Col span={12}></Col>
+          </Row>
 
-                <Modal
-                  open={open}
-                  title="Change Password"
-                  okText="Save"
-                  cancelText="Cancel"
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
-                  onOk={() => {
-                    form
-                      .validateFields()
-                      .then((values) => {
-                        form.resetFields();
-                        onCreate(values);
-                      })
-                      .catch((info) => {
-                        console.log("Validate Failed:", info);
-                      });
-                  }}
-                >
-                  <Form
-                    form={form}
-                    layout="vertical"
-                    name="form_in_modal"
-                    initialValues={{ modifier: "public" }}
-                  >
-                    <InputPassword
-                      label="Current password"
-                      name="password"
-                      required={true}
-                    />
-                    <InputPassword
-                      label="New password"
-                      name="password"
-                      required={true}
-                    />
-                    <InputPassword
-                      label="Confirm new password"
-                      name="password"
-                      required={true}
-                    />
-                  </Form>
-                </Modal>
-              </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Input label="Full name" name="full_name" required={true} />
+            </Col>
+            <Col span={12}>
+              <Input label="Username" name="user_name" required={true} />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Full name"
-                name="full_name"
-                required={true}
-                defaultValue={"thanh binh"}
-              />
+              <Birthday defaultValue={undefined} />
             </Col>
             <Col span={12}>
-              <Input
-                label="Username"
-                name="user_name"
-                required={true}
-                defaultValue={"thanhbinh"}
-              />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Birthday defaultValue="2023-01-01" />
-            </Col>
-            <Col span={12}>
-              <Input
-                label="Mobile Phone"
-                name="phone"
-                required={true}
-                defaultValue={"0909888999"}
-              />
+              <Input label="Mobile Phone" name="phone" required={true} />
             </Col>
           </Row>
 
@@ -153,10 +158,12 @@ export default function UserAdd() {
             <Col span={12}>
               <DataRadio
                 name="status"
+                disabled
+                defaultValue={1}
                 label="Status"
                 data={[
-                  { label: "Active", value: "active" },
-                  { label: "Inactive", value: "inactive" },
+                  { label: "Active", value: 1 },
+                  { label: "Inactive", value: -1 },
                 ]}
               />
             </Col>
@@ -164,19 +171,14 @@ export default function UserAdd() {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input
-                label="Email"
-                name="email"
-                required={true}
-                defaultValue={"thanhbinh@lubrytics.com"}
-              />
+              <Input label="Email" type="email" name="email" required={true} />
             </Col>
             <Col span={12}>
               <Input
                 label="Address"
                 name="address"
-                required={true}
-                defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+                placeholder="ex: 2 Hai Trieu, Bitexco Financial Tower"
+                required={false}
               />
             </Col>
           </Row>
@@ -185,25 +187,39 @@ export default function UserAdd() {
             <Col span={12}>
               <DataSelect
                 label="Role"
-                name="role"
+                name="type"
                 required={true}
-                defaultValue="manager"
-                data={[
-                  { label: "Manager", value: "manager" },
-                  { label: "Staff", value: "staff" },
-                ]}
+                data={roleData}
               />
             </Col>
+            <Col span={12}></Col>
           </Row>
 
           <Form.Item className="flex justify-end space-x-2">
-            <Button className="mr-2">Cancel</Button>
+            {/* <Button
+            className="mr-2"
+            onClick={() => {
+              setModalShow(true);
+              console.log("hello");
+              setNotiData({
+                title: "Update User",
+                content: "Update failed",
+              });
+            }}
+          >
+            Cancel
+          </Button> */}
             <Button type="primary" htmlType="submit">
               Save
             </Button>
           </Form.Item>
         </Form>
       </div>
+      <Notification
+        status={notiShow}
+        setStatus={setNotiShow}
+        notiData={notiData}
+      />
     </div>
   );
 }
