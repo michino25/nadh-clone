@@ -3,7 +3,7 @@ import { Anchor, Col, Row, Button, Form, Timeline, Collapse } from "antd";
 import type { CollapseProps } from "antd";
 import React, { useEffect, useState } from "react";
 
-import Table from "../components/DataDisplay/Table";
+// import Table from "../components/DataDisplay/Table";
 import Image from "../components/DataDisplay/Image";
 
 import DataUpload from "../components/DataEntry/Upload";
@@ -368,7 +368,7 @@ export default function Candidates() {
           </div>
           <div id="part-3" className="p-6 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-            <Table />
+            {/* <Table data={} /> */}
           </div>
           <div id="part-4" className="p-6 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Attachments</p>
