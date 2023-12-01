@@ -18,6 +18,7 @@ export default function MultiSelect({
   label,
   name,
   required,
+  defaultValue,
   value,
   setValue,
   options,
@@ -38,6 +39,7 @@ export default function MultiSelect({
     <Form.Item
       label={label}
       name={name}
+      initialValue={defaultValue}
       className="w-full"
       rules={[
         {

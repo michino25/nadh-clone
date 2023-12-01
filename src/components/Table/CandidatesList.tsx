@@ -1,16 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-import DataTable from "../DataTable";
-import { formatName } from "../../../utils/format";
-import axios from "axios";
+import DataTable from "components/DataTable";
+import { formatName } from "utils/format";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Skeleton } from "antd";
-import { iUser, iCandidate } from "../../../utils/models";
-import { getUser } from "../../../utils/getUser";
+import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
-
-const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -59,19 +54,17 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, refetch, isPending } = useQuery({
-    queryKey: ["Candidates", userDetail?.id],
+  const { data, isPending } = useQuery({
+    queryKey: ["Candidates", userDetail?.id, currentPage],
     queryFn: () =>
       axios
-        .get(
-          api +
-            `candidates?perPage=${pageSize}&page=${currentPage}&creator_id=${userDetail?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${getUser()?.token}`,
-            },
-          }
-        )
+        .get("api/candidates", {
+          params: {
+            perPage: pageSize,
+            page: currentPage,
+            creator_id: userDetail?.id,
+          },
+        })
         .then((res) => {
           setTotal(res.data.count);
 
@@ -86,17 +79,13 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
               .join(", "),
           }));
         }),
-    enabled: !!userDetail?.id,
+    enabled: userDetail?.id !== undefined,
   });
 
   const goDetail = (id: string) => {
     const candidates = data.filter((item: iCandidate) => item.id === id);
     navigate(`/candidate-detail/${candidates[0].candidate_id}`);
   };
-
-  useEffect(() => {
-    refetch();
-  }, [userDetail, refetch, currentPage]);
 
   const createBtn = {
     handler: () => {

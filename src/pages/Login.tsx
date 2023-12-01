@@ -1,7 +1,10 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
-import axios from "axios";
+import { Typography, Card, Button, Form, Input, Space, Spin } from "antd";
+// import axios from "axios";
+import axios from "utils/axiosConfig";
 import { useMutation } from "@tanstack/react-query";
+import { notification } from "antd";
+import { useState } from "react";
 
 interface LoginData {
   user_name: string;
@@ -9,21 +12,30 @@ interface LoginData {
 }
 
 export default function Login() {
-  // const queryClient = useQueryClient();
-
+  const [loading, setLoading] = useState(false);
   const login = async (loginData: LoginData) => {
     try {
-      const res = await axios.post(
-        "https://lubrytics.com:8443/nadh-api-crm/login",
-        loginData
-      );
-
-      // console.log(res.data);
+      setLoading(true);
+      const res = await axios.post("login", loginData);
+      notification.success({
+        message: "Login Success",
+        description: "You have successfully logged in.",
+      });
       localStorage.setItem("userData", JSON.stringify(res.data));
 
-      window.location.href = "/dashboard";
-    } catch (error) {
-      console.error("Login failed", error);
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+    } catch (error: any) {
+      console.error(error);
+      notification.error({
+        message: "Login Failed",
+        description: `Login failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,52 +51,55 @@ export default function Login() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <span className="text-4xl font-semibold text-blue-500 mb-10">Login</span>
-      <Form className="w-[400px]" onFinish={onFinish}>
-        <Form.Item
-          name="user_name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Username!",
-            },
-          ]}
-        >
-          <Input
-            size="large"
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Username"
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Password!",
-            },
-          ]}
-        >
-          <Input.Password
-            size="large"
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
-        </Form.Item>
+      <Card style={{ padding: 20 }}>
+        <Space direction="vertical" style={{ marginBottom: 20 }}>
+          <Typography.Title style={{ marginBottom: 0 }} level={2}>
+            Login
+          </Typography.Title>
+          <Typography.Text>Sign in to your account</Typography.Text>
+        </Space>
 
-        <Form.Item>
-          <Button
-            size="large"
-            type="primary"
-            ghost
-            htmlType="submit"
-            className="w-full"
+        <Form className="w-[400px]" onFinish={onFinish}>
+          <Form.Item
+            name="user_name"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Username!",
+              },
+            ]}
           >
-            Log in
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input
+              size="large"
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Username"
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Password!",
+              },
+            ]}
+          >
+            <Input.Password
+              size="large"
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button size="large" type="primary" htmlType="submit">
+              Log in
+            </Button>
+            <Spin className="ml-5" spinning={loading}></Spin>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 }

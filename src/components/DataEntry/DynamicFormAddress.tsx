@@ -1,11 +1,8 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Select, Button, Form, Input } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import { getUser } from "../../../utils/getUser";
-import axios from "axios";
+import axios from "utils/axiosConfig";
 import { useState } from "react";
-
-const api = import.meta.env.VITE_API_URL;
 
 interface iDataInput {
   label?: string;
@@ -28,14 +25,13 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
 
   const getCity = async (id: any) => {
     try {
-      const res = await axios.get(
-        api + `locations?type=1&parent_id=${id}&limit=500`,
-        {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        }
-      );
+      const res = await axios.get("api/locations", {
+        params: {
+          type: 1,
+          parent_id: id,
+          limit: 500,
+        },
+      });
 
       // success
       // {key: 1, label: 'An Giang'}
@@ -53,14 +49,13 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
 
   const getDistrict = async (id: any) => {
     try {
-      const res = await axios.get(
-        api + `locations?type=2&parent_id=${id}&limit=500`,
-        {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        }
-      );
+      const res = await axios.get("api/locations", {
+        params: {
+          type: 2,
+          parent_id: id,
+          limit: 500,
+        },
+      });
 
       // success
       // {key: 1, label: 'An Giang'}
@@ -184,7 +179,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                     className="w-full mb-3"
                     rules={[
                       {
-                        required: true,
+                        required: required,
                         message: "Please input your Address!",
                       },
                     ]}

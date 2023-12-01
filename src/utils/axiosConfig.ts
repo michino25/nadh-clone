@@ -13,7 +13,7 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (401 === error.response.status) {
-      localStorage.setItem("userData", "");
+      // localStorage.setItem("userData", "");
       window.location.href = "/login";
 
       return Promise.reject(error);
@@ -24,3 +24,10 @@ instance.interceptors.response.use(
 );
 
 export default instance;
+
+export const axiosWithBaseURL = (newBaseURL: string) => {
+  if (newBaseURL) {
+    instance.defaults.baseURL = newBaseURL;
+  }
+  return instance;
+};

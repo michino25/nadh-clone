@@ -18,6 +18,28 @@ import UserAdd from "./pages/UserAdd";
 import UserDetail from "./pages/UserDetail";
 import ClientDetail from "./pages/ClientDetail";
 
+const routesConfig = [
+  { path: "/dashboard", element: <Dashboard /> },
+
+  { path: "/candidates", element: <Candidates /> },
+  { path: "/candidate-add", element: <CandidateAdd /> },
+  { path: "/candidate-detail/:id", element: <CandidateDetail /> },
+
+  { path: "/clients", element: <Clients /> },
+  { path: "/client-add", element: <ClientAdd /> },
+  { path: "/client-detail/:id", element: <ClientDetail /> },
+
+  { path: "/jobs", element: <Jobs /> },
+  { path: "/job-add", element: <JobAdd /> },
+
+  { path: "/users", element: <Users /> },
+  { path: "/user-add", element: <UserAdd /> },
+  { path: "/user-detail/:id", element: <UserDetail /> },
+
+  { path: "/notify", element: <Notify /> },
+  { path: "/group-user", element: <GroupUser /> },
+];
+
 export default function App() {
   return (
     <Routes>
@@ -28,25 +50,10 @@ export default function App() {
 
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/candidates" element={<Candidates />} />
-        <Route path="/candidate-add" element={<CandidateAdd />} />
-        <Route path="/candidate-detail/:id" element={<CandidateDetail />} />
-
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/client-add" element={<ClientAdd />} />
-        <Route path="/client-detail/:id" element={<ClientDetail />} />
-
-        <Route path="/jobs" element={<Jobs />} />
-        <Route path="/job-add" element={<JobAdd />} />
-
-        <Route path="/users" element={<Users />} />
-        <Route path="/user-add" element={<UserAdd />} />
-        <Route path="/user-detail/:id" element={<UserDetail />} />
-
-        <Route path="/notify" element={<Notify />} />
-        <Route path="/group-user" element={<GroupUser />} />
+        {routesConfig.map(({ path, element }) => (
+          <Route key={path} path={path} element={element} />
+        ))}
       </Route>
     </Routes>
   );

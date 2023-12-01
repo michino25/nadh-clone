@@ -1,189 +1,190 @@
 import { useParams, Link } from "react-router-dom";
-import {
-  Anchor,
-  Col,
-  Row,
-  Button,
-  Form,
-  Timeline,
-  Collapse,
-  Skeleton,
-} from "antd";
-import type { CollapseProps } from "antd";
-import { useEffect, useState } from "react";
+import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
+import { useState } from "react";
 
-import Table from "../components/DataDisplay/Table";
-import Image from "../components/DataDisplay/Image";
+import Table from "components/DataDisplay/Table";
+import Image from "components/DataDisplay/Image";
 
-import DataUpload from "../components/DataEntry/Upload";
-import TextArea from "../components/DataEntry/TextArea";
-import Input from "../components/DataEntry/Input";
-import DataSelect from "../components/DataEntry/Select";
-import Birthday from "../components/DataEntry/Birthday";
-import DataRadio from "../components/DataEntry/Radio";
-import DataDatePicker from "../components/DataEntry/DatePicker";
-import MultiSelect from "../components/DataEntry/MultiSelect";
-import BackToTopButton from "../components/BackToTopButton";
-import axios from "axios";
-import { getUser } from "../../utils/getUser";
+import DataUpload from "components/DataEntry/Upload";
+import TextArea from "components/DataEntry/TextArea";
+import Input from "components/DataEntry/Input";
+import DataSelect from "components/DataEntry/Select";
+import Birthday from "components/DataEntry/Birthday";
+import DataRadio from "components/DataEntry/Radio";
+import DataDatePicker from "components/DataEntry/DatePicker";
+import MultiSelect from "components/DataEntry/MultiSelect";
+import BackToTopButton from "components/BackToTopButton";
+import DynamicFormEmail from "components/DataEntry/DynamicFormEmail";
+import DynamicFormPhone from "components/DataEntry/DynamicFormPhone";
+import DynamicFormAddress from "components/DataEntry/DynamicFormAddress";
+
+import axios, { axiosWithBaseURL } from "utils/axiosConfig";
+
 import { useQuery } from "@tanstack/react-query";
-import { formatDate, formatName } from "../../utils/format";
+import { useMutation } from "@tanstack/react-query";
 
-const api = import.meta.env.VITE_API_URL;
+import { formatName } from "utils/format";
+import InterviewLoop from "components/InterviewLoop";
+import DataInputNumber from "components/DataEntry/InputNumber";
 
-interface ItemProps {
-  label: string;
-  value: string;
-}
-
-const primaryStatus = ["Active", "Off - limit", "Blacklist", "Inactive"];
-const gender = ["Male", "Female", "Complicated"];
-
-const createSelectData = (data: string[]) => {
-  const selectData: ItemProps[] = [];
-  for (let i = 0; i < data.length; i++) {
-    selectData.push({
-      label: data[i],
-      value: (i + 1).toString(),
-    });
-  }
-  return selectData;
-};
-
-const options: ItemProps[] = [];
-
-const items: CollapseProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <div>
-        <strong>J-000376 - Accounting Assistant</strong>
-        <p>THI TEST 5 - C-000159</p>
-      </div>
-    ),
-    children: (
-      <Timeline
-        items={[
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Rejected by NADH</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Placement</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <div>
-        <strong>J-000376 - Accounting Assistant</strong>
-        <p>THI TEST 5 - C-000159</p>
-      </div>
-    ),
-    children: (
-      <Timeline
-        items={[
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Rejected by NADH</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Placement</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    key: "3",
-    label: (
-      <div>
-        <strong>J-000376 - Accounting Assistant</strong>
-        <p>THI TEST 5 - C-000159</p>
-      </div>
-    ),
-    children: (
-      <Timeline
-        items={[
-          {
-            color: "green",
-            children: "Create a services site 2015-09-01",
-          },
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Solve initial network problems 1</strong>
-                <p>Solve initial network problems 2</p>
-                <p>Solve initial network problems 3 2015-09-01</p>
-              </>
-            ),
-          },
-        ]}
-      />
-    ),
-  },
-];
+import { createSelectData, gender, primaryStatus } from "_constants/index";
 
 export default function Candidates() {
   const { id } = useParams();
 
   const [value, setValue] = useState<string[]>([]);
 
-  const {
-    data: candidateData,
-    isPending,
-    refetch,
-  } = useQuery({
-    queryKey: ["candidate", id],
+  const { data: dataDegree } = useQuery({
+    queryKey: ["degree"],
     queryFn: () =>
       axios
-        .get(api + `candidates/${id}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
+        .get("api/property_values", {
+          params: {
+            property_name: "degree",
           },
         })
         .then((res) => {
-          console.log(res.data);
-
-          return res.data;
+          return res.data.data.map((item: any) => ({
+            label: item.label,
+            value: item.key + "_" + item.label,
+          }));
         }),
   });
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [refetch, id]);
+  const { data: dataPosition } = useQuery({
+    queryKey: ["position"],
+    queryFn: () =>
+      axios
+        .get("api/property_values", {
+          params: {
+            property_name: "position",
+          },
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.label,
+            value: item.key + "_" + item.label,
+          }));
+        }),
+  });
 
-  console.log(candidateData);
+  const { data: candidateData, isPending } = useQuery({
+    queryKey: ["candidate", id],
+    queryFn: () =>
+      axios.get("api/candidates/" + id).then((res) => {
+        console.log(res.data);
+
+        return res.data;
+      }),
+  });
+
+  const { data: candidateImage } = useQuery({
+    queryKey: ["files", candidateData?.id],
+    queryFn: () =>
+      axiosWithBaseURL("https://lubrytics.com:8443/nadh-mediafile")
+        .get("files", {
+          params: {
+            obj_id: "238c5f1e-87da-4358-8aad-acd029320dbf",
+            obj_table: "candidates",
+            page: 1,
+            perPage: 10,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.data);
+
+          return res.data.data;
+        }),
+    enabled: !!candidateData?.id,
+  });
+
+  const updateCandidate = async (userData: any) => {
+    try {
+      await axiosWithBaseURL("https://lubrytics.com:8443/nadh-api-crm").put(
+        "api/candidates/" + candidateData.id,
+        userData
+      );
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Update Candidate",
+        description: "Update success.",
+      });
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update Candidate",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: (formData: any) => updateCandidate(formData),
+  });
+
+  const onFinish = (values: any) => {
+    const dob =
+      values.birthday.year && values.birthday.month && values.birthday.day
+        ? `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`
+        : null;
+
+    console.log(values.addresses[0].country);
+
+    const data = {
+      ...values,
+      addresses: values.addresses.map((item: any) => ({
+        address: item.address,
+        country: item.country,
+        // && typeof item.country === "string"
+        //   ? {
+        //       key: item.country.split("_")[0],
+        //       label: item.country.split("_")[1],
+        //     }
+        //   : { key: null, label: null },
+        //   city: item.city &&
+        //     typeof item.city === "string" && {
+        //       key: item.city.split("_")[0],
+        //       label: item.city.split("_")[1],
+        //     },
+        //   district: item.district &&
+        //     typeof item.district === "string" && {
+        //       key: item.district.split("_")[0],
+        //       label: item.district.split("_")[1],
+        //     },
+      })),
+      dob: dob,
+      gender: parseInt(values.gender),
+      highest_education: {
+        key: values.highest_education.split("_")[0],
+        label: values.highest_education.split("_")[1],
+      },
+      nationality: [],
+      phones: values.phones.map((item: any) => ({
+        number: item,
+        current: -1,
+        phone_code: { key: 1280 },
+      })),
+
+      prefer_position: {
+        positions: values.prefer_position.map((item: any) => ({
+          key: item.split("_")[0],
+          label: item.split("_")[1],
+        })),
+      },
+
+      priority_status: parseInt(values.priority_status),
+      relocating_willingness: parseInt(values.relocating_willingness),
+    };
+    updateMutation.mutate(data);
+    console.log("Received values of form: ", data);
+  };
+
+  console.log(candidateData?.business_line);
 
   if (isPending) return <Skeleton active />;
 
@@ -235,7 +236,7 @@ export default function Candidates() {
             <div id="part-2" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
 
-              <Form layout="vertical" className="w-full">
+              <Form layout="vertical" className="w-full" onFinish={onFinish}>
                 <Row gutter={16}>
                   <Col span={12}>
                     <Input
@@ -267,10 +268,10 @@ export default function Candidates() {
                   <Col span={12}>
                     <DataSelect
                       label="Primary status"
-                      name="status"
+                      name="priority_status"
                       required={true}
                       defaultValue={candidateData.priority_status.toString()}
-                      data={createSelectData(primaryStatus)}
+                      data={primaryStatus}
                     />
                   </Col>
                 </Row>
@@ -307,7 +308,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <DataSelect
                       label="Ready to move"
-                      name="status"
+                      name="relocating_willingness"
                       required={true}
                       defaultValue={candidateData.relocating_willingness.toString()}
                       data={[
@@ -338,9 +339,9 @@ export default function Candidates() {
                   </Col>
                   <Col span={12}>
                     <DataDatePicker
-                      name="createAt"
+                      name="createdAt"
+                      defaultValue={candidateData.createdAt}
                       label="Created on"
-                      defaultValue={candidateData.createAt}
                       disabled
                     />
                   </Col>
@@ -348,32 +349,78 @@ export default function Candidates() {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Input
-                      label="Email"
+                    <DynamicFormEmail
+                      defaultValue={candidateData.emails}
                       name="emails"
                       required={true}
-                      defaultValue={candidateData.emails[0]}
                     />
                   </Col>
                   <Col span={12}>
-                    <Input
-                      label="Address"
-                      name="address"
+                    <DynamicFormPhone
+                      defaultValue={candidateData.phones.map(
+                        (item: any) => item.number
+                      )}
+                      name="phones"
                       required={true}
-                      placeholder={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
                     />
                   </Col>
                 </Row>
 
-                <Row>
-                  <MultiSelect
-                    label="Position Applied"
-                    name="position"
-                    required={false}
-                    value={value}
-                    setValue={setValue}
-                    options={options}
-                  />
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <DynamicFormAddress
+                      defaultValue={candidateData.addresses}
+                      name="addresses"
+                    />
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <MultiSelect
+                      label="Position Applied"
+                      name="prefer_position"
+                      required={false}
+                      defaultValue={candidateData.prefer_position.positions.map(
+                        (item: any) => item.key + "_" + item.label
+                      )}
+                      value={value}
+                      setValue={setValue}
+                      options={dataPosition ? dataPosition : []}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <DataSelect
+                      label="Highest Education"
+                      name="highest_education"
+                      defaultValue={
+                        candidateData?.highest_education?.key &&
+                        candidateData.highest_education.key +
+                          "_" +
+                          candidateData.highest_education.label
+                      }
+                      data={dataDegree ? dataDegree : []}
+                    />
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <DataInputNumber
+                      label="Industry Year of Services"
+                      defaultValue={candidateData.industry_years}
+                      placeholder={"0"}
+                      name="industry_years"
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <DataInputNumber
+                      label="Year of Management"
+                      defaultValue={candidateData.management_years}
+                      placeholder={"0"}
+                      name="management_years"
+                    />
+                  </Col>
                 </Row>
 
                 <Form.Item className="flex justify-end space-x-2">
@@ -386,23 +433,29 @@ export default function Candidates() {
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-              <Table />
+              <Table data={candidateData?.business_line} />
             </div>
             <div id="part-4" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>
               <div className="flex space-x-2">
-                <Image
-                  src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                  size={100}
-                />
+                {candidateImage?.length > 0 &&
+                  candidateImage.map((item: any) => (
+                    <Image
+                      src={
+                        "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                        item.id
+                      }
+                      size={100}
+                    />
+                  ))}
                 <DataUpload label="" />
               </div>
             </div>
           </div>
-          <div className="w-1/3 ml-4">
-            <div className="bg-white flex-col p-4 rounded-lg">
+          <div className="w-1/3 pl-5 fixed top-50 right-5">
+            <div className="bg-white flex-col p-4 rounded-lg overflow-y-scroll max-h-[700px]">
               <p className="mb-4 font-bold text-lg">Interview Loop</p>
-              <Collapse accordion items={items} />
+              <InterviewLoop data={candidateData?.flows} />
             </div>
           </div>
         </div>

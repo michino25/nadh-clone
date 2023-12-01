@@ -1,22 +1,18 @@
 // import { useParams, Link } from "react-router-dom";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Col, Row, Button, Form, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { Col, Row, Button, Form, Skeleton, notification } from "antd";
 
-import DataUpload from "../components/DataEntry/Upload";
-import Input from "../components/DataEntry/Input";
-import DataSelect from "../components/DataEntry/Select";
-import Birthday from "../components/DataEntry/Birthday";
-import DataRadio from "../components/DataEntry/Radio";
-import DataDatePicker from "../components/DataEntry/DatePicker";
-import Notification from "../components/DataDisplay/Notification";
+import DataUpload from "components/DataEntry/Upload";
+import Input from "components/DataEntry/Input";
+import DataSelect from "components/DataEntry/Select";
+import Birthday from "components/DataEntry/Birthday";
+import DataRadio from "components/DataEntry/Radio";
+import DataDatePicker from "components/DataEntry/DatePicker";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser } from "../../utils/getUser";
-import axios from "axios";
-import ChangePassword from "../components/ChangePassword";
-
-const api = import.meta.env.VITE_API_URL;
+import { getUser } from "utils/getUser";
+import axios from "utils/axiosConfig";
+import ChangePassword from "components/ChangePassword";
 
 const gender = ["Male", "Female", "Complicated"];
 
@@ -35,75 +31,52 @@ export default function User() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [notiShow, setNotiShow] = useState(false);
-  const [notiData, setNotiData] = useState<{
-    title: string;
-    content: string;
-  }>();
-
-  const { data, isPending, refetch } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["users", id],
     queryFn: () =>
-      axios
-        .get(api + `users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
+      axios.get("api/users/" + id).then((res) => {
+        console.log(res.data);
 
-          return res.data;
-        }),
+        return res.data;
+      }),
   });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, id]);
 
   const { data: roleData, isPending: rolePending } = useQuery({
     queryKey: ["roles"],
     queryFn: () =>
-      axios
-        .get(api + `roles`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => {
-          return res.data.data.map((item: any) => ({
-            label: item.name,
-            value: item.id,
-          }));
-        }),
+      axios.get("api/roles").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
   });
 
   const updateUser = async (userData: any) => {
     try {
-      await axios.put(api + `users/${id}`, userData, {
-        headers: {
-          Authorization: `Bearer ${getUser()?.token}`,
-        },
+      await axios.put("api/users/" + id, {
+        params: userData,
       });
 
       // success
       // console.log(res.data);
-      setNotiData({
-        title: "Update User",
-        content: "Update success",
+      notification.success({
+        message: "Update User",
+        description: "Update success.",
       });
-      setNotiShow(true);
+
       setTimeout(() => {
         navigate("/users");
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       // error
       // console.error("Update failed", error);
-      setNotiData({
-        title: "Update User",
-        content: "Update failed",
+      notification.error({
+        message: "Update User",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
       });
-      setNotiShow(true);
     }
   };
 
@@ -277,12 +250,6 @@ export default function User() {
           </Form>
         </div>
       </div>
-
-      <Notification
-        status={notiShow}
-        setStatus={setNotiShow}
-        notiData={notiData}
-      />
     </>
   );
 }

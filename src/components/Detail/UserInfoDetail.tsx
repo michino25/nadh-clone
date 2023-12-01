@@ -1,6 +1,6 @@
 import { Drawer, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { formatName } from "../../../utils/format";
+import { formatName } from "../../utils/format";
 import UserInfo from "../Form/UserInfo";
 
 export default function UserInfoDetail({

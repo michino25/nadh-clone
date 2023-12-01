@@ -1,28 +1,22 @@
-import { Input, Popover, Flex, Dropdown, Empty } from "antd";
+import { Input, Popover, Flex, Dropdown, Empty, Modal } from "antd";
 import type { MenuProps } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser } from "../../utils/getUser";
-import { iUserData } from "../../utils/models";
-import axios from "../../utils/axiosConfig";
+import { getUser } from "utils/getUser";
+import { iUserData } from "utils/models";
+import axios from "utils/axiosConfig";
 
 import {
   BellOutlined,
   SearchOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import UserInfoDetail from "./Detail/UserInfoDetail";
-import ConfirmModal from "./DataDisplay/ConfirmModal";
+import UserInfoDetail from "components/Detail/UserInfoDetail";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState<iUserData>();
   const [searchShow, setSearchShow] = useState(false);
-  const [modalShow, setModalShow] = useState(false);
-  const [modalData, setModalData] = useState<{
-    title: string;
-    content: string;
-  }>();
 
   const [open, setOpen] = useState(false);
 
@@ -31,6 +25,14 @@ export default function Navbar() {
   };
   const onClose = () => {
     setOpen(false);
+  };
+
+  const showConfirmLogout = () => {
+    Modal.confirm({
+      title: "Confirm to logout",
+      content: "Are you sure you want to log out?",
+      onOk: () => logoutHandler(),
+    });
   };
 
   const logoutHandler = () => {
@@ -58,14 +60,7 @@ export default function Navbar() {
       label: (
         <button
           className="h-full w-full text-left hover:bg-transparent border-0 p-0"
-          onClick={() => {
-            setModalShow(true);
-            console.log("hello");
-            setModalData({
-              title: "Confirm to logout",
-              content: "",
-            });
-          }}
+          onClick={showConfirmLogout}
         >
           Logout
         </button>
@@ -181,14 +176,6 @@ export default function Navbar() {
       </div>
 
       {open && <UserInfoDetail open={open} onClose={onClose} />}
-
-      <ConfirmModal
-        status={modalShow}
-        setStatus={setModalShow}
-        modalData={modalData}
-        onConfirm={logoutHandler}
-        modalType="confirm"
-      />
     </>
   );
 }

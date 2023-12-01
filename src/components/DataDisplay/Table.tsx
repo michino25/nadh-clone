@@ -13,15 +13,15 @@ interface DataType {
 const columns: ColumnsType<DataType> = [
   {
     title: "Industry",
-    dataIndex: "name",
+    dataIndex: "industry",
   },
   {
     title: "Sector",
-    dataIndex: "age",
+    dataIndex: "sector",
   },
   {
     title: "Category",
-    dataIndex: "address",
+    dataIndex: "category",
   },
   {
     title: "Action",
@@ -36,28 +36,25 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const data: DataType[] = [];
-for (let i = 1; i <= 10; i++) {
-  data.push({
-    key: i,
-    name: "John Brown",
-    age: Number(`${i}2`),
-    address: `New York No. ${i} Lake Park`,
-    description: `My name is John Brown, I am ${i}2 years old, living in New York No. ${i} Lake Park.`,
-  });
-}
-
-const defaultTitle = () => "Here is title";
+// const defaultTitle = () => "Here is title";
 // const defaultFooter = () => "Here is footer";
 
-export default function DataTable() {
+export default function DataTable({ data }: { data: any }) {
+  console.log(data);
+
+  const dataShow: DataType[] = data.map((item: any, value: any) => ({
+    key: value,
+    industry: item.industry?.label,
+    sector: item.sector?.label,
+    category: item.category?.label,
+  }));
+
   const tableColumns = columns.map((item) => ({ ...item }));
 
   const tableProps: TableProps<DataType> = {
     bordered: false,
     loading: false,
     size: "large",
-    title: defaultTitle,
     showHeader: true,
     rowSelection: {},
     scroll: undefined,
@@ -70,7 +67,7 @@ export default function DataTable() {
         {...tableProps}
         pagination={{ position: ["none", "bottomRight"] }}
         columns={tableColumns}
-        dataSource={data}
+        dataSource={dataShow}
       />
     </>
   );

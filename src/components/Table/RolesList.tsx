@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
-import DataTable from "../DataTable";
-import { formatDate } from "../../../utils/format";
-import axios from "axios";
+import DataTable from "components/DataTable";
+import { formatDate } from "utils/format";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
-import { iRole } from "../../../utils/models";
-import { getUser } from "../../../utils/getUser";
-
-const api = import.meta.env.VITE_API_URL;
+import { iRole } from "utils/models";
 
 const rawColumns = [
   {
@@ -47,28 +43,18 @@ export default function RolesList() {
     total,
   };
 
-  const { data, refetch, status, isPending } = useQuery({
-    queryKey: ["Notify"],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Notify", currentPage],
     queryFn: () =>
-      axios
-        .get(api + `roles`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => {
-          setTotal(res.data.total);
-          return res.data.data.map((role: iRole) => ({
-            ...role,
-            status: role.status ? "Active" : "Inactive",
-            created_at: formatDate(role.created_at, "ISOdate", "date"),
-          }));
-        }),
+      axios.get("api/roles").then((res) => {
+        setTotal(res.data.total);
+        return res.data.data.map((role: iRole) => ({
+          ...role,
+          status: role.status ? "Active" : "Inactive",
+          created_at: formatDate(role.created_at, "ISOdate", "date"),
+        }));
+      }),
   });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, currentPage]);
 
   useEffect(() => {
     console.log("Data status:", status);

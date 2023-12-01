@@ -1,19 +1,13 @@
-import { Row, Col, Button, Form, Skeleton } from "antd";
+import { Row, Col, Button, Form, Skeleton, notification } from "antd";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser } from "../../utils/getUser";
-import axios from "axios";
+import axios from "utils/axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 
-import Input from "../components/DataEntry/Input";
-import Birthday from "../components/DataEntry/Birthday";
-import DataRadio from "../components/DataEntry/Radio";
-import DataSelect from "../components/DataEntry/Select";
-import DataUpload from "../components/DataEntry/Upload";
-
-import Notification from "../components/DataDisplay/Notification";
-import { useState } from "react";
-
-const api = import.meta.env.VITE_API_URL;
+import Input from "components/DataEntry/Input";
+import Birthday from "components/DataEntry/Birthday";
+import DataRadio from "components/DataEntry/Radio";
+import DataSelect from "components/DataEntry/Select";
+import DataUpload from "components/DataEntry/Upload";
 
 interface ItemProps {
   label: string;
@@ -36,55 +30,42 @@ const gender = ["Male", "Female", "Complicated"];
 export default function UserAdd() {
   const navigate = useNavigate();
 
-  const [notiShow, setNotiShow] = useState(false);
-  const [notiData, setNotiData] = useState<{
-    title: string;
-    content: string;
-  }>();
-
   const { data: roleData, isPending: rolePending } = useQuery({
     queryKey: ["roles"],
     queryFn: () =>
-      axios
-        .get(api + `roles`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => {
-          return res.data.data.map((item: any) => ({
-            label: item.name,
-            value: item.id,
-          }));
-        }),
+      axios.get("api/roles").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
   });
 
   const createUser = async (userData: any) => {
     try {
-      await axios.post(api + `users`, userData, {
-        headers: {
-          Authorization: `Bearer ${getUser()?.token}`,
-        },
+      await axios.post("api/users", {
+        params: userData,
       });
 
       // success
       // console.log(res.data);
-      setNotiData({
-        title: "Create User",
-        content: "Create success",
+      notification.success({
+        message: "Create User",
+        description: "Create success.",
       });
-      setNotiShow(true);
+
       setTimeout(() => {
         navigate("/users");
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       // error
       // console.error("Create failed", error);
-      setNotiData({
-        title: "Create User",
-        content: "Create failed",
+      notification.error({
+        message: "Create User",
+        description: `Create failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
       });
-      setNotiShow(true);
     }
   };
 
@@ -215,11 +196,6 @@ export default function UserAdd() {
           </Form.Item>
         </Form>
       </div>
-      <Notification
-        status={notiShow}
-        setStatus={setNotiShow}
-        notiData={notiData}
-      />
     </div>
   );
 }

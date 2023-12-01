@@ -1,12 +1,11 @@
-import DataTable from "../DataTable";
-// import axios from "axios";
-import axios from "../../../utils/axiosConfig";
+import DataTable from "components/DataTable";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import DashboardDetail from "../Detail/DashboardDetail";
-import { formatDate, formatName } from "../../../utils/format";
+import DashboardDetail from "components/Detail/DashboardDetail";
+import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
-import { iUser } from "../../../utils/models";
+import { iUser } from "utils/models";
 
 const rawColumns = [
   {

@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-vars */
-import DataTable from "../DataTable";
-import axios from "axios";
+import DataTable from "components/DataTable";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
-import { iNotification } from "../../../utils/models";
-import { formatDate } from "../../../utils/format";
-import { getUser } from "../../../utils/getUser";
-import NotiDetail from "../Detail/NotiDetail";
-
-const api = import.meta.env.VITE_API_URL;
+import { iNotification } from "utils/models";
+import { formatDate } from "utils/format";
+import NotiDetail from "components/Detail/NotiDetail";
 
 const rawColumns = [
   {
@@ -64,13 +61,14 @@ export default function JobsList() {
     total,
   };
 
-  const { data, refetch, status, isPending } = useQuery({
-    queryKey: ["Notify"],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Notify", currentPage],
     queryFn: () =>
       axios
-        .get(api + `notify_masters?perPage=${pageSize}&page=${currentPage}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
+        .get("api/notify_masters", {
+          params: {
+            perPage: pageSize,
+            page: currentPage,
           },
         })
         .then((res) => {
@@ -81,10 +79,6 @@ export default function JobsList() {
           }));
         }),
   });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, currentPage]);
 
   useEffect(() => {
     console.log("Data status:", status);

@@ -3,7 +3,7 @@ import Highlighter from "react-highlight-words";
 import { useRef, useState } from "react";
 import { Pagination, Button, Input, Space, Table, Flex, Dropdown } from "antd";
 import { EyeOutlined, CaretDownOutlined } from "@ant-design/icons";
-import { iUser } from "../../utils/models";
+import { iUser } from "../utils/models";
 import type { FilterConfirmProps, Key } from "antd/es/table/interface";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import type { InputRef } from "antd";

@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-vars */
-import DataTable from "../DataTable";
-import axios from "axios";
+import DataTable from "components/DataTable";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
-import { iJob, iUser } from "../../../utils/models";
-import { formatDate } from "../../../utils/format";
-import { getUser } from "../../../utils/getUser";
+import { iJob, iUser } from "utils/models";
+import { formatDate } from "utils/format";
 import { useNavigate } from "react-router-dom";
-
-const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -53,19 +50,17 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, refetch, status, isPending } = useQuery({
-    queryKey: ["Jobs", userDetail?.id],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Jobs", userDetail?.id, currentPage],
     queryFn: () =>
       axios
-        .get(
-          api +
-            `jobs?perPage=${pageSize}&page=${currentPage}&mapping_by_recruiters=${userDetail?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${getUser()?.token}`,
-            },
-          }
-        )
+        .get("api/jobs", {
+          params: {
+            perPage: pageSize,
+            page: currentPage,
+            mapping_by_recruiters: userDetail?.id,
+          },
+        })
         .then((res) => {
           setTotal(res.data.count);
 
@@ -77,12 +72,8 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
             salary: "Negotiation",
           }));
         }),
-    enabled: !!userDetail?.id,
+    enabled: userDetail?.id !== undefined,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [userDetail, refetch, currentPage]);
 
   useEffect(() => {
     console.log("Data status:", status);

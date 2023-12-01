@@ -1,51 +1,40 @@
-import { Button, Form, Modal } from "antd";
-import InputPassword from "./DataEntry/InputPassword";
+import { Button, Form, Modal, notification } from "antd";
+import InputPassword from "components/DataEntry/InputPassword";
 import { useState } from "react";
 
 import { useMutation } from "@tanstack/react-query";
-import { getUser } from "../../utils/getUser";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import Notification from "../components/DataDisplay/Notification";
+import axios from "utils/axiosConfig";
 
-const api = import.meta.env.VITE_API_URL;
+import { useParams } from "react-router-dom";
 
 export default function ChangePassword() {
   const { id } = useParams();
-
-  const [notiShow, setNotiShow] = useState(false);
-  const [notiData, setNotiData] = useState<{
-    title: string;
-    content: string;
-  }>();
 
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
 
   const updateUser = async (userData: any) => {
     try {
-      await axios.put(api + `users/${id}/password`, userData, {
-        headers: {
-          Authorization: `Bearer ${getUser()?.token}`,
-        },
+      await axios.put("api/users/" + id + "/password", {
+        params: userData,
       });
 
       // success
       // console.log(res.data);
-      setNotiData({
-        title: "Update Password",
-        content: "Update success",
+      notification.success({
+        message: "Update Password",
+        description: "Update success.",
       });
-      setNotiShow(true);
       setOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       // error
       // console.error("Update failed", error);
-      setNotiData({
-        title: "Update Password",
-        content: "Update failed",
+      notification.error({
+        message: "Update Password",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
       });
-      setNotiShow(true);
     }
   };
 
@@ -119,12 +108,6 @@ export default function ChangePassword() {
           </Form>
         </Modal>
       </Form.Item>
-
-      <Notification
-        status={notiShow}
-        setStatus={setNotiShow}
-        notiData={notiData}
-      />
     </>
   );
 }

@@ -1,15 +1,12 @@
 import { Drawer, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { formatDate, formatName } from "../../../utils/format";
-import { iNotification } from "../../../utils/models";
+import { formatDate, formatName } from "utils/format";
+import { iNotification } from "utils/models";
 import { Descriptions } from "antd";
 import type { DescriptionsProps } from "antd";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { getUser } from "../../../utils/getUser";
-import { useEffect, useState } from "react";
-
-const api = import.meta.env.VITE_API_URL;
+import axios from "utils/axiosConfig";
+import { useState } from "react";
 
 export default function NotiDetail({
   open,
@@ -21,15 +18,11 @@ export default function NotiDetail({
   onClose: () => void;
 }) {
   const [noti, setNoti] = useState(notiDetail);
-  const { refetch } = useQuery({
+  useQuery({
     queryKey: ["NotiDetail", notiDetail.notify_master_id],
     queryFn: () =>
       axios
-        .get(api + `notify_masters/${notiDetail.notify_master_id}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
+        .get("api/notify_masters/" + notiDetail.notify_master_id)
         .then((res) => setNoti(res.data)),
   });
 
@@ -69,10 +62,6 @@ export default function NotiDetail({
         : "",
     },
   ];
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, notiDetail]);
 
   console.log(notiDetail);
 

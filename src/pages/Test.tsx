@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getUser } from "../../utils/getUser";
+import { getUser } from "../utils/getUser";
 
 export default function Test() {
   const [token, setToken] = useState("");

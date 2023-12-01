@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { DatePicker, Form } from "antd";
-import { formatDate } from "../../../utils/format";
+import { formatDate } from "../../utils/format";
 
 dayjs.extend(customParseFormat);
 

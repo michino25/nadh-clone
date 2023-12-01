@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-vars */
-import DataTable from "../DataTable";
-import { formatName, formatDate } from "../../../utils/format";
-import axios from "axios";
+import DataTable from "components/DataTable";
+import { formatName, formatDate } from "utils/format";
+import axios from "utils/axiosConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
-import { iClient, iUser } from "../../../utils/models";
-import { getUser } from "../../../utils/getUser";
+import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
-
-const api = import.meta.env.VITE_API_URL;
 
 const rawColumns = [
   {
@@ -69,21 +66,20 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, refetch, status, isPending } = useQuery({
-    queryKey: ["Clients", userDetail?.id],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Clients", userDetail?.id, currentPage],
     queryFn: () =>
       axios
-        .get(
-          api +
-            `clients?perPage=${pageSize}&page=${currentPage}&lead_consultant=${userDetail?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${getUser()?.token}`,
-            },
-          }
-        )
+        .get("api/clients", {
+          params: {
+            perPage: pageSize,
+            page: currentPage,
+            lead_consultant: userDetail?.id,
+          },
+        })
         .then((res) => {
           setTotal(res.data.count);
+          console.log(res.data);
 
           return res.data.data.map((client: iClient) => ({
             ...client,
@@ -98,12 +94,8 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
             industry: client.business_line[0]?.sector?.name,
           }));
         }),
-    enabled: !!userDetail?.id,
+    enabled: userDetail?.id !== undefined,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [userDetail, refetch, currentPage]);
 
   useEffect(() => {
     console.log("Data status:", status);

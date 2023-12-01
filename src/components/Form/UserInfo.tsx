@@ -1,22 +1,18 @@
-import { useState } from "react";
-import { Row, Col, Button, Form, Skeleton } from "antd";
+import { Row, Col, Button, Form, Skeleton, notification } from "antd";
 import { useMutation } from "@tanstack/react-query";
 
-import Input from "../DataEntry/Input";
-import Birthday from "../DataEntry/Birthday";
-import DataRadio from "../DataEntry/Radio";
-import DataSelect from "../DataEntry/Select";
-import DataUpload from "../DataEntry/Upload";
-import DataDatePicker from "../DataEntry/DatePicker";
+import Input from "components/DataEntry/Input";
+import Birthday from "components/DataEntry/Birthday";
+import DataRadio from "components/DataEntry/Radio";
+import DataSelect from "components/DataEntry/Select";
+import DataUpload from "components/DataEntry/Upload";
+import DataDatePicker from "components/DataEntry/DatePicker";
 
-import Notification from "../DataDisplay/Notification";
-import axios from "axios";
-import { getUser } from "../../../utils/getUser";
+import axios from "utils/axiosConfig";
+import { getUser } from "utils/getUser";
 import { useQuery } from "@tanstack/react-query";
 import ChangePassword from "../ChangePassword";
-// import ConfirmModal from "../DataDisplay/ConfirmModal";
-
-const api = import.meta.env.VITE_API_URL;
+// import ConfirmModal from "components/DataDisplay/ConfirmModal";
 
 const gender = [
   {
@@ -34,65 +30,44 @@ const gender = [
 ];
 
 export default function UserInfo() {
-  const [notiShow, setNotiShow] = useState(false);
-  // const [modalShow, setModalShow] = useState(false);
-  const [notiData, setNotiData] = useState<{
-    title: string;
-    content: string;
-  }>();
-
   const { data, isPending } = useQuery({
     queryKey: ["users", getUser()?.user_sent.id],
     queryFn: () =>
-      axios
-        .get(api + `users/${getUser()?.user_sent.id}`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => res.data),
+      axios.get("api/users/" + getUser()?.user_sent.id).then((res) => res.data),
   });
 
   const { data: roleData, isPending: rolePending } = useQuery({
     queryKey: ["roles"],
     queryFn: () =>
-      axios
-        .get(api + `roles`, {
-          headers: {
-            Authorization: `Bearer ${getUser()?.token}`,
-          },
-        })
-        .then((res) => {
-          return res.data.data.map((item: any) => ({
-            label: item.name,
-            value: item.id,
-          }));
-        }),
+      axios.get("api/roles").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
   });
 
   const updateUser = async (userData: any) => {
     try {
-      await axios.put(api + `users/${getUser()?.user_sent.user_id}`, userData, {
-        headers: {
-          Authorization: `Bearer ${getUser()?.token}`,
-        },
+      await axios.put("api/users/" + getUser()?.user_sent.user_id, {
+        params: userData,
       });
 
       // success
       // console.log(res.data);
-      setNotiData({
-        title: "Update User",
-        content: "Update success",
+      notification.success({
+        message: "Update User",
+        description: "Update success.",
       });
-      setNotiShow(true);
-    } catch (error) {
+    } catch (error: any) {
       // error
       // console.error("Update failed", error);
-      setNotiData({
-        title: "Update User",
-        content: "Update failed",
+      notification.error({
+        message: "Update User",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
       });
-      setNotiShow(true);
     }
   };
 
@@ -236,12 +211,6 @@ export default function UserInfo() {
           </Button>
         </Form.Item>
       </Form>
-
-      <Notification
-        status={notiShow}
-        setStatus={setNotiShow}
-        notiData={notiData}
-      />
     </>
   );
 }
