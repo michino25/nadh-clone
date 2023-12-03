@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Flex } from "antd";
-import Navbar from "../components/Navbar";
-import Navmenu from "../components/Navmenu";
+import Navbar from "containers/Navbar/Navbar";
+import Navmenu from "containers/Navbar/Navmenu";
 
 export default function MainLayout() {
   return (

@@ -1,0 +1,38 @@
+  const items: DescriptionsProps["items"] = [
+    {
+      key: "1",
+      label: "Creator",
+      span: 2,
+      children: formatName(noti.creator.username),
+    },
+    {
+      key: "2",
+      label: "Created on",
+      span: 2,
+      children: formatDate(noti.createdAt, "ISOdate", "date"),
+    },
+    {
+      key: "3",
+      label: "Title",
+      span: 3,
+      children: noti.title,
+    },
+    {
+      key: "4",
+      label: "Content",
+      span: 3,
+      children: noti.content,
+    },
+    {
+      key: "5",
+      label: "Receiver",
+      span: 3,
+      children: noti.target.recievers_list
+        ? noti.target.recievers_list
+            .map((item: { full_name: string }) => formatName(item.full_name))
+            .join(", ")
+        : "",
+    },
+  ];
+
+  <Descriptions title="Notification Detail" items={items} />

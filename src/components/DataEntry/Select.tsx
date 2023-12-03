@@ -1,11 +1,12 @@
 import { Form, Select } from "antd";
+import { iOption } from "_constants/index";
 
 interface iDataInput {
   label: string;
   name: string;
   required?: boolean;
   defaultValue?: string | number;
-  data: { label: string; value: string }[];
+  data: iOption[];
 }
 
 export default function DataSelect({
@@ -28,7 +29,7 @@ export default function DataSelect({
       ]}
     >
       <Select>
-        {data?.map((item: { label: string; value: string }) => (
+        {data?.map((item: iOption) => (
           <Select.Option key={item.value} value={item.value}>
             {item.label}
           </Select.Option>

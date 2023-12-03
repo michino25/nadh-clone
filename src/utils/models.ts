@@ -462,39 +462,6 @@ export interface iJob {
   }[];
 }
 
-export interface iNotification {
-  id: string;
-  notify_master_id: string;
-  title: string;
-  content: string;
-  category: { type: number };
-  target: {
-    ids: number[];
-    type: number;
-    recievers_list: {
-      full_name: string;
-      id: string;
-      user_id: number;
-      user_name: string;
-    }[];
-  };
-  embedded: {
-    link: string;
-  };
-  status: number;
-  creator: {
-    id: number;
-    username: string;
-  };
-  logs: any[];
-  decider: null;
-  scheduling: {
-    type: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface iRole {
   id: number;
   name: string;

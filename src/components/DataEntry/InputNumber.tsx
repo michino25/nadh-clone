@@ -9,10 +9,6 @@ interface iDataInput {
   disabled?: boolean;
 }
 
-interface iDataInput {
-  label: string;
-}
-
 export default function DataInputNumber({
   label,
   name,

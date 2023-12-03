@@ -6,13 +6,13 @@ export const primaryStatus = [
 ];
 export const gender = ["Male", "Female", "Complicated"];
 
-export interface ItemProps {
+export interface iOption {
   label: string;
   value: string | number;
 }
 
 export const createSelectData = (data: string[]) => {
-  const selectData: ItemProps[] = [];
+  const selectData: iOption[] = [];
   for (let i = 0; i < data.length; i++) {
     selectData.push({
       label: data[i],

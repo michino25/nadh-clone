@@ -1,17 +1,13 @@
 import { Select, Col, Form, Row } from "antd";
+import type { iOption } from "_constants/index";
 
 interface iDataInput {
   defaultValue: string | undefined;
   label?: string;
 }
 
-interface Option {
-  value: string;
-  label: string;
-}
-
-const createDaysArray = (): Option[] => {
-  const daysArray: Option[] = [];
+const createDaysArray = (): iOption[] => {
+  const daysArray: iOption[] = [];
   for (let i = 1; i <= 31; i++) {
     const value = i.toString().padStart(2, "0");
     daysArray.push({ value, label: value });
@@ -19,8 +15,8 @@ const createDaysArray = (): Option[] => {
   return daysArray;
 };
 
-const createMonthsArray = (): Option[] => {
-  const monthsArray: Option[] = [];
+const createMonthsArray = (): iOption[] => {
+  const monthsArray: iOption[] = [];
   for (let i = 1; i <= 12; i++) {
     const value = i.toString().padStart(2, "0");
     monthsArray.push({ value, label: value });
@@ -28,8 +24,8 @@ const createMonthsArray = (): Option[] => {
   return monthsArray;
 };
 
-const createYearsArray = (): Option[] => {
-  const yearsArray: Option[] = [];
+const createYearsArray = (): iOption[] => {
+  const yearsArray: iOption[] = [];
   for (let year = 1970; year <= 2023; year++) {
     yearsArray.push({ value: year.toString(), label: year.toString() });
   }

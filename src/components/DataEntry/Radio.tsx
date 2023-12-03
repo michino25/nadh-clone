@@ -1,15 +1,11 @@
 import { useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { Form, Radio } from "antd";
-
-interface iData {
-  label: string;
-  value: string | number;
-}
+import { iOption } from "_constants/index";
 
 interface iRadio {
   label: string;
-  data: iData[];
+  data: iOption[];
   name: string;
   required?: boolean;
   defaultValue?: string | number | undefined;
@@ -44,7 +40,7 @@ export default function DataRadio({
       ]}
     >
       <Radio.Group onChange={onChange} value={value} disabled={disabled}>
-        {data.map((item: iData) => (
+        {data.map((item: iOption) => (
           <Radio key={item.value} value={item.value}>
             {" "}
             {item.label}{" "}

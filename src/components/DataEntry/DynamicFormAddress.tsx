@@ -1,8 +1,9 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Select, Button, Form, Input } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import axios from "utils/axiosConfig";
 import { useState } from "react";
+import { otherApi } from "apis/index";
+import type { iOption } from "_constants/index";
 
 interface iDataInput {
   label?: string;
@@ -14,24 +15,13 @@ interface iDataInput {
   disabled?: boolean;
 }
 
-interface iSelect {
-  value: string;
-  label: string;
-}
-
 const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
-  const [cities, setCities] = useState<iSelect[]>([]);
-  const [district, setDistrict] = useState<iSelect[]>([]);
+  const [cities, setCities] = useState<iOption[]>([]);
+  const [district, setDistrict] = useState<iOption[]>([]);
 
   const getCity = async (id: any) => {
     try {
-      const res = await axios.get("api/locations", {
-        params: {
-          type: 1,
-          parent_id: id,
-          limit: 500,
-        },
-      });
+      const res = await otherApi.getLocation(1, id);
 
       // success
       // {key: 1, label: 'An Giang'}
@@ -49,13 +39,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
 
   const getDistrict = async (id: any) => {
     try {
-      const res = await axios.get("api/locations", {
-        params: {
-          type: 2,
-          parent_id: id,
-          limit: 500,
-        },
-      });
+      const res = await otherApi.getLocation(2, id);
 
       // success
       // {key: 1, label: 'An Giang'}

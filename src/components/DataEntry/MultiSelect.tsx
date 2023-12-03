@@ -1,5 +1,6 @@
 import { Form, Select } from "antd";
 import type { SelectProps } from "antd";
+import { iOption } from "_constants/index";
 
 interface iData {
   label: string;
@@ -8,10 +9,7 @@ interface iData {
   defaultValue?: string | number;
   value: string[];
   setValue: (data: string[]) => void;
-  options: {
-    label: string;
-    value: string;
-  }[];
+  options: iOption[];
 }
 
 export default function MultiSelect({

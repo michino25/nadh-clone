@@ -1,8 +1,9 @@
 import { iUserData } from "./models";
-export const getUser = (): iUserData | undefined => {
+export const getUser = (): iUserData => {
   const loggedInUser = localStorage.getItem("userData");
+  let foundUser;
   if (loggedInUser) {
-    const foundUser = JSON.parse(loggedInUser);
-    return foundUser;
-  } else null;
+    foundUser = JSON.parse(loggedInUser);
+  }
+  return foundUser;
 };

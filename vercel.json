@@ -42,41 +42,6 @@
     {
       "src": "/client-detail/([a-z0-9]+)/?",
       "dest": "/"
-    },
-
-    {
-      "src": "/jobs",
-      "dest": "/"
-    },
-    {
-      "src": "/job-add",
-      "dest": "/"
-    },
-    {
-      "src": "/job-detail/([a-z0-9]+)/?",
-      "dest": "/"
-    },
-
-    {
-      "src": "/users",
-      "dest": "/"
-    },
-    {
-      "src": "/user-add",
-      "dest": "/"
-    },
-    {
-      "src": "/user-detail/([a-z0-9]+)/?",
-      "dest": "/"
-    },
-
-    {
-      "src": "/notify",
-      "dest": "/"
-    },
-    {
-      "src": "/group-user",
-      "dest": "/"
     }
   ]
 }

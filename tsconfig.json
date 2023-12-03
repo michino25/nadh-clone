@@ -14,8 +14,8 @@
       "layouts/*": [
         "src/layouts/*"
       ],
-      "pages/*": [
-        "src/pages/*"
+      "containers/*": [
+        "src/containers/*"
       ],
       "utils/*": [
         "src/utils/*"

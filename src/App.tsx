@@ -1,22 +1,15 @@
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Candidates from "./pages/Candidates";
-import Clients from "./pages/Clients";
-import Jobs from "./pages/Jobs";
-import Users from "./pages/Users";
-import Notify from "./pages/Notify";
-import GroupUser from "./pages/GroupUser";
-import Login from "./pages/Login";
-import BlankLayout from "./layouts/BlankLayout";
-import MainLayout from "./layouts/MainLayout";
-import Test from "./pages/Test";
-import CandidateDetail from "./pages/CandidateDetail";
-import CandidateAdd from "./pages/CandidateAdd";
-import ClientAdd from "./pages/ClientAdd";
-import JobAdd from "./pages/JobAdd";
-import UserAdd from "./pages/UserAdd";
-import UserDetail from "./pages/UserDetail";
-import ClientDetail from "./pages/ClientDetail";
+import Dashboard from "containers/Dashboard/Dashboard";
+import Candidates from "containers/Candidate/Candidates";
+import Clients from "containers/Client/Clients";
+import Login from "containers/Login";
+import BlankLayout from "layouts/BlankLayout";
+import MainLayout from "layouts/MainLayout";
+import Test from "containers/Test";
+import CandidateDetail from "containers/Candidate/CandidateDetail";
+import CandidateAdd from "containers/Candidate/CandidateAdd";
+import ClientAdd from "containers/Client/ClientAdd";
+import ClientDetail from "containers/Client/ClientDetail";
 
 const routesConfig = [
   { path: "/dashboard", element: <Dashboard /> },
@@ -28,16 +21,6 @@ const routesConfig = [
   { path: "/clients", element: <Clients /> },
   { path: "/client-add", element: <ClientAdd /> },
   { path: "/client-detail/:id", element: <ClientDetail /> },
-
-  { path: "/jobs", element: <Jobs /> },
-  { path: "/job-add", element: <JobAdd /> },
-
-  { path: "/users", element: <Users /> },
-  { path: "/user-add", element: <UserAdd /> },
-  { path: "/user-detail/:id", element: <UserDetail /> },
-
-  { path: "/notify", element: <Notify /> },
-  { path: "/group-user", element: <GroupUser /> },
 ];
 
 export default function App() {
