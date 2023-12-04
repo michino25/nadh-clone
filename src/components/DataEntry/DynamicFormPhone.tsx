@@ -49,7 +49,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                   className="w-full mb-3"
                   rules={[
                     {
-                      pattern: new RegExp(/^\d{10}$/),
+                      pattern: new RegExp(/[2-9]{1}\d{2}/),
                       message: `The input is not valid phone!`,
                     },
                     {

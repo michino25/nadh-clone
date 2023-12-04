@@ -3,7 +3,7 @@ import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
-import Table from "components/DataDisplay/Table";
+import Table from "components/DataDisplay/IndustryTable";
 import Image from "components/DataDisplay/Image";
 
 import {

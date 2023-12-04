@@ -11,10 +11,10 @@ const _clientApi = {
     return axios().get(url);
   },
 
-  // updateUser(id: number, params: any) {
-  //   const url = "api/users/" + id + "/password";
-  //   return axios().put(url, { params });
-  // },
+  updateClient(id: string, params: any) {
+    const url = "api/clients/" + id;
+    return axios().put(url, params);
+  },
 };
 
 export default _clientApi;

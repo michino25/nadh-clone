@@ -36,6 +36,11 @@ const _otherApi = {
     });
   },
 
+  getIndustry(params: any) {
+    const url = "api/categories";
+    return axios().get(url, { params });
+  },
+
   getFile(obj_id: string, obj_table: string) {
     const url = "files";
     return axiosURL("https://lubrytics.com:8443/nadh-mediafile").get(url, {

@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, notification } from "antd";
+import { Modal, Col, Row, Button, Form, notification } from "antd";
 
 import Input from "components/DataEntry/Input";
 import DataSelect from "components/DataEntry/Select";
@@ -140,8 +140,16 @@ export default function CandidateAddStep1({
     // console.log("Received values of form: ", data);
   };
 
+  const showConfirmSubmit = (values: any) => {
+    Modal.confirm({
+      title: "Confirm to create candidate",
+      content: "Are you sure you want to create new candidate ?",
+      onOk: () => onFinish(values),
+    });
+  };
+
   return (
-    <Form layout="vertical" className="w-full" onFinish={onFinish}>
+    <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
       <Row gutter={16}>
         <Col span={12}>
           <Input label="First Name" name="first_name" required={true} />
