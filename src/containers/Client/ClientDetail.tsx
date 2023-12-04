@@ -1,79 +1,16 @@
 import { useParams, Link } from "react-router-dom";
-import {
-  Anchor,
-  Col,
-  Row,
-  Button,
-  Form,
-  Timeline,
-  Collapse,
-  Descriptions,
-  Skeleton,
-} from "antd";
-import type { CollapseProps } from "antd";
-import { useState } from "react";
+import { Anchor, Descriptions, Skeleton } from "antd";
 
 // import Table from "components/DataDisplay/Table";
 import Image from "components/DataDisplay/Image";
 
-import {
-  DataUpload,
-  Input,
-  DataSelect,
-  Birthday,
-  DataRadio,
-  DataDatePicker,
-  MultiSelect,
-} from "components/DataEntry/index";
-
 import BackToTopButton from "components/BackToTopButton";
-import { iOption } from "_constants/index";
 import { clientApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
-
-const options: iOption[] = [];
-
-const items: CollapseProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <div>
-        <strong>J-000376 - Accounting Assistant</strong>
-        <p>THI TEST 5 - C-000159</p>
-      </div>
-    ),
-    children: (
-      <Timeline
-        items={[
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Rejected by NADH</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-          {
-            color: "green",
-            children: (
-              <>
-                <strong>Placement</strong>
-                <p>05/04/2023 16:07:30</p>
-                <p>0 comments</p>
-              </>
-            ),
-          },
-        ]}
-      />
-    ),
-  },
-];
+import EditableForm from "components/EditableForm";
 
 export default function Candidates() {
   const { id } = useParams();
-  const [value, setValue] = useState<string[]>([]);
 
   const { data: clientData, isPending } = useQuery({
     queryKey: ["client", id],
@@ -130,7 +67,7 @@ export default function Candidates() {
             <div className="flex">
               <Descriptions className="w-1/2" column={1}>
                 <Descriptions.Item label="Address">
-                  {clientData.address.country.label}
+                  {clientData.address.country?.label}
                 </Descriptions.Item>
                 <Descriptions.Item label="Phone number">
                   {clientData.phone.phone_code.extra.dial_code}{" "}
@@ -166,15 +103,19 @@ export default function Candidates() {
                   {clientData.status}
                 </Descriptions.Item>
                 <Descriptions.Item label="Client's shortened name">
-                  {clientData.code}
+                  <EditableForm
+                    value={clientData.code}
+                    onSubmit={() => console.log(clientData.code)}
+                  />
+                  {/* {clientData.code} */}
                 </Descriptions.Item>
                 <Descriptions.Item label="Parent Company">
-                  {clientData.parent_company.label}
+                  {clientData.parent_company?.label}
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 1">
-                  {clientData.factory_site[0].district.label} -{" "}
-                  {clientData.factory_site[0].city.label} -{" "}
-                  {clientData.factory_site[0].country.label}
+                  {clientData.factory_site[0]?.district?.label} -{" "}
+                  {clientData.factory_site[0]?.city?.label} -{" "}
+                  {clientData.factory_site[0]?.country?.label}
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 2">-</Descriptions.Item>
               </Descriptions>
@@ -187,7 +128,7 @@ export default function Candidates() {
                   {clientData.cpa}
                 </Descriptions.Item>
                 <Descriptions.Item label="Lead Consultant">
-                  {clientData.lead_consultants[0].label}
+                  {clientData.lead_consultants[0]?.label}
                 </Descriptions.Item>
                 <Descriptions.Item label="Search Consultant">
                   -
@@ -201,193 +142,8 @@ export default function Candidates() {
               </Descriptions>
             </div>
           </div>
-          <div id="part-2" className="flex">
-            <div className="p-6 flex-col w-2/3 bg-white rounded-lg">
-              <p className="mb-4 font-bold text-lg">Personal Information</p>
-
-              <Form layout="vertical" className="w-full">
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="First Name"
-                      name="full_name"
-                      required={true}
-                      defaultValue={"thanh binh"}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      label="Last Name"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"thanhbinh"}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="Middle Name"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"thanhbinh"}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataSelect
-                      label="Primary status"
-                      name="status"
-                      required={true}
-                      defaultValue="active"
-                      data={[
-                        { label: "Active", value: "active" },
-                        { label: "Inactive", value: "inactive" },
-                      ]}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Birthday defaultValue="2023-01-01" />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DataRadio
-                      name="gender"
-                      label="Gender"
-                      data={[
-                        {
-                          label: "Male",
-                          value: "male",
-                        },
-                        {
-                          label: "Female",
-                          value: "female",
-                        },
-                        {
-                          label: "Complicated",
-                          value: "complicated",
-                        },
-                      ]}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataRadio
-                      name="status"
-                      label="Marital Status"
-                      data={[
-                        { label: "Yes", value: "yes" },
-                        { label: "No", value: "no" },
-                      ]}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DataSelect
-                      label="Ready to move"
-                      name="status"
-                      required={true}
-                      defaultValue="yes"
-                      data={[
-                        { label: "Yes", value: "yes" },
-                        { label: "No", value: "no" },
-                      ]}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      label="Source"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"Source ne"}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="Created by"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"Quynh Thi"}
-                      disabled
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataDatePicker
-                      name="createAt"
-                      label="Created on"
-                      disabled
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="Email"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"thanhbinh@lubrytics.com"}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      label="Address"
-                      name="user_name"
-                      required={true}
-                      defaultValue={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
-                    />
-                  </Col>
-                </Row>
-
-                <Row>
-                  <MultiSelect
-                    label="Position Applied"
-                    name="position"
-                    required={false}
-                    value={value}
-                    setValue={setValue}
-                    options={options}
-                  />
-                </Row>
-
-                <Form.Item className="flex justify-end space-x-2">
-                  <Button className="mr-2">Cancel</Button>
-                  <Button type="primary" htmlType="submit">
-                    Save
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div className="p-6 w-1/3 ml-4 bg-white rounded-lg flex-col">
-              <p className="mb-4 font-bold text-lg">Interview Loop</p>
-              <Collapse accordion items={items} />
-            </div>
-          </div>
-          <div id="part-3" className="p-6 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-            {/* <Table data={} /> */}
-          </div>
-          <div id="part-4" className="p-6 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Attachments</p>
-            <div className="flex space-x-2">
-              <Image
-                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                size={100}
-              />
-              <DataUpload label="" />
-            </div>
-          </div>
         </div>
+        <EditableForm value="hello" onSubmit={() => console.log("hello")} />
       </div>
     </>
   );

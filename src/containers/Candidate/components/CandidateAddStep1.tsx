@@ -12,14 +12,18 @@ import DataInputNumber from "components/DataEntry/InputNumber";
 
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { candidateApi, otherApi } from "apis/index";
 
-export default function CandidateAddStep1() {
-  const navigate = useNavigate();
+export default function CandidateAddStep1({
+  nextStep,
+}: {
+  nextStep: () => void;
+}) {
+  // const navigate = useNavigate();
 
   const [value, setValue] = useState<string[]>([]);
 
@@ -60,7 +64,8 @@ export default function CandidateAddStep1() {
       });
 
       setTimeout(() => {
-        navigate("/candidates");
+        nextStep();
+        // navigate("/candidates");
       }, 1000);
     } catch (error: any) {
       // error
@@ -88,22 +93,30 @@ export default function CandidateAddStep1() {
       ...values,
       addresses: values.addresses.map((item: any) => ({
         address: item.address,
-        city: { key: item.city.split("_")[0], label: item.city.split("_")[1] },
-        country: {
-          key: item.country.split("_")[0],
-          label: item.country.split("_")[1],
-        },
-        district: {
-          key: item.district.split("_")[0],
-          label: item.district.split("_")[1],
-        },
+        city: item.city
+          ? { key: item.city.split("_")[0], label: item.city.split("_")[1] }
+          : null,
+        country: item.country
+          ? {
+              key: item.country.split("_")[0],
+              label: item.country.split("_")[1],
+            }
+          : null,
+        district: item.district
+          ? {
+              key: item.district.split("_")[0],
+              label: item.district.split("_")[1],
+            }
+          : null,
       })),
       dob: dob,
       gender: parseInt(values.gender),
-      highest_education: {
-        key: values.highest_education.split("_")[0],
-        label: values.highest_education.split("_")[1],
-      },
+      highest_education: values.highest_education
+        ? {
+            key: values.highest_education.split("_")[0],
+            label: values.highest_education.split("_")[1],
+          }
+        : null,
       nationality: [],
       phones: values.phones.map((item: any) => ({
         number: item,
@@ -111,18 +124,20 @@ export default function CandidateAddStep1() {
         phone_code: { key: 1280 },
       })),
 
-      prefer_position: {
-        positions: values.prefer_position.map((item: any) => ({
-          key: item.split("_")[0],
-          label: item.split("_")[1],
-        })),
-      },
+      prefer_position: values.prefer_position
+        ? {
+            positions: values.prefer_position.map((item: any) => ({
+              key: item.split("_")[0],
+              label: item.split("_")[1],
+            })),
+          }
+        : null,
 
       priority_status: parseInt(values.priority_status),
       relocating_willingness: parseInt(values.relocating_willingness),
     };
     createMutation.mutate(data);
-    console.log("Received values of form: ", data);
+    // console.log("Received values of form: ", data);
   };
 
   return (
@@ -245,7 +260,6 @@ export default function CandidateAddStep1() {
       </Row>
 
       <Form.Item className="flex justify-end space-x-2">
-        <Button className="mr-2">Cancel</Button>
         <Button type="primary" htmlType="submit">
           Save
         </Button>

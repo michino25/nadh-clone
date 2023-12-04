@@ -1,22 +1,15 @@
 import Step from "components/DataDisplay/Step";
-import { Button } from "antd";
 import { useState } from "react";
 
 import { Link } from "react-router-dom";
 import CandidateAddStep1 from "./components/CandidateAddStep1";
+import CandidateAddFinish from "./components/CandidateAddFinish";
 
-const step = [
-  "Personal Information",
-  "Skills and Industry",
-  "Education and Certificat",
-  "Working History",
-  "Remunertion and Rewards",
-  "Finish",
-];
+const step = ["Personal Information", "Finish"];
 
 export default function CadidateAdd() {
-  const [currentStep, setCurrentStep] = useState(1);
-  console.log(currentStep);
+  const [currentStep, setCurrentStep] = useState(0);
+  // console.log(currentStep);
 
   return (
     <div className="px-12 pb-2">
@@ -27,18 +20,17 @@ export default function CadidateAdd() {
 
       <p className="mb-4 font-bold text-xl">Create Candidate</p>
 
-      <Step current={currentStep} data={step} />
+      <div className="px-12">
+        <Step current={currentStep} data={step} />
+      </div>
 
       <div className="p-4 my-6 bg-white rounded-lg">
         <p className="mb-4 font-bold text-lg">{step[currentStep]}</p>
-        {currentStep === 0 && <CandidateAddStep1 />}
+        {currentStep === 0 && (
+          <CandidateAddStep1 nextStep={() => setCurrentStep(currentStep + 1)} />
+        )}
+        {currentStep === 1 && <CandidateAddFinish />}
       </div>
-      <Button onClick={() => setCurrentStep(currentStep - 1)} className="mr-2">
-        Prev
-      </Button>
-      <Button onClick={() => setCurrentStep(currentStep + 1)} className="mr-2">
-        Next
-      </Button>
     </div>
   );
 }
