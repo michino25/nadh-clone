@@ -13,12 +13,12 @@ const _candidateApi = {
 
   createCandidate(params: any) {
     const url = "api/candidates";
-    return axios().post(url, { params });
+    return axios().post(url, params);
   },
 
   updateCandidate(id: string, params: any) {
     const url = "api/candidates/" + id;
-    return axios().put(url, { params });
+    return axios().put(url, params);
   },
 };
 

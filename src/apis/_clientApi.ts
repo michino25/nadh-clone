@@ -6,10 +6,10 @@ const _clientApi = {
     return axios().get(url, { params });
   },
 
-  // getOneUser(id: string) {
-  //   const url = "api/users/" + id;
-  //   return axios().get(url);
-  // },
+  getOneClient(id: string) {
+    const url = "api/clients/" + id;
+    return axios().get(url);
+  },
 
   // updateUser(id: number, params: any) {
   //   const url = "api/users/" + id + "/password";

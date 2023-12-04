@@ -1,6 +1,6 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Select, Button, Form, Input } from "antd";
-import { useMutation } from "@tanstack/react-query";
+import { Select, Button, Form, Input, Skeleton } from "antd";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { otherApi } from "apis/index";
 import type { iOption } from "_constants/index";
@@ -18,6 +18,17 @@ interface iDataInput {
 const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
   const [cities, setCities] = useState<iOption[]>([]);
   const [district, setDistrict] = useState<iOption[]>([]);
+
+  const { data: countries, isPending } = useQuery({
+    queryKey: ["countries"],
+    queryFn: async () =>
+      await otherApi.getCountries().then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.key + "_" + item.label,
+          label: item.label,
+        }))
+      ),
+  });
 
   const getCity = async (id: any) => {
     try {
@@ -71,6 +82,8 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
     getDistrictMutation.mutate(value.split("_")[0]);
   };
 
+  if (isPending) return <Skeleton active />;
+
   return (
     <Form.Item
       label="Address"
@@ -106,24 +119,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                       <Select
                         placeholder="Country"
                         onChange={handleChangeCountry}
-                        options={[
-                          {
-                            value: "1280_Viet Nam",
-                            label: "Viet Nam",
-                          },
-                          {
-                            value: "1281_Nhat Ban",
-                            label: "Nhat Ban",
-                          },
-                          {
-                            value: "1282_Han Quoc",
-                            label: "Han Quoc",
-                          },
-                          {
-                            value: "1283_Trung Quoc",
-                            label: "Trung Quoc",
-                          },
-                        ]}
+                        options={countries}
                       />
                     </Form.Item>
 

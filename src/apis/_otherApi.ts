@@ -18,6 +18,15 @@ const _otherApi = {
     });
   },
 
+  getCountries() {
+    const url = "api/locations";
+    return axios().get(url, {
+      params: {
+        type: 4,
+      },
+    });
+  },
+
   getProperty(property_name: string) {
     const url = "api/property_values";
     return axios().get(url, {

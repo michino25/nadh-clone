@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 import Table from "components/DataDisplay/Table";
@@ -29,6 +30,7 @@ import DataInputNumber from "components/DataEntry/InputNumber";
 
 import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { candidateApi, otherApi } from "apis/index";
+import { getUser } from "utils/getUser";
 
 export default function Candidates() {
   const { id } = useParams();
@@ -61,21 +63,33 @@ export default function Candidates() {
     queryKey: ["candidate", id],
     queryFn: async () =>
       await candidateApi.getOneCandidate(id as string).then((res) => {
-        // console.log(res.data);
-        return res.data;
+        // console.log(!res.data.addresses[0].city);
+        return {
+          ...res.data,
+          addresses: res.data.addresses.map((addressItem: any) => ({
+            address: addressItem.address,
+            country: addressItem.country
+              ? addressItem.country.key + "_" + addressItem.country.label
+              : null,
+            city: addressItem.city
+              ? addressItem.city.key + "_" + addressItem.city.label
+              : null,
+            district: addressItem.district
+              ? addressItem.district.key + "_" + addressItem.district.label
+              : null,
+          })),
+        };
       }),
   });
 
   const { data: candidateImage } = useQuery({
     queryKey: ["files", candidateData?.id],
     queryFn: () =>
-      otherApi
-        .getFile("238c5f1e-87da-4358-8aad-acd029320dbf", "candidates")
-        .then((res) => {
-          console.log(res.data.data);
+      otherApi.getFile(candidateData?.id, "candidates").then((res) => {
+        console.log(res.data.data);
 
-          return res.data.data;
-        }),
+        return res.data.data;
+      }),
     enabled: !!candidateData?.id,
   });
 
@@ -117,23 +131,23 @@ export default function Candidates() {
       ...values,
       addresses: values.addresses.map((item: any) => ({
         address: item.address,
-        country: item.country,
-        // && typeof item.country === "string"
-        //   ? {
-        //       key: item.country.split("_")[0],
-        //       label: item.country.split("_")[1],
-        //     }
-        //   : { key: null, label: null },
-        //   city: item.city &&
-        //     typeof item.city === "string" && {
-        //       key: item.city.split("_")[0],
-        //       label: item.city.split("_")[1],
-        //     },
-        //   district: item.district &&
-        //     typeof item.district === "string" && {
-        //       key: item.district.split("_")[0],
-        //       label: item.district.split("_")[1],
-        //     },
+        country:
+          item.country && typeof item.country === "string"
+            ? {
+                key: item.country.split("_")[0],
+                label: item.country.split("_")[1],
+              }
+            : { key: null, label: null },
+        city: item.city &&
+          typeof item.city === "string" && {
+            key: item.city.split("_")[0],
+            label: item.city.split("_")[1],
+          },
+        district: item.district &&
+          typeof item.district === "string" && {
+            key: item.district.split("_")[0],
+            label: item.district.split("_")[1],
+          },
       })),
       dob: dob,
       gender: parseInt(values.gender),
@@ -160,6 +174,11 @@ export default function Candidates() {
     };
     updateMutation.mutate(data);
     console.log("Received values of form: ", data);
+  };
+
+  const [showBtn, setShowBtn] = useState(false);
+  const showSave = () => {
+    setShowBtn(true);
   };
 
   console.log(candidateData?.business_line);
@@ -191,13 +210,29 @@ export default function Candidates() {
             },
           ]}
         />
-        <div className="py-1">
-          <Link to={"/candidates"}>Candidates List</Link>
-          <span>
-            {" "}
-            / {candidateData.candidate_id} -{" "}
-            {candidateData.full_name.toUpperCase()}
-          </span>
+        <div className="py-1 flex justify-between">
+          <div>
+            <Link to={"/candidates"}>Candidates List</Link>
+            <span>
+              {" "}
+              / {candidateData.candidate_id} -{" "}
+              {candidateData.full_name.toUpperCase()}
+            </span>
+          </div>
+          <div>
+            <Button
+              href={
+                "https://lubrytics.com:8443/nadh-api-crm/api/export/candidates/" +
+                id +
+                "/CV?download=true&token=" +
+                getUser().token
+              }
+              type="primary"
+              icon={<DownloadOutlined />}
+            >
+              Download File PDF
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
@@ -214,7 +249,12 @@ export default function Candidates() {
             <div id="part-2" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
 
-              <Form layout="vertical" className="w-full" onFinish={onFinish}>
+              <Form
+                layout="vertical"
+                className="w-full"
+                onFinish={onFinish}
+                onValuesChange={showSave}
+              >
                 <Row gutter={16}>
                   <Col span={12}>
                     <Input
@@ -401,12 +441,13 @@ export default function Candidates() {
                   </Col>
                 </Row>
 
-                <Form.Item className="flex justify-end space-x-2">
-                  <Button className="mr-2">Cancel</Button>
-                  <Button type="primary" htmlType="submit">
-                    Save
-                  </Button>
-                </Form.Item>
+                {showBtn && (
+                  <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end space-x-2 py-3 px-8">
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                  </Form.Item>
+                )}
               </Form>
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
@@ -430,8 +471,8 @@ export default function Candidates() {
               </div>
             </div>
           </div>
-          <div className="w-1/3 pl-5 fixed top-50 right-5">
-            <div className="bg-white flex-col p-4 rounded-lg overflow-y-scroll max-h-[700px]">
+          <div className="w-1/3 pl-5">
+            <div className="bg-white flex-col p-4 rounded-lg">
               <p className="mb-4 font-bold text-lg">Interview Loop</p>
               <InterviewLoop data={candidateData?.flows} />
             </div>

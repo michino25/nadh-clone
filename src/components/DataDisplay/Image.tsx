@@ -32,7 +32,7 @@ export default function DataImage({
 
   return (
     <Image
-      className="rounded-lg overflow-hidden"
+      className="rounded-lg overflow-hidden object-cover object-center"
       width={size}
       height={size}
       src={src}

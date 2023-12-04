@@ -13,12 +13,12 @@ const _userApi = {
 
   updateUser(id: number, params: any) {
     const url = "api/users/" + id + "/password";
-    return axios().put(url, { params });
+    return axios().put(url, params);
   },
 
   login(params: any) {
     const url = "login";
-    return axios().post(url, { params });
+    return axios().post(url, params);
   },
 
   logout() {
