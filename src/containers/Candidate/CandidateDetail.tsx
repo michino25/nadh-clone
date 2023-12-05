@@ -452,7 +452,10 @@ export default function Candidates() {
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-              <Table data={candidateData?.business_line} />
+              <Table
+                deleteItem={() => {}}
+                data={candidateData?.business_line}
+              />
             </div>
             <div id="part-4" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>

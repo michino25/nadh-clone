@@ -3,15 +3,16 @@ import { Button, Modal, Form, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Input from "components/DataEntry/Input";
 
-const App: React.FC = () => {
+const App = ({ setData }: { setData: (value: any) => void }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = (values: any) => {
     setIsModalOpen(false);
+    console.log(values);
   };
 
   const handleCancel = () => {
@@ -25,13 +26,8 @@ const App: React.FC = () => {
           New Contact
         </Button>
       </div>
-      <Modal
-        title="Add Contact Person"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Form layout="vertical" className="w-full" onFinish={() => {}}>
+      <Modal title="Add Contact Person" open={isModalOpen} footer={null}>
+        <Form layout="vertical" className="w-full" onFinish={handleOk}>
           <Row gutter={16}>
             <Col span={12}>
               <Input label="Name" name="name" required />
@@ -64,6 +60,13 @@ const App: React.FC = () => {
               <Input label="Job(s)" name="jobs_count" />
             </Col>
           </Row>
+
+          <div className="w-full flex justify-end gap-2">
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
+          </div>
         </Form>
       </Modal>
     </>

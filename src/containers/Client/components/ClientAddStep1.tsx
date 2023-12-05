@@ -38,8 +38,18 @@ export default function CandidateAddStep1({
       ),
   });
 
+  const onFinish = (values: any) => {
+    const data = {
+      ...values,
+      value,
+    };
+    // createMutation.mutate(data);
+    console.log("Received values of form: ", data);
+    nextStep();
+  };
+
   return (
-    <Form layout="vertical" className="w-full">
+    <Form layout="vertical" className="w-full" onFinish={onFinish}>
       <Row gutter={16}>
         <Col span={12}>
           <Input

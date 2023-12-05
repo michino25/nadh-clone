@@ -1,4 +1,4 @@
-import { Button, Form } from "antd";
+import { Button, Col, Form, Row } from "antd";
 
 import { clientApi, userApi } from "apis/index";
 import { formatName } from "utils/format";
@@ -37,13 +37,15 @@ export default function CandidateAddStep1({
 
   return (
     <Form layout="vertical" className="w-full">
-      <Form.Item className="flex flex-1 space-x-2 mt-5">
-        <ContactPerson data={[]} />
+      <Form.Item className="flex-col space-x-2 mt-5 w-full">
+        <ContactPerson data={value} setData={setValue} />
 
-        <Button className="mr-2">Cancel</Button>
-        <Button type="primary" htmlType="submit">
-          Save
-        </Button>
+        <div className="w-full flex justify-end">
+          <Button className="mr-2">Cancel</Button>
+          <Button type="primary" htmlType="submit">
+            Save
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );
