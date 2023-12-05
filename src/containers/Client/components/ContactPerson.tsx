@@ -10,7 +10,7 @@ export default function ContactPerson({
 }) {
   return (
     <div className="w-full">
-      <ContactPersonModel setData={setData} />
+      <ContactPersonModel setData={setData} data={data} />
       <ContactPersonTable deleteItem={() => {}} data={data} />
     </div>
   );

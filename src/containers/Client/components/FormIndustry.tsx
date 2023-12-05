@@ -116,13 +116,15 @@ const App = ({ value, setValue }: iDataInput) => {
                 onClick={saveData}
                 type="primary"
               >
-                Save
+                Save Industry
               </Button>
             </div>
           </div>
         </div>
       </Form.Item>
-      <IndustryTable data={value} deleteItem={deleteItem} />
+      {value.length > 0 && (
+        <IndustryTable data={value} deleteItem={deleteItem} />
+      )}
     </>
   );
 };

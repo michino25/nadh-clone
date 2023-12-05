@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Modal, Form, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import InputNumber from "components/DataEntry/InputNumber";
 import Input from "components/DataEntry/Input";
 
-const App = ({ setData }: { setData: (value: any) => void }) => {
+const App = ({
+  data,
+  setData,
+}: {
+  data: any;
+  setData: (value: any) => void;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -12,7 +19,7 @@ const App = ({ setData }: { setData: (value: any) => void }) => {
 
   const handleOk = (values: any) => {
     setIsModalOpen(false);
-    console.log(values);
+    setData([...data, values]);
   };
 
   const handleCancel = () => {
@@ -57,7 +64,12 @@ const App = ({ setData }: { setData: (value: any) => void }) => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input label="Job(s)" name="jobs_count" />
+              <Input
+                label="Job(s)"
+                name="jobs_count"
+                disabled
+                defaultValue={"0"}
+              />
             </Col>
           </Row>
 

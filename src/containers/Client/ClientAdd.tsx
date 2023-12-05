@@ -14,6 +14,7 @@ const step = ["Client Information", "Contact Person", "Finish"];
 
 export default function ClientAdd() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [step1Data, setStep1Data] = useState();
 
   useQuery({
     queryKey: ["User"],
@@ -52,27 +53,21 @@ export default function ClientAdd() {
         <p className="mb-4 font-bold text-lg">{step[currentStep]}</p>
 
         {currentStep === 0 && (
-          <ClientAddStep1 nextStep={() => setCurrentStep(currentStep + 1)} />
+          <ClientAddStep1
+            setData={setStep1Data}
+            nextStep={() => setCurrentStep(currentStep + 1)}
+          />
         )}
 
         {currentStep === 1 && (
-          <ClientAddStep2 nextStep={() => setCurrentStep(currentStep + 1)} />
+          <ClientAddStep2
+            step1Data={step1Data}
+            prevStep={() => setCurrentStep(currentStep - 1)}
+            nextStep={() => setCurrentStep(currentStep + 1)}
+          />
         )}
 
-        {currentStep === 2 && <ClientAddFinish />}
-
-        <Button
-          onClick={() => setCurrentStep(currentStep - 1)}
-          className="mr-2"
-        >
-          prev
-        </Button>
-        <Button
-          onClick={() => setCurrentStep(currentStep + 1)}
-          className="mr-2"
-        >
-          next
-        </Button>
+        {currentStep === 2 && <ClientAddFinish step1Data={step1Data} />}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form } from "antd";
+import { Col, Row, Button, Form, notification } from "antd";
 
 import Input from "components/DataEntry/Input";
 import DataSelect from "components/DataEntry/Select";
@@ -8,13 +8,16 @@ import { clientApi, userApi } from "apis/index";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export default function CandidateAddStep1({
   nextStep,
+  setData,
 }: {
   nextStep: () => void;
+  setData: (value: any) => void;
 }) {
-  const [value, setValue] = useState<any[]>([]);
+  const [industry, setIndustry] = useState<any[]>([]);
 
   const { data: userData } = useQuery({
     queryKey: ["User"],
@@ -38,32 +41,95 @@ export default function CandidateAddStep1({
       ),
   });
 
+  const createClient = async (userData: any) => {
+    try {
+      const data = await clientApi.createClient(userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Create Client",
+        description: "Create success.",
+      });
+
+      setData(data);
+
+      setTimeout(() => {
+        nextStep();
+      }, 1000);
+    } catch (error: any) {
+      // error
+      // console.error("Create failed", error);
+      notification.error({
+        message: "Create Client",
+        description: `Create failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const createMutation = useMutation({
+    mutationFn: (formData: any) => createClient(formData),
+  });
+
   const onFinish = (values: any) => {
-    const data = {
-      ...values,
-      value,
+    const {
+      name,
+      code,
+      phone,
+      fax,
+      lead_consultants,
+      tax_code,
+      email,
+      address,
+      parent_company,
+      status,
+      cpa,
+      type,
+    } = values;
+
+    const transformedData = {
+      name,
+      code,
+      tax_code,
+      email,
+      parent_id: parent_company,
+      status,
+      cpa,
+      type,
+      address: { address },
+      phone: { number: phone, phone_code: { key: "1280" } },
+      fax: { number: fax, phone_code: { key: "1280" } },
+      business_line:
+        industry.length > 0 &&
+        industry.map((item: any) => ({
+          industry: { key: item.industry.key, label: item.industry.label },
+          sector: { key: item.sector.key, label: item.sector.label },
+        })),
+      business_line_send: industry.map((item: any) => ({
+        industry_id: item.industry.key,
+        sector_id: item.sector.key,
+      })),
+      lead_consultants: [lead_consultants],
     };
-    // createMutation.mutate(data);
-    console.log("Received values of form: ", data);
-    nextStep();
+
+    createMutation.mutate(transformedData);
+    console.log("Received values of form: ", transformedData);
+    // setData(data);
+    // nextStep();
   };
 
   return (
     <Form layout="vertical" className="w-full" onFinish={onFinish}>
       <Row gutter={16}>
         <Col span={12}>
-          <Input
-            label="Trade Name"
-            name="name"
-            required={true}
-            defaultValue={""}
-          />
+          <Input label="Trade Name" name="name" required defaultValue={""} />
         </Col>
         <Col span={12}>
           <Input
             label="Client's Shortened Name"
             name="code"
-            required={false}
             defaultValue={""}
           />
         </Col>
@@ -71,12 +137,7 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input
-            label="Phone Number"
-            name="phone.number"
-            required={true}
-            defaultValue={""}
-          />
+          <Input label="Phone Number" name="phone" required defaultValue={""} />
         </Col>
         <Col span={12}>
           <Input label="Fax" name="fax" required={false} defaultValue={""} />
@@ -88,27 +149,18 @@ export default function CandidateAddStep1({
           <DataSelect
             label="Lead consultant"
             name="lead_consultants"
-            required={true}
+            required
             data={userData}
           />
         </Col>
         <Col span={12}>
-          <Input
-            label="Tax code"
-            name="tax_code"
-            required={true}
-            defaultValue={""}
-          />
+          <Input label="Tax code" name="tax_code" required defaultValue={""} />
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input
-            label="Email"
-            name="email"
-            defaultValue={"thanhbinh@lubrytics.com"}
-          />
+          <Input label="Email" name="email" />
         </Col>
         <Col span={12}>
           <Input
@@ -149,14 +201,13 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={24}>
-          <FormIndustry value={value} setValue={setValue} />
+          <FormIndustry value={industry} setValue={setIndustry} />
         </Col>
       </Row>
 
       <Form.Item className="flex justify-end space-x-2 mt-5">
-        <Button className="mr-2">Cancel</Button>
         <Button type="primary" htmlType="submit">
-          Save
+          Next
         </Button>
       </Form.Item>
     </Form>
