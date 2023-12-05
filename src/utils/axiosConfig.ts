@@ -14,8 +14,10 @@ instance.interceptors.response.use(
     if (401 === error.response.status) {
       // reset token
       const user = getStore("userData") as iUserData;
-      user.token = "";
-      saveStore("userData", user);
+      if (user.token) {
+        user.token = "";
+        saveStore("userData", user);
+      }
 
       window.location.href = "/login";
 

@@ -7,34 +7,36 @@ import { Skeleton } from "antd";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi } from "apis/index";
-import { clientColumns } from "_constants/index";
+import { clientColumns, clientTable } from "_constants/index";
+import { pageChange } from "utils/filter";
+import { getStore } from "utils/localStorage";
+import Tag from "components/Table/Tag";
 
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {
-  const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    setCurrentPage(page);
+    pageChange(clientTable, page, refetch);
   };
 
   const pageSize = 10;
 
   const paginationOption = {
     pageSize,
-    currentPage,
     handlePageChange,
     total,
   };
 
-  const { data, status, isPending } = useQuery({
-    queryKey: ["Clients", userDetail?.id, currentPage],
+  const { data, status, isPending, refetch } = useQuery({
+    queryKey: ["Clients", getStore(clientTable).page],
     queryFn: async () =>
       await clientApi
         .getClients({
           perPage: pageSize,
-          page: currentPage,
+          page: getStore(clientTable).page,
+          ...getStore(clientTable).filter,
           lead_consultant: userDetail?.id,
         })
         .then((res) => {
@@ -77,15 +79,20 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   if (isPending) return <Skeleton active />;
 
   return (
-    data && (
-      <DataTable
-        titleTable={`Clients List`}
-        createBtn={createBtn}
-        data={data}
-        showDetail={goDetail}
-        rawColumns={clientColumns}
-        paginationOption={paginationOption}
-      />
-    )
+    <div className="flex-col w-full">
+      <Tag tableName={clientTable} refetch={refetch} />
+      {data && (
+        <DataTable
+          titleTable={`Clients List`}
+          tableName={clientTable}
+          refetch={refetch}
+          createBtn={createBtn}
+          data={data}
+          showDetail={goDetail}
+          rawColumns={clientColumns}
+          paginationOption={paginationOption}
+        />
+      )}
+    </div>
   );
 }

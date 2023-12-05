@@ -6,35 +6,37 @@ import { Skeleton } from "antd";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi } from "apis/index";
-import { candidateColumns } from "_constants/index";
+import { candidateColumns, candidateTable } from "_constants/index";
+import { pageChange } from "utils/filter";
+import { getStore } from "utils/localStorage";
+import Tag from "components/Table/Tag";
 
 export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const navigate = useNavigate();
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    setCurrentPage(page);
+    pageChange(candidateTable, page, refetch);
   };
 
   const pageSize = 10;
 
   const paginationOption = {
     pageSize,
-    currentPage,
     handlePageChange,
     total,
   };
 
-  const { data, isPending } = useQuery({
-    queryKey: ["Candidates", userDetail?.id, currentPage],
+  const { data, isPending, refetch } = useQuery({
+    queryKey: ["Candidates", getStore(candidateTable).page],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
           perPage: pageSize,
-          page: currentPage,
+          page: getStore(candidateTable).page,
+          ...getStore(candidateTable).filter,
           creator_id: userDetail?.id,
         })
         .then((res) => {
@@ -69,13 +71,18 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   if (isPending) return <Skeleton active />;
 
   return (
-    <DataTable
-      titleTable={`Candidates List`}
-      data={data}
-      createBtn={createBtn}
-      showDetail={goDetail}
-      rawColumns={candidateColumns}
-      paginationOption={paginationOption}
-    />
+    <div className="flex-col w-full">
+      <Tag tableName={candidateTable} refetch={refetch} />
+      <DataTable
+        titleTable={`Candidates List`}
+        tableName={candidateTable}
+        refetch={refetch}
+        data={data}
+        createBtn={createBtn}
+        showDetail={goDetail}
+        rawColumns={candidateColumns}
+        paginationOption={paginationOption}
+      />
+    </div>
   );
 }

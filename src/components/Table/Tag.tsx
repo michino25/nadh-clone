@@ -1,5 +1,6 @@
 import { Tag } from "antd";
-import { getStore, saveStore } from "utils/localStorage";
+import { removeOneFilter } from "utils/filter";
+import { getStore } from "utils/localStorage";
 
 const App = ({
   tableName,
@@ -10,16 +11,13 @@ const App = ({
 }) => {
   const removedTag = (tag: string) => {
     console.log(tag);
-    const tableProp = getStore(tableName);
-    delete tableProp.filter[tag];
-    saveStore(tableName, tableProp);
-    refetch();
+    removeOneFilter(tableName, tag, refetch);
   };
 
   return (
-    <div className="mb-5">
+    <>
       {Object.keys(getStore(tableName).filter).map((tag: string) => (
-        <span key={tag} className="inline-block">
+        <span key={tag} className="inline-block mb-6">
           <Tag
             closable
             color="#108ee9"
@@ -32,7 +30,7 @@ const App = ({
           </Tag>
         </span>
       ))}
-    </div>
+    </>
   );
 };
 

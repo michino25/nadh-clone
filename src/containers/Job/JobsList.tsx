@@ -6,34 +6,36 @@ import { iJob, iUser } from "utils/models";
 import { formatDate } from "utils/format";
 import { useNavigate } from "react-router-dom";
 import { jobApi } from "apis/index";
-import { jobColumns } from "_constants/index";
+import { jobColumns, jobTable } from "_constants/index";
+import { pageChange } from "utils/filter";
+import { getStore } from "utils/localStorage";
+import Tag from "components/Table/Tag";
 
 export default function JobsList({ userDetail }: { userDetail: iUser }) {
-  const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    setCurrentPage(page);
+    pageChange(jobTable, page, refetch);
   };
 
   const pageSize = 10;
 
   const paginationOption = {
     pageSize,
-    currentPage,
     handlePageChange,
     total,
   };
 
-  const { data, status, isPending } = useQuery({
-    queryKey: ["Jobs", userDetail?.id, currentPage],
+  const { data, status, isPending, refetch } = useQuery({
+    queryKey: ["Jobs", getStore(jobTable).page],
     queryFn: async () =>
       await jobApi
         .getJobs({
           perPage: pageSize,
-          page: currentPage,
+          page: getStore(jobTable).page,
+          ...getStore(jobTable).filter,
           mapping_by_recruiters: userDetail?.id,
         })
         .then((res) => {
@@ -65,15 +67,20 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   if (isPending) return <Skeleton active />;
 
   return (
-    data && (
-      <DataTable
-        titleTable={`Jobs List`}
-        createBtn={createBtn}
-        data={data}
-        showDetail={() => {}}
-        rawColumns={jobColumns}
-        paginationOption={paginationOption}
-      />
-    )
+    <div className="flex-col w-full">
+      <Tag tableName={jobTable} refetch={refetch} />
+      {data && (
+        <DataTable
+          titleTable={`Jobs List`}
+          tableName={jobTable}
+          refetch={refetch}
+          createBtn={createBtn}
+          data={data}
+          showDetail={() => {}}
+          rawColumns={jobColumns}
+          paginationOption={paginationOption}
+        />
+      )}
+    </div>
   );
 }

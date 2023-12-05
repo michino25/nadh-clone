@@ -2,29 +2,27 @@ import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import DashboardDetail from "containers/Dashboard/DashboardDetail";
-import Tag from "containers/Dashboard/components/Tag";
+import Tag from "components/Table/Tag";
 import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "utils/models";
 import { userApi } from "apis/index";
 import { getStore } from "utils/localStorage";
-import { userColumns } from "_constants/index";
+import { userColumns, userTable } from "_constants/index";
+import { pageChange } from "utils/filter";
 
 export default function DashboardUserList() {
-  const tableName = "UserTable";
-  const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    setCurrentPage(page);
+    pageChange(userTable, page, refetch);
   };
 
   const pageSize = 10;
 
   const paginationOption = {
     pageSize,
-    currentPage,
     handlePageChange,
     total,
   };
@@ -44,13 +42,13 @@ export default function DashboardUserList() {
   };
 
   const { isPending, error, data, refetch } = useQuery({
-    queryKey: ["User", currentPage],
+    queryKey: ["User", getStore(userTable).page],
     queryFn: async () =>
       await userApi
         .getUsers({
           perPage: pageSize,
-          page: currentPage,
-          ...getStore(tableName).filter,
+          page: getStore(userTable).page,
+          ...getStore(userTable).filter,
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -73,11 +71,11 @@ export default function DashboardUserList() {
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={tableName} refetch={refetch} />
+      <Tag tableName={userTable} refetch={refetch} />
 
       <DataTable
         titleTable={`System Users List`}
-        tableName={tableName}
+        tableName={userTable}
         refetch={refetch}
         createBtn={undefined}
         data={data}

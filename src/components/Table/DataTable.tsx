@@ -9,6 +9,8 @@ import { iUser } from "../../utils/models";
 import type { Key } from "antd/es/table/interface";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
+import { removeAllFilter } from "utils/filter";
+import { getStore } from "utils/localStorage";
 
 type DataType = iUser;
 
@@ -26,7 +28,6 @@ interface DataTableProps {
   createBtn: { handler: () => void; title: string } | undefined;
   showDetail: (id: string) => void;
   paginationOption?: {
-    currentPage: number;
     handlePageChange: (page: number) => void;
     total: number;
     pageSize: number;
@@ -129,9 +130,7 @@ const DataTable: React.FC<DataTableProps> = ({
           </Button>
         </Dropdown>
 
-        <Button
-        // onClick={clearFilters}
-        >
+        <Button onClick={() => removeAllFilter(tableName, refetch)}>
           Clear filters
         </Button>
       </Flex>
@@ -141,7 +140,7 @@ const DataTable: React.FC<DataTableProps> = ({
   const footer = paginationOption && (
     <div className="flex justify-end">
       <Pagination
-        current={paginationOption.currentPage}
+        current={getStore(tableName).page}
         onChange={paginationOption.handlePageChange}
         total={paginationOption.total}
         pageSize={paginationOption.pageSize}

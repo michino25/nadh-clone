@@ -6,6 +6,13 @@ import { useEffect, useState } from "react";
 import { userApi } from "apis/index";
 import { getUser } from "utils/getUser";
 import { useNavigate } from "react-router-dom";
+import {
+  candidateTable,
+  clientTable,
+  jobTable,
+  userTable,
+} from "_constants/index";
+import { initFilter } from "utils/filter";
 
 interface LoginData {
   user_name: string;
@@ -56,6 +63,11 @@ export default function Login() {
     if (loggedInUser?.token) {
       navigate("/");
     }
+    // init filter
+    initFilter(userTable);
+    initFilter(clientTable);
+    initFilter(candidateTable);
+    initFilter(jobTable);
   }, []);
 
   return (

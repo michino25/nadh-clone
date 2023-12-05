@@ -174,3 +174,8 @@ export const jobColumns = [
     key: "salary",
   },
 ];
+
+export const userTable = "UserTable";
+export const candidateTable = "CandidateTable";
+export const clientTable = "ClientTable";
+export const jobTable = "JobTable";
