@@ -103,11 +103,6 @@ export default function Candidates() {
               href: "#part-2",
               title: "Industry & Contact Person & Account Development",
             },
-            {
-              key: "part-3",
-              href: "#part-3",
-              title: "Client Description",
-            },
           ]}
         />
         <div className="py-1">
@@ -239,7 +234,7 @@ export default function Candidates() {
               </div>
               <div className="bg-white rounded-lg p-6">
                 <p className="mb-4 font-bold text-lg">Contact Person</p>
-                <ContactPerson data={clientData.pic} />
+                <ContactPerson setData={() => {}} data={clientData.pic} />
               </div>
             </div>
             <div className="w-1/3 bg-white rounded-lg ml-5 p-6">
