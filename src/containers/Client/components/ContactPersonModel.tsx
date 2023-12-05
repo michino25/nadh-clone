@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button, Modal, Form, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import InputNumber from "components/DataEntry/InputNumber";
 import Input from "components/DataEntry/Input";
 
 const App = ({
