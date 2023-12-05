@@ -6,14 +6,19 @@ interface iDataInput {
   name: string;
   required?: boolean;
   defaultValue?: string | number;
+  placeholder?: string;
   data: iOption[];
 }
+
+const filterOption = (input: string, option?: iOption) =>
+  (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
 export default function DataSelect({
   label,
   name,
   required,
   defaultValue,
+  placeholder,
   data,
 }: iDataInput) {
   return (
@@ -28,13 +33,13 @@ export default function DataSelect({
         },
       ]}
     >
-      <Select>
-        {data?.map((item: iOption) => (
-          <Select.Option key={item.value} value={item.value}>
-            {item.label}
-          </Select.Option>
-        ))}
-      </Select>
+      <Select
+        filterOption={filterOption}
+        allowClear
+        options={data}
+        showSearch
+        placeholder={placeholder}
+      />
     </Form.Item>
   );
 }

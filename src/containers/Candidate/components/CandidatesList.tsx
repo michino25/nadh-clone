@@ -1,4 +1,4 @@
-import DataTable from "components/DataTable";
+import DataTable from "components/Table/DataTable";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -6,33 +6,7 @@ import { Skeleton } from "antd";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi } from "apis/index";
-
-const rawColumns = [
-  {
-    title: "ID",
-    key: "candidate_id",
-  },
-  {
-    title: "Name",
-    key: "full_name",
-  },
-  {
-    title: "Recent companies",
-    key: "companies",
-  },
-  {
-    title: "Recent positions",
-    key: "positions",
-  },
-  {
-    title: "Year of services",
-    key: "industry_years",
-  },
-  {
-    title: "Year of management",
-    key: "management_years",
-  },
-];
+import { candidateColumns } from "_constants/index";
 
 export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const navigate = useNavigate();
@@ -100,7 +74,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       data={data}
       createBtn={createBtn}
       showDetail={goDetail}
-      rawColumns={rawColumns}
+      rawColumns={candidateColumns}
       paginationOption={paginationOption}
     />
   );

@@ -1,9 +1,6 @@
 import Step from "../../components/DataDisplay/Step";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 
-import { formatName } from "utils/format";
-import { clientApi, userApi } from "apis/index";
 import { useState } from "react";
 import ClientAddStep1 from "./components/ClientAddStep1";
 import ClientAddStep2 from "./components/ClientAddStep2";
@@ -14,28 +11,6 @@ const step = ["Client Information", "Contact Person", "Finish"];
 export default function ClientAdd() {
   const [currentStep, setCurrentStep] = useState(0);
   const [step1Data, setStep1Data] = useState();
-
-  useQuery({
-    queryKey: ["User"],
-    queryFn: async () =>
-      await userApi.getUsers({}).then((res: any) =>
-        res.data.data.map((user: any) => ({
-          label: formatName(user.full_name),
-          value: user.id,
-        }))
-      ),
-  });
-
-  useQuery({
-    queryKey: ["Client"],
-    queryFn: async () =>
-      await clientApi.getClients({}).then((res: any) =>
-        res.data.data.map((clients: any) => ({
-          label: formatName(clients.name),
-          value: clients.id,
-        }))
-      ),
-  });
 
   return (
     <div className="px-12 pb-2">
@@ -66,7 +41,7 @@ export default function ClientAdd() {
           />
         )}
 
-        {currentStep === 2 && <ClientAddFinish step1Data={step1Data} />}
+        {currentStep === 2 && <ClientAddFinish />}
       </div>
     </div>
   );

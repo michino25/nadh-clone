@@ -1,25 +1,22 @@
 import axios from "axios";
 import { iUserData } from "./models";
+import { getStore, saveStore } from "./localStorage";
 
 const instance = axios.create();
 
-const getUser = (): iUserData | undefined => {
-  const loggedInUser = localStorage.getItem("userData");
-  if (loggedInUser) {
-    const foundUser = JSON.parse(loggedInUser);
-    return foundUser;
-  } else null;
-};
-
 instance.defaults.headers.common["Authorization"] = `Bearer ${
-  getUser()?.token
+  getStore("userData")?.token
 }`;
 
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (401 === error.response.status) {
-      // localStorage.setItem("userData", "");
+      // reset token
+      const user = getStore("userData") as iUserData;
+      user.token = "";
+      saveStore("userData", user);
+
       window.location.href = "/login";
 
       return Promise.reject(error);

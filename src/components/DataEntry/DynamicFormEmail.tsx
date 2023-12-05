@@ -45,11 +45,12 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => (
                   disabled={disabled}
                 />
               </Form.Item>
-
-              <MinusCircleOutlined
-                className="hover:text-red-500 pb-3"
-                onClick={() => remove(name)}
-              />
+              {fields.length > 1 && (
+                <MinusCircleOutlined
+                  className="hover:text-red-500 pb-3"
+                  onClick={() => remove(name)}
+                />
+              )}
             </div>
           ))}
           <Form.Item>

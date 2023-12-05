@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import DataTable from "components/DataTable";
+import DataTable from "components/Table/DataTable";
 import { formatName, formatDate } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -7,45 +7,7 @@ import { Skeleton } from "antd";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi } from "apis/index";
-
-const rawColumns = [
-  {
-    title: "ID",
-    key: "client_id",
-  },
-  {
-    title: "Trade Name",
-    key: "name",
-  },
-  {
-    title: "City",
-    key: "city",
-  },
-  {
-    title: "Lead Consultant",
-    key: "lead_consultant",
-  },
-  {
-    title: "Tax Code",
-    key: "tax_code",
-  },
-  {
-    title: "Industry",
-    key: "industry",
-  },
-  {
-    title: "Jobs",
-    key: "jobs_count",
-  },
-  {
-    title: "Updated by",
-    key: "updated_by",
-  },
-  {
-    title: "Updated on",
-    key: "updated_on",
-  },
-];
+import { clientColumns } from "_constants/index";
 
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,7 +83,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         createBtn={createBtn}
         data={data}
         showDetail={goDetail}
-        rawColumns={rawColumns}
+        rawColumns={clientColumns}
         paginationOption={paginationOption}
       />
     )

@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import DataTable from "components/DataTable";
+import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
@@ -7,29 +6,7 @@ import { iJob, iUser } from "utils/models";
 import { formatDate } from "utils/format";
 import { useNavigate } from "react-router-dom";
 import { jobApi } from "apis/index";
-
-const rawColumns = [
-  {
-    title: "ID",
-    key: "job_id",
-  },
-  {
-    title: "Expire Date",
-    key: "end_date",
-  },
-  {
-    title: "Industry",
-    key: "industry",
-  },
-  {
-    title: "Year of services",
-    key: "year",
-  },
-  {
-    title: "Salary Range",
-    key: "salary",
-  },
-];
+import { jobColumns } from "_constants/index";
 
 export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,7 +71,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
         createBtn={createBtn}
         data={data}
         showDetail={() => {}}
-        rawColumns={rawColumns}
+        rawColumns={jobColumns}
         paginationOption={paginationOption}
       />
     )

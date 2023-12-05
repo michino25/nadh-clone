@@ -1,48 +1,17 @@
-import DataTable from "components/DataTable";
+import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import DashboardDetail from "containers/Dashboard/DashboardDetail";
+import Tag from "containers/Dashboard/components/Tag";
 import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "utils/models";
 import { userApi } from "apis/index";
-
-const rawColumns = [
-  {
-    title: "ID",
-    key: "user_id",
-  },
-  {
-    title: "Full Name",
-    key: "full_name",
-  },
-  {
-    title: "Username",
-    key: "user_name",
-  },
-  {
-    title: "Phone",
-    key: "phone",
-  },
-  {
-    title: "Email",
-    key: "email",
-  },
-  {
-    title: "Role",
-    key: "role",
-  },
-  {
-    title: "Created on",
-    key: "createdAt",
-  },
-  {
-    title: "Status",
-    key: "status",
-  },
-];
+import { getStore } from "utils/localStorage";
+import { userColumns } from "_constants/index";
 
 export default function DashboardUserList() {
+  const tableName = "UserTable";
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -74,13 +43,14 @@ export default function DashboardUserList() {
     setOpen(false);
   };
 
-  const { isPending, error, data } = useQuery({
+  const { isPending, error, data, refetch } = useQuery({
     queryKey: ["User", currentPage],
     queryFn: async () =>
       await userApi
         .getUsers({
           perPage: pageSize,
           page: currentPage,
+          ...getStore(tableName).filter,
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -102,12 +72,16 @@ export default function DashboardUserList() {
   console.log(data);
 
   return (
-    <>
+    <div className="flex-col w-full">
+      <Tag tableName={tableName} refetch={refetch} />
+
       <DataTable
         titleTable={`System Users List`}
+        tableName={tableName}
+        refetch={refetch}
         createBtn={undefined}
         data={data}
-        rawColumns={rawColumns}
+        rawColumns={userColumns}
         showDetail={showDrawer}
         paginationOption={paginationOption}
       />
@@ -118,6 +92,6 @@ export default function DashboardUserList() {
           onClose={onClose}
         />
       )}
-    </>
+    </div>
   );
 }

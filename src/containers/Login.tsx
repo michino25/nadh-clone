@@ -1,9 +1,11 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Typography, Card, Button, Form, Input, Space, Spin } from "antd";
+import { Typography, Card, Button, Form, Input, Space, Checkbox } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { notification } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userApi } from "apis/index";
+import { getUser } from "utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 interface LoginData {
   user_name: string;
@@ -11,6 +13,7 @@ interface LoginData {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const login = async (loginData: LoginData) => {
     try {
@@ -48,6 +51,13 @@ export default function Login() {
     // console.log("Received values of form: ", values); // {username: 'a', password: 'a'}
   };
 
+  useEffect(() => {
+    const loggedInUser = getUser();
+    if (loggedInUser?.token) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col justify-center items-center h-screen">
       <Card style={{ padding: 20 }}>
@@ -72,6 +82,7 @@ export default function Login() {
               size="large"
               prefix={<UserOutlined className="site-form-item-icon" />}
               placeholder="Username"
+              disabled={loading}
             />
           </Form.Item>
           <Form.Item
@@ -88,14 +99,23 @@ export default function Login() {
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder="Password"
+              disabled={loading}
             />
           </Form.Item>
 
+          <Form.Item valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
           <Form.Item>
-            <Button size="large" type="primary" htmlType="submit">
+            <Button
+              size="large"
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+            >
               Log in
             </Button>
-            <Spin className="ml-5" spinning={loading}></Spin>
           </Form.Item>
         </Form>
       </Card>

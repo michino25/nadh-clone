@@ -46,3 +46,131 @@ export const createSelectData = (data: string[]) => {
   }
   return selectData;
 };
+
+export const random = (max: number) => {
+  return Math.floor(Math.random() * (max + 1));
+};
+
+export const userColumns = [
+  {
+    title: "ID",
+    key: "user_id",
+  },
+  {
+    title: "Full Name",
+    key: "full_name",
+  },
+  {
+    title: "Username",
+    key: "user_name",
+  },
+  {
+    title: "Phone",
+    key: "phone",
+  },
+  {
+    title: "Email",
+    key: "email",
+  },
+  {
+    title: "Role",
+    key: "role",
+  },
+  {
+    title: "Created on",
+    key: "createdAt",
+  },
+  {
+    title: "Status",
+    key: "status",
+  },
+];
+
+export const candidateColumns = [
+  {
+    title: "ID",
+    key: "candidate_id",
+  },
+  {
+    title: "Name",
+    key: "full_name",
+  },
+  {
+    title: "Recent companies",
+    key: "companies",
+  },
+  {
+    title: "Recent positions",
+    key: "positions",
+  },
+  {
+    title: "Year of services",
+    key: "industry_years",
+  },
+  {
+    title: "Year of management",
+    key: "management_years",
+  },
+];
+
+export const clientColumns = [
+  {
+    title: "ID",
+    key: "client_id",
+  },
+  {
+    title: "Trade Name",
+    key: "name",
+  },
+  {
+    title: "City",
+    key: "city",
+  },
+  {
+    title: "Lead Consultant",
+    key: "lead_consultant",
+  },
+  {
+    title: "Tax Code",
+    key: "tax_code",
+  },
+  {
+    title: "Industry",
+    key: "industry",
+  },
+  {
+    title: "Jobs",
+    key: "jobs_count",
+  },
+  {
+    title: "Updated by",
+    key: "updated_by",
+  },
+  {
+    title: "Updated on",
+    key: "updated_on",
+  },
+];
+
+export const jobColumns = [
+  {
+    title: "ID",
+    key: "job_id",
+  },
+  {
+    title: "Expire Date",
+    key: "end_date",
+  },
+  {
+    title: "Industry",
+    key: "industry",
+  },
+  {
+    title: "Year of services",
+    key: "year",
+  },
+  {
+    title: "Salary Range",
+    key: "salary",
+  },
+];
