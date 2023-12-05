@@ -54,7 +54,14 @@ const App = ({
     },
   ];
 
-  return <Table className="w-full" columns={columns} dataSource={data} />;
+  return (
+    <Table
+      className="w-full"
+      scroll={{ x: true }}
+      columns={columns}
+      dataSource={data}
+    />
+  );
 };
 
 export default App;

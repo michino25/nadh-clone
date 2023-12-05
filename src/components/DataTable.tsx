@@ -275,6 +275,7 @@ const DataTable: React.FC<DataTableProps> = ({
         className="w-full"
         title={() => header}
         footer={() => footer}
+        scroll={{ x: true }}
         columns={columns}
         dataSource={data}
         pagination={false}

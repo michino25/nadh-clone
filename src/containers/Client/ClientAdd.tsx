@@ -1,6 +1,5 @@
 import Step from "../../components/DataDisplay/Step";
 import { Link } from "react-router-dom";
-import { Button } from "antd";
 import { useQuery } from "@tanstack/react-query";
 
 import { formatName } from "utils/format";

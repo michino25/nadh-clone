@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "containers/Dashboard/Dashboard";
 import Candidates from "containers/Candidate/Candidates";
 import Clients from "containers/Client/Clients";
@@ -10,6 +10,7 @@ import CandidateDetail from "containers/Candidate/CandidateDetail";
 import CandidateAdd from "containers/Candidate/CandidateAdd";
 import ClientAdd from "containers/Client/ClientAdd";
 import ClientDetail from "containers/Client/ClientDetail";
+import NotFound from "containers/NotFound";
 
 const routesConfig = [
   { path: "/dashboard", element: <Dashboard /> },
@@ -32,11 +33,12 @@ export default function App() {
       </Route>
 
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<Navigate to="/dashboard" />} />
 
         {routesConfig.map(({ path, element }) => (
           <Route key={path} path={path} element={element} />
         ))}
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

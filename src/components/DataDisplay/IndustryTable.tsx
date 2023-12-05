@@ -68,6 +68,7 @@ export default function IndustryTable({
       <Table
         {...tableProps}
         pagination={{ position: ["none", "bottomRight"] }}
+        scroll={{ x: true }}
         columns={tableColumns}
         dataSource={dataShow}
       />
