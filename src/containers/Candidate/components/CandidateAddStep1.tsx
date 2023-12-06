@@ -152,16 +152,30 @@ export default function CandidateAddStep1({
     <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="First Name" name="first_name" required={true} />
+          <Input
+            label="First Name"
+            placeholder="First Name"
+            name="first_name"
+            required={true}
+          />
         </Col>
         <Col span={12}>
-          <Input label="Last Name" name="last_name" required={true} />
+          <Input
+            label="Last Name"
+            placeholder="Last Name"
+            name="last_name"
+            required={true}
+          />
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="Middle Name" name="middle_name" />
+          <Input
+            label="Middle Name"
+            placeholder="Middle Name"
+            name="middle_name"
+          />
         </Col>
         <Col span={12}>
           <DataSelect
@@ -211,7 +225,12 @@ export default function CandidateAddStep1({
           />
         </Col>
         <Col span={12}>
-          <Input label="Source" name="source" required={true} />
+          <Input
+            label="Source"
+            placeholder="Source"
+            name="source"
+            required={true}
+          />
         </Col>
       </Row>
 
