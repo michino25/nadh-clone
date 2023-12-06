@@ -37,18 +37,29 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
     ? defaultValue.split("-")
     : [null, null, null];
 
+  const filterOption = (input: string, option?: iOption) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
   return (
     <Form.Item className="mb-0" label={label ? label : "Birthday"}>
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item name={["birthday", "day"]} initialValue={day}>
-            <Select placeholder="Day" allowClear options={createDaysArray()} />
+            <Select
+              placeholder="Day"
+              showSearch
+              filterOption={filterOption}
+              allowClear
+              options={createDaysArray()}
+            />
           </Form.Item>
         </Col>
         <Col span={8}>
           <Form.Item name={["birthday", "month"]} initialValue={month}>
             <Select
               placeholder="Month"
+              showSearch
+              filterOption={filterOption}
               allowClear
               options={createMonthsArray()}
             />
@@ -58,6 +69,8 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
           <Form.Item name={["birthday", "year"]} initialValue={year}>
             <Select
               placeholder="Year"
+              showSearch
+              filterOption={filterOption}
               allowClear
               options={createYearsArray()}
             />

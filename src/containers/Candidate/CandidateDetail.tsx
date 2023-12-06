@@ -189,27 +189,6 @@ export default function Candidates() {
     <>
       <BackToTopButton />
       <div className="fixed z-40 bg-gray-100 top-24 left-0 right-0 px-8 pb-2 pt-4">
-        <Anchor
-          className=""
-          direction="horizontal"
-          items={[
-            {
-              key: "part-1",
-              href: "#part-1",
-              title: "Personal Information",
-            },
-            {
-              key: "part-2",
-              href: "#part-2",
-              title: "Skills and Industry",
-            },
-            {
-              key: "part-3",
-              href: "#part-3",
-              title: "Attachments",
-            },
-          ]}
-        />
         <div className="py-1 flex justify-between">
           <div>
             <Link to={"/candidates"}>Candidates List</Link>
@@ -234,6 +213,27 @@ export default function Candidates() {
             </Button>
           </div>
         </div>
+        <Anchor
+          className=""
+          direction="horizontal"
+          items={[
+            {
+              key: "part-1",
+              href: "#part-1",
+              title: "Personal Information",
+            },
+            {
+              key: "part-2",
+              href: "#part-2",
+              title: "Skills and Industry",
+            },
+            {
+              key: "part-3",
+              href: "#part-3",
+              title: "Attachments",
+            },
+          ]}
+        />
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
       <div className="px-8 my-5">
@@ -282,13 +282,13 @@ export default function Candidates() {
                       label="Middle Name"
                       placeholder="Middle Name"
                       name="middle_name"
-                      required={true}
                       defaultValue={formatName(candidateData.middle_name)}
                     />
                   </Col>
                   <Col span={12}>
                     <DataSelect
                       label="Primary status"
+                      placeholder="Primary status"
                       name="priority_status"
                       required={true}
                       defaultValue={candidateData.priority_status.toString()}
@@ -298,7 +298,7 @@ export default function Candidates() {
                 </Row>
 
                 <Row gutter={16}>
-                  <Col span={12}>
+                  <Col xs={24} lg={12}>
                     <Birthday defaultValue={candidateData.dob} />
                   </Col>
                 </Row>
@@ -329,6 +329,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <DataSelect
                       label="Ready to move"
+                      placeholder="Ready to move"
                       name="relocating_willingness"
                       required={true}
                       defaultValue={candidateData.relocating_willingness.toString()}
@@ -415,6 +416,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <DataSelect
                       label="Highest Education"
+                      placeholder="Highest Education"
                       name="highest_education"
                       defaultValue={
                         candidateData?.highest_education?.key &&

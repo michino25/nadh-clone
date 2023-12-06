@@ -1,3 +1,4 @@
+import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Select } from "antd";
 import { useState } from "react";
 import { changeOneFilter, removeOneFilter } from "utils/filter";
@@ -50,7 +51,9 @@ export default function SearchSelect({
         showSearch
         allowClear
         value={getStore(table)?.filter[columnKey] && selected}
-        placeholder="Select a person"
+        placeholder={
+          "Select a " + getColByKey(rawColumnsByTable(table), columnKey).title
+        }
         optionFilterProp="children"
         onChange={setSelected}
         filterOption={filterOption}
