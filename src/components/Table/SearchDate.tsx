@@ -1,4 +1,3 @@
-import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { useState } from "react";
 import { changeOneFilter, removeOneFilter } from "utils/filter";
 import { getStore } from "utils/localStorage";
@@ -6,8 +5,6 @@ import { getStore } from "utils/localStorage";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Button, DatePicker } from "antd";
-import type { RangePickerProps } from "antd/es/date-picker";
-import type { DatePickerProps } from "antd";
 
 dayjs.extend(customParseFormat);
 

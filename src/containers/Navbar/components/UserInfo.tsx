@@ -88,6 +88,7 @@ export default function UserInfo() {
           <Col span={12}>
             <Input
               label="Full name"
+              placeholder="Full name"
               name="full_name"
               required={true}
               defaultValue={data?.full_name}
@@ -96,6 +97,7 @@ export default function UserInfo() {
           <Col span={12}>
             <Input
               label="Username"
+              placeholder="Username"
               name="user_name"
               required={true}
               disabled
@@ -111,6 +113,7 @@ export default function UserInfo() {
           <Col span={12}>
             <Input
               label="Mobile Phone"
+              placeholder="Mobile Phone"
               name="phone"
               required={true}
               defaultValue={data?.phone.number}
@@ -144,6 +147,7 @@ export default function UserInfo() {
           <Col span={12}>
             <Input
               label="Email"
+              placeholder="Email"
               name="email"
               required={true}
               defaultValue={data.email}
@@ -152,6 +156,7 @@ export default function UserInfo() {
           <Col span={12}>
             <Input
               label="Address"
+              placeholder="Address"
               name="address"
               required={false}
               defaultValue={data.address}

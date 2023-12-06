@@ -36,28 +36,32 @@ const App = ({
         <Form layout="vertical" className="w-full" onFinish={handleOk}>
           <Row gutter={16}>
             <Col span={12}>
-              <Input label="Name" name="name" required />
+              <Input placeholder="Name" label="Name" name="name" required />
             </Col>
             <Col span={12}>
-              <Input label="Title" name="title" required />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Input label="Mobile Phone" name="mobile_phone" />
-            </Col>
-            <Col span={12}>
-              <Input label="Email" name="email" required />
+              <Input placeholder="Title" label="Title" name="title" required />
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Input label="Telephone" name="phone" />
+              <Input
+                placeholder="Mobile"
+                label="Mobile Phone"
+                name="mobile_phone"
+              />
             </Col>
             <Col span={12}>
-              <Input label="Fax" name="fax" />
+              <Input placeholder="Email" label="Email" name="email" required />
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Input placeholder="Telephone" label="Telephone" name="phone" />
+            </Col>
+            <Col span={12}>
+              <Input placeholder="Fax" label="Fax" name="fax" />
             </Col>
           </Row>
 
@@ -65,6 +69,7 @@ const App = ({
             <Col span={12}>
               <Input
                 label="Job(s)"
+                placeholder="Job(s)"
                 name="jobs_count"
                 disabled
                 defaultValue={"0"}

@@ -259,6 +259,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="First Name"
+                      placeholder="First Name"
                       name="first_name"
                       required={true}
                       defaultValue={formatName(candidateData.first_name)}
@@ -267,6 +268,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Last Name"
+                      placeholder="Last Name"
                       name="last_name"
                       required={true}
                       defaultValue={formatName(candidateData.last_name)}
@@ -278,6 +280,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Middle Name"
+                      placeholder="Middle Name"
                       name="middle_name"
                       required={true}
                       defaultValue={formatName(candidateData.middle_name)}
@@ -338,6 +341,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Source"
+                      placeholder="Source"
                       name="source"
                       required={true}
                       defaultValue={candidateData.source}
@@ -349,6 +353,7 @@ export default function Candidates() {
                   <Col span={12}>
                     <Input
                       label="Created by"
+                      placeholder="Created by"
                       name="user_name"
                       required={true}
                       defaultValue={formatName(candidateData.creator.full_name)}

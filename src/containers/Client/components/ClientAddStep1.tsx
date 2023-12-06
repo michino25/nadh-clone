@@ -124,11 +124,18 @@ export default function CandidateAddStep1({
     <Form layout="vertical" className="w-full" onFinish={onFinish}>
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="Trade Name" name="name" required defaultValue={""} />
+          <Input
+            label="Trade Name"
+            placeholder="Trade Name"
+            name="name"
+            required
+            defaultValue={""}
+          />
         </Col>
         <Col span={12}>
           <Input
             label="Client's Shortened Name"
+            placeholder="Client's Shortened Name"
             name="code"
             defaultValue={""}
           />
@@ -137,10 +144,22 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="Phone Number" name="phone" required defaultValue={""} />
+          <Input
+            label="Phone Number"
+            placeholder="Phone Number"
+            name="phone"
+            required
+            defaultValue={""}
+          />
         </Col>
         <Col span={12}>
-          <Input label="Fax" name="fax" required={false} defaultValue={""} />
+          <Input
+            label="Fax"
+            placeholder="Fax"
+            name="fax"
+            required={false}
+            defaultValue={""}
+          />
         </Col>
       </Row>
 
@@ -154,13 +173,19 @@ export default function CandidateAddStep1({
           />
         </Col>
         <Col span={12}>
-          <Input label="Tax code" name="tax_code" required defaultValue={""} />
+          <Input
+            label="Tax code"
+            placeholder="Tax code"
+            name="tax_code"
+            required
+            defaultValue={""}
+          />
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="Email" name="email" />
+          <Input label="Email" placeholder="Email" name="email" />
         </Col>
         <Col span={12}>
           <Input
