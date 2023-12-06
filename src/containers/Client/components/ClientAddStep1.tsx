@@ -167,6 +167,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Lead consultant"
+            placeholder="Lead consultant"
             name="lead_consultants"
             required
             data={userData}
@@ -200,6 +201,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Parent Company"
+            placeholder="Parent Company"
             name="parent_company"
             required={true}
             data={clientData}
@@ -208,6 +210,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Status"
+            placeholder="Status"
             name="status"
             required={true}
             data={primaryStatus2}
@@ -217,10 +220,15 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={12}>
-          <DataSelect label="CPA" name="cpa" data={cpa} />
+          <DataSelect label="CPA" placeholder="CPA" name="cpa" data={cpa} />
         </Col>
         <Col span={12}>
-          <DataSelect label="Type" name="type" data={clientType} />
+          <DataSelect
+            label="Type"
+            placeholder="Type"
+            name="type"
+            data={clientType}
+          />
         </Col>
       </Row>
 
