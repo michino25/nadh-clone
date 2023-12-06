@@ -45,12 +45,12 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
           return res.data.data.map((user: iCandidate) => ({
             ...user,
             full_name: formatName(user.full_name),
-            companies: user.current_employments
-              .map((employment) => employment.organization.label)
-              .join(", "),
-            positions: user.current_employments
-              .map((employment) => employment.title.label)
-              .join(", "),
+            companies: user.current_employments.map(
+              (employment) => employment.organization.label
+            ),
+            positions: user.current_employments.map(
+              (employment) => employment.title.label
+            ),
           }));
         }),
     enabled: userDetail?.id !== undefined,

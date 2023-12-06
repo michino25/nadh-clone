@@ -4,27 +4,26 @@ import {
   CaretDownOutlined,
 } from "@ant-design/icons";
 import { Pagination, Button, Space, Table, Flex, Dropdown } from "antd";
-import { useState } from "react";
 import { iUser } from "../../utils/models";
-import type { Key } from "antd/es/table/interface";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
-import { removeAllFilter } from "utils/filter";
+import { changeCustomColumn, removeAllFilter } from "utils/filter";
 import { getStore } from "utils/localStorage";
+import { useState } from "react";
+import SearchNumber from "./SearchNumber";
+import { getColByKey } from "_constants/index";
+import SearchSelect from "./SearchSelect";
+import SearchDate from "./SearchDate";
 
 type DataType = iUser;
-
-interface Column {
-  key: string;
-  title: string;
-}
 
 interface DataTableProps {
   titleTable: string;
   tableName: string;
   refetch: () => void;
   data: any[];
-  rawColumns: Column[];
+  filterSelectData?: any;
+  rawColumns: any[];
   createBtn: { handler: () => void; title: string } | undefined;
   showDetail: (id: string) => void;
   paginationOption?: {
@@ -39,6 +38,7 @@ const DataTable: React.FC<DataTableProps> = ({
   tableName,
   refetch,
   data,
+  filterSelectData,
   rawColumns,
   showDetail,
   createBtn,
@@ -46,7 +46,40 @@ const DataTable: React.FC<DataTableProps> = ({
 }) => {
   const getColumnSearchProps = (columnKey: string): ColumnType<DataType> => ({
     filterDropdown: () => (
-      <SearchInput refetch={refetch} table={tableName} columnKey={columnKey} />
+      <>
+        {!getColByKey(rawColumns, columnKey).type && (
+          <SearchInput
+            refetch={refetch}
+            table={tableName}
+            columnKey={columnKey}
+          />
+        )}
+
+        {getColByKey(rawColumns, columnKey).type === "number" && (
+          <SearchNumber
+            refetch={refetch}
+            table={tableName}
+            columnKey={columnKey}
+          />
+        )}
+
+        {getColByKey(rawColumns, columnKey).type === "select" && (
+          <SearchSelect
+            refetch={refetch}
+            filterSelectData={filterSelectData}
+            table={tableName}
+            columnKey={columnKey}
+          />
+        )}
+
+        {getColByKey(rawColumns, columnKey).type === "date" && (
+          <SearchDate
+            refetch={refetch}
+            table={tableName}
+            columnKey={columnKey}
+          />
+        )}
+      </>
     ),
     filterIcon: (filtered: boolean) => (
       <SearchOutlined
@@ -57,20 +90,15 @@ const DataTable: React.FC<DataTableProps> = ({
     ),
   });
 
-  const [selectedKeys, setSelectedKeys] = useState<Key[] | string[]>(
-    rawColumns.map((column: Column) => column.key)
-  );
+  const [render, setRender] = useState(true);
 
-  const handleMenuSelect = ({
-    selectedKeys,
-  }: {
-    selectedKeys: React.Key[];
-  }) => {
+  const handleMenuSelect = ({ selectedKeys }: { selectedKeys: string[] }) => {
     console.log("Selected keys:", selectedKeys);
-    setSelectedKeys(selectedKeys);
+    changeCustomColumn(tableName, selectedKeys);
+    setRender(!render);
   };
 
-  const items = rawColumns.map((column: Column) => ({
+  const items = rawColumns.map((column: any) => ({
     key: column.key,
     label: column.title,
   }));
@@ -78,11 +106,24 @@ const DataTable: React.FC<DataTableProps> = ({
   let columns: ColumnsType<DataType> = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns
-      .filter((column) => selectedKeys.includes(column.key))
+      .filter((column) => getStore(tableName).col.includes(column.key))
       .map((column) => ({
         ...column,
         dataIndex: column.key,
         ...getColumnSearchProps(column.key),
+        render: (data: any) => (
+          <>
+            {Array.isArray(data) ? (
+              data.map((item, index) => (
+                <p className="mb-1" key={index}>
+                  {item}
+                </p>
+              ))
+            ) : (
+              <>{data}</>
+            )}
+          </>
+        ),
       }));
 
     columns.push({
@@ -117,7 +158,7 @@ const DataTable: React.FC<DataTableProps> = ({
             items,
             selectable: true,
             multiple: true,
-            defaultSelectedKeys: selectedKeys as string[],
+            defaultSelectedKeys: getStore(tableName).col,
             onSelect: handleMenuSelect,
             onDeselect: handleMenuSelect,
           }}

@@ -1,6 +1,8 @@
+import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Input } from "antd";
 import { useState } from "react";
-import { getStore, saveStore } from "utils/localStorage";
+import { changeOneFilter, removeOneFilter } from "utils/filter";
+import { getStore } from "utils/localStorage";
 
 export default function SearchInput({
   columnKey,
@@ -17,22 +19,15 @@ export default function SearchInput({
 
   const submit = () => {
     // console.log(filter);
-
     if (filter) {
-      const tableProp = getStore(table);
-      tableProp.filter[columnKey] = filter;
-      saveStore(table, tableProp);
-      refetch();
-    }
+      changeOneFilter(table, columnKey, filter, refetch);
+    } else removeOneFilter(table, columnKey, refetch);
   };
 
   const reset = () => {
     // console.log(filter);
-    const tableProp = getStore(table);
-    delete tableProp.filter[columnKey];
+    removeOneFilter(table, columnKey, refetch);
     setFilter("");
-    saveStore(table, tableProp);
-    refetch();
   };
 
   return (
@@ -47,8 +42,10 @@ export default function SearchInput({
       </div>
 
       <Input
-        placeholder={"Search" + columnKey}
-        value={filter}
+        placeholder={
+          "Search " + getColByKey(rawColumnsByTable(table), columnKey).title
+        }
+        value={getStore(table)?.filter[columnKey] && filter}
         onChange={(e) => setFilter(e.target.value)}
         onPressEnter={submit}
         className="mt-3 block"

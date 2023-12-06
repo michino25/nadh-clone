@@ -48,6 +48,7 @@ export interface iClient {
   type: number;
   gender: number;
   district_id: null;
+  jobs_count: number;
   city_id: null;
   country_id: null;
   address: { country: { label: string } };

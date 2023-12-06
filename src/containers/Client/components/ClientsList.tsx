@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "antd";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
-import { clientApi } from "apis/index";
+import { clientApi, userApi } from "apis/index";
 import { clientColumns, clientTable } from "_constants/index";
 import { pageChange } from "utils/filter";
 import { getStore } from "utils/localStorage";
@@ -45,15 +45,22 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
 
           return res.data.data.map((client: iClient) => ({
             ...client,
-            city: client.address?.country?.label,
-            lead_consultant: formatName(client.lead_consultants[0]?.full_name),
-            updated_by: formatName(client.meta?.lastUpdated?.user?.full_name),
+            city: Object.values(client.address).map((location) =>
+              typeof location === "object" ? location.label : location
+            ),
+            lead_consultants: client.lead_consultants.map((item) =>
+              formatName(item.full_name)
+            ),
+            update_last_by: formatName(
+              client.meta?.lastUpdated?.user?.full_name
+            ),
             updated_on: formatDate(
               client.meta?.lastUpdated?.time,
               "timestamp",
               "date"
             ),
-            industry: client.business_line[0]?.sector?.name,
+            client_jobs: client.jobs_count,
+            industry: client.business_line.map((item) => item.sector?.name),
           }));
         }),
     enabled: userDetail?.id !== undefined,
@@ -76,15 +83,36 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     title: "Create Client",
   };
 
+  const { data: userData } = useQuery({
+    queryKey: ["Role"],
+    queryFn: async () =>
+      userApi.getUsers({}).then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.id,
+          label: formatName(item.full_name),
+        }))
+      ),
+  });
+
+  const filterSelectData = {
+    update_last_by: userData,
+    lead_consultants: userData,
+  };
+
   if (isPending) return <Skeleton active />;
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={clientTable} refetch={refetch} />
+      <Tag
+        filterSelectData={filterSelectData}
+        tableName={clientTable}
+        refetch={refetch}
+      />
       {data && (
         <DataTable
           titleTable={`Clients List`}
           tableName={clientTable}
+          filterSelectData={filterSelectData}
           refetch={refetch}
           createBtn={createBtn}
           data={data}

@@ -6,7 +6,7 @@ import Tag from "components/Table/Tag";
 import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "utils/models";
-import { userApi } from "apis/index";
+import { otherApi, userApi } from "apis/index";
 import { getStore } from "utils/localStorage";
 import { userColumns, userTable } from "_constants/index";
 import { pageChange } from "utils/filter";
@@ -57,26 +57,51 @@ export default function DashboardUserList() {
             ...user,
             full_name: formatName(user.full_name),
             phone: (user.phone as { number: string }).number,
-            role: (user.role as { name: string }).name,
+            type: (user.role as { name: string }).name,
             status: user.status ? "Active" : "Inactive",
-            createdAt: formatDate(user.createdAt, "ISOdate", "date"),
+            created: formatDate(user.createdAt, "ISOdate", "date"),
           }));
         }),
   });
 
+  const { data: roleData } = useQuery({
+    queryKey: ["Role"],
+    queryFn: async () =>
+      otherApi.getRoles().then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+        }))
+      ),
+  });
+
+  const filterSelectData = {
+    type: roleData,
+    status: [
+      { value: "-2", label: "Inactive" },
+      { value: "1", label: "Active" },
+    ],
+  };
+
+  console.log(filterSelectData.type);
+
   if (isPending) return <Skeleton active />;
 
   if (error) return <p>An error has occurred: {error.message}</p>;
-  console.log(data);
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={userTable} refetch={refetch} />
+      <Tag
+        tableName={userTable}
+        filterSelectData={filterSelectData}
+        refetch={refetch}
+      />
 
       <DataTable
         titleTable={`System Users List`}
         tableName={userTable}
         refetch={refetch}
+        filterSelectData={filterSelectData}
         createBtn={undefined}
         data={data}
         rawColumns={userColumns}

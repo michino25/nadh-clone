@@ -74,15 +74,18 @@ export const userColumns = [
   },
   {
     title: "Role",
-    key: "role",
+    key: "type",
+    type: "select",
   },
   {
     title: "Created on",
-    key: "createdAt",
+    key: "created",
+    type: "date",
   },
   {
     title: "Status",
     key: "status",
+    type: "select",
   },
 ];
 
@@ -106,10 +109,12 @@ export const candidateColumns = [
   {
     title: "Year of services",
     key: "industry_years",
+    type: "number",
   },
   {
     title: "Year of management",
     key: "management_years",
+    type: "number",
   },
 ];
 
@@ -128,7 +133,8 @@ export const clientColumns = [
   },
   {
     title: "Lead Consultant",
-    key: "lead_consultant",
+    key: "lead_consultants",
+    type: "select",
   },
   {
     title: "Tax Code",
@@ -140,11 +146,13 @@ export const clientColumns = [
   },
   {
     title: "Jobs",
-    key: "jobs_count",
+    key: "client_jobs",
+    type: "number",
   },
   {
     title: "Updated by",
-    key: "updated_by",
+    key: "update_last_by",
+    type: "select",
   },
   {
     title: "Updated on",
@@ -179,3 +187,36 @@ export const userTable = "UserTable";
 export const candidateTable = "CandidateTable";
 export const clientTable = "ClientTable";
 export const jobTable = "JobTable";
+
+export const rawColumnsByTable = (tableName: string) => {
+  let rawColumns: any[] = [];
+  switch (tableName) {
+    case "UserTable":
+      rawColumns = userColumns;
+      break;
+    case "CandidateTable":
+      rawColumns = candidateColumns;
+      break;
+    case "ClientTable":
+      rawColumns = clientColumns;
+      break;
+    case "JobTable":
+      rawColumns = jobColumns;
+      break;
+  }
+
+  return rawColumns;
+};
+
+export const getObjByKey = (objs: any[], key: string, data: string) => {
+  const obj = objs.find((obj) => obj[key] === data);
+  return obj;
+};
+
+export const getColByKey = (cols: any[], key: string) => {
+  return getObjByKey(cols, "key", key);
+};
+
+export const getSelectByValue = (selectData: any[], value: string) => {
+  return getObjByKey(selectData, "value", value);
+};

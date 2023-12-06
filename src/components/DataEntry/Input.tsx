@@ -4,7 +4,7 @@ interface iDataInput {
   label?: string;
   name: string;
   type?: string | undefined;
-  placeholder?: string;
+  placeholder: string;
   required?: boolean;
   defaultValue?: string | number;
   disabled?: boolean;
