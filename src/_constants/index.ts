@@ -134,7 +134,7 @@ export const clientColumns = [
   {
     title: "Lead Consultant",
     key: "lead_consultants",
-    type: "select",
+    type: "multiple_select",
   },
   {
     title: "Tax Code",

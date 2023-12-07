@@ -3,7 +3,7 @@ import { Button, Select } from "antd";
 import { useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
-export default function SearchSelect({
+export default function SearchMultiSelect({
   columnKey,
   table,
   filterSelectData,
@@ -14,12 +14,15 @@ export default function SearchSelect({
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [selected, setSelected] = useState(getAllParams()[columnKey]);
+  const [selected, setSelected] = useState(
+    getAllParams()[columnKey]?.split(",")
+  );
 
   const submit = () => {
-    //   // console.log(filter);
+    // console.log(selected.join(","));
+
     if (selected) {
-      changeOneFilter(getAllParams(), columnKey, selected);
+      changeOneFilter(getAllParams(), columnKey, selected.join(","));
     } else reset();
   };
 
@@ -49,6 +52,7 @@ export default function SearchSelect({
         className="w-[200px] mt-3"
         showSearch
         allowClear
+        mode="multiple"
         value={getAllParams()[columnKey] && selected}
         placeholder={
           "Select a " + getColByKey(rawColumnsByTable(table), columnKey).title

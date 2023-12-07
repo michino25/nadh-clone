@@ -220,7 +220,7 @@ export default function Candidates() {
                   {formatName(clientData.creator.full_name)}
                 </Descriptions.Item>
                 <Descriptions.Item label="Updated On">
-                  {formatDate(clientData.createdAt, "ISOdate", "date&hour")}
+                  {formatDate(clientData.updatedAt, "ISOdate", "date&hour")}
                 </Descriptions.Item>
               </Descriptions>
             </div>

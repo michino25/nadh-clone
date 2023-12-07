@@ -7,16 +7,16 @@ import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "utils/models";
 import { otherApi, userApi } from "apis/index";
-import { getStore } from "utils/localStorage";
 import { userColumns, userTable } from "_constants/index";
-import { pageChange } from "utils/filter";
+import useFilter from "src/hooks/useFilter";
 
 export default function DashboardUserList() {
   const [total, setTotal] = useState(0);
+  const { getAllParams, pageChange } = useFilter();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    pageChange(userTable, page, refetch);
+    pageChange(getAllParams(), page);
   };
 
   const pageSize = 10;
@@ -41,14 +41,13 @@ export default function DashboardUserList() {
     setOpen(false);
   };
 
-  const { isPending, error, data, refetch } = useQuery({
-    queryKey: ["User", getStore(userTable).page],
+  const { isPending, error, data } = useQuery({
+    queryKey: ["User", window.location.href],
     queryFn: async () =>
       await userApi
         .getUsers({
           perPage: pageSize,
-          page: getStore(userTable).page,
-          ...getStore(userTable).filter,
+          ...getAllParams(),
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -91,16 +90,11 @@ export default function DashboardUserList() {
 
   return (
     <div className="flex-col w-full">
-      <Tag
-        tableName={userTable}
-        filterSelectData={filterSelectData}
-        refetch={refetch}
-      />
+      <Tag tableName={userTable} filterSelectData={filterSelectData} />
 
       <DataTable
         titleTable={`System Users List`}
         tableName={userTable}
-        refetch={refetch}
         filterSelectData={filterSelectData}
         createBtn={undefined}
         data={data}

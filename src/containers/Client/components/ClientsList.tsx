@@ -8,17 +8,17 @@ import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi, userApi } from "apis/index";
 import { clientColumns, clientTable } from "_constants/index";
-import { pageChange } from "utils/filter";
-import { getStore } from "utils/localStorage";
 import Tag from "components/Table/Tag";
+import useFilter from "src/hooks/useFilter";
 
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const { getAllParams, pageChange } = useFilter();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    pageChange(clientTable, page, refetch);
+    pageChange(getAllParams(), page);
   };
 
   const pageSize = 10;
@@ -29,14 +29,13 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, status, isPending, refetch } = useQuery({
-    queryKey: ["Clients", getStore(clientTable).page],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Clients", window.location.href],
     queryFn: async () =>
       await clientApi
         .getClients({
           perPage: pageSize,
-          page: getStore(clientTable).page,
-          ...getStore(clientTable).filter,
+          ...getAllParams(),
           lead_consultant: userDetail?.id,
         })
         .then((res) => {
@@ -103,22 +102,18 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      <Tag
-        filterSelectData={filterSelectData}
-        tableName={clientTable}
-        refetch={refetch}
-      />
+      <Tag filterSelectData={filterSelectData} tableName={clientTable} />
       {data && (
         <DataTable
           titleTable={`Clients List`}
           tableName={clientTable}
           filterSelectData={filterSelectData}
-          refetch={refetch}
           createBtn={createBtn}
           data={data}
           showDetail={goDetail}
           rawColumns={clientColumns}
           paginationOption={paginationOption}
+          noFilter={userDetail?.id !== ""}
         />
       )}
     </div>

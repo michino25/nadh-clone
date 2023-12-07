@@ -7,20 +7,21 @@ import { Pagination, Button, Space, Table, Flex, Dropdown } from "antd";
 import { iUser } from "../../utils/models";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
-import { changeCustomColumn, removeAllFilter } from "utils/filter";
+import { changeCustomColumn } from "utils/filter";
 import { getStore } from "utils/localStorage";
 import { useState } from "react";
 import SearchNumber from "./SearchNumber";
 import { getColByKey } from "_constants/index";
 import SearchSelect from "./SearchSelect";
 import SearchDate from "./SearchDate";
+import useFilter from "src/hooks/useFilter";
+import SearchMultiSelect from "./SearchMultiSelect";
 
 type DataType = iUser;
 
 interface DataTableProps {
   titleTable: string;
   tableName: string;
-  refetch: () => void;
   data: any[];
   filterSelectData?: any;
   rawColumns: any[];
@@ -31,64 +32,68 @@ interface DataTableProps {
     total: number;
     pageSize: number;
   };
+  noFilter?: boolean;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   titleTable,
   tableName,
-  refetch,
   data,
   filterSelectData,
   rawColumns,
   showDetail,
   createBtn,
   paginationOption,
+  noFilter,
 }) => {
-  const getColumnSearchProps = (columnKey: string): ColumnType<DataType> => ({
-    filterDropdown: () => (
-      <>
-        {!getColByKey(rawColumns, columnKey).type && (
-          <SearchInput
-            refetch={refetch}
-            table={tableName}
-            columnKey={columnKey}
-          />
-        )}
+  const { getAllParams, removeAllFilter } = useFilter();
 
-        {getColByKey(rawColumns, columnKey).type === "number" && (
-          <SearchNumber
-            refetch={refetch}
-            table={tableName}
-            columnKey={columnKey}
-          />
-        )}
+  const getColumnSearchProps = (columnKey: string): ColumnType<DataType> => {
+    if (!noFilter)
+      return {
+        filterDropdown: () => (
+          <>
+            {!getColByKey(rawColumns, columnKey).type && (
+              <SearchInput table={tableName} columnKey={columnKey} />
+            )}
 
-        {getColByKey(rawColumns, columnKey).type === "select" && (
-          <SearchSelect
-            refetch={refetch}
-            filterSelectData={filterSelectData}
-            table={tableName}
-            columnKey={columnKey}
-          />
-        )}
+            {getColByKey(rawColumns, columnKey).type === "number" && (
+              <SearchNumber columnKey={columnKey} />
+            )}
 
-        {getColByKey(rawColumns, columnKey).type === "date" && (
-          <SearchDate
-            refetch={refetch}
-            table={tableName}
-            columnKey={columnKey}
+            {getColByKey(rawColumns, columnKey).type === "select" && (
+              <SearchSelect
+                filterSelectData={filterSelectData}
+                table={tableName}
+                columnKey={columnKey}
+              />
+            )}
+
+            {getColByKey(rawColumns, columnKey).type === "multiple_select" && (
+              <SearchMultiSelect
+                filterSelectData={filterSelectData}
+                table={tableName}
+                columnKey={columnKey}
+              />
+            )}
+
+            {getColByKey(rawColumns, columnKey).type === "date" && (
+              <SearchDate columnKey={columnKey} />
+            )}
+          </>
+        ),
+        filterIcon: () => (
+          <SearchOutlined
+            style={{
+              color: Object.keys(getAllParams()).includes(columnKey)
+                ? "#1677ff"
+                : undefined,
+            }}
           />
-        )}
-      </>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1677ff" : undefined,
-        }}
-      />
-    ),
-  });
+        ),
+      };
+    else return {};
+  };
 
   const [render, setRender] = useState(true);
 
@@ -149,7 +154,7 @@ const DataTable: React.FC<DataTableProps> = ({
       </span>
 
       <Flex gap="middle">
-        {createBtn && (
+        {createBtn && !noFilter && (
           <Button onClick={createBtn.handler}>{createBtn.title}</Button>
         )}
 
@@ -171,17 +176,17 @@ const DataTable: React.FC<DataTableProps> = ({
           </Button>
         </Dropdown>
 
-        <Button onClick={() => removeAllFilter(tableName, refetch)}>
-          Clear filters
-        </Button>
+        <Button onClick={() => removeAllFilter()}>Clear filters</Button>
       </Flex>
     </Flex>
   );
 
+  console.log(getAllParams().page);
+
   const footer = paginationOption && (
     <div className="flex justify-end">
       <Pagination
-        current={getStore(tableName).page}
+        current={getAllParams().page ? parseInt(getAllParams().page) : 1}
         onChange={paginationOption.handlePageChange}
         total={paginationOption.total}
         pageSize={paginationOption.pageSize}

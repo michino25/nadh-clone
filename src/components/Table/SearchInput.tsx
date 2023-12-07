@@ -1,32 +1,31 @@
 import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Input } from "antd";
 import { useState } from "react";
-import { changeOneFilter, removeOneFilter } from "utils/filter";
-import { getStore } from "utils/localStorage";
+import useFilter from "src/hooks/useFilter";
 
 export default function SearchInput({
   columnKey,
   table,
-  refetch,
 }: {
   columnKey: string;
   table: string;
-  refetch: () => void;
 }) {
+  const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
+
   const [filter, setFilter] = useState(
-    getStore(table)?.filter[columnKey] ? getStore(table)?.filter[columnKey] : ""
+    getAllParams()[columnKey] ? getAllParams()[columnKey] : ""
   );
 
   const submit = () => {
     // console.log(filter);
     if (filter) {
-      changeOneFilter(table, columnKey, filter, refetch);
-    } else removeOneFilter(table, columnKey, refetch);
+      changeOneFilter(getAllParams(), columnKey, filter);
+    } else removeOneFilter(getAllParams(), columnKey);
   };
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(table, columnKey, refetch);
+    removeOneFilter(getAllParams(), columnKey);
     setFilter("");
   };
 
@@ -45,7 +44,7 @@ export default function SearchInput({
         placeholder={
           "Search " + getColByKey(rawColumnsByTable(table), columnKey).title
         }
-        value={getStore(table)?.filter[columnKey] && filter}
+        value={getAllParams()[columnKey] && filter}
         onChange={(e) => setFilter(e.target.value)}
         onPressEnter={submit}
         className="mt-3 block"

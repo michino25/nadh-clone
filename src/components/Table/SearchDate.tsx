@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { changeOneFilter, removeOneFilter } from "utils/filter";
-import { getStore } from "utils/localStorage";
-
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Button, DatePicker } from "antd";
+import useFilter from "src/hooks/useFilter";
 
 dayjs.extend(customParseFormat);
 
@@ -12,33 +10,24 @@ const formatDate = (date: dayjs.Dayjs, format: string) => {
   return date.format(format);
 };
 
-export default function SearchDate({
-  columnKey,
-  table,
-  refetch,
-}: {
-  columnKey: string;
-  table: string;
-  refetch: () => void;
-}) {
-  const [from, setFrom] = useState(
-    getStore(table)?.filter[columnKey + "_from"]
-  );
+export default function SearchDate({ columnKey }: { columnKey: string }) {
+  const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [to, setTo] = useState(getStore(table)?.filter[columnKey + "_to"]);
+  const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
+  const [to, setTo] = useState(getAllParams()[columnKey + "_to"]);
 
   const submit = () => {
     console.log(to, from);
     if (to || from) {
-      if (from) changeOneFilter(table, columnKey + "_from", from, refetch);
-      if (to) changeOneFilter(table, columnKey + "_to", to, refetch);
+      if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
+      if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
     } else reset();
   };
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(table, columnKey + "_from", refetch);
-    removeOneFilter(table, columnKey + "_to", refetch);
+    removeOneFilter(getAllParams(), columnKey + "_from");
+    removeOneFilter(getAllParams(), columnKey + "_to");
     setFrom(null);
     setTo(null);
   };
@@ -56,7 +45,7 @@ export default function SearchDate({
 
       <DatePicker
         format="DD-MM-YYYY"
-        value={getStore(table)?.filter[columnKey + "_from"] && dayjs(from)}
+        value={getAllParams()[columnKey + "_from"] && dayjs(from)}
         placeholder="Start date"
         disabledDate={(date) => to && date > dayjs(to)}
         onChange={(date) =>
@@ -67,7 +56,7 @@ export default function SearchDate({
 
       <DatePicker
         format="DD-MM-YYYY"
-        value={getStore(table)?.filter[columnKey + "_to"] && dayjs(to)}
+        value={getAllParams()[columnKey + "_to"] && dayjs(to)}
         placeholder="End date"
         disabledDate={(date) => from && date < dayjs(from)}
         onChange={(date) =>

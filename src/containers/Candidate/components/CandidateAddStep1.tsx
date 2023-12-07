@@ -180,6 +180,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Primary status"
+            placeholder="Primary status"
             name="priority_status"
             data={primaryStatus}
           />
@@ -216,6 +217,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Ready to move"
+            placeholder="Ready to move"
             name="relocating_willingness"
             defaultValue="1"
             data={[
@@ -263,6 +265,7 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <DataSelect
             label="Highest Education"
+            placeholder="Highest Education"
             name="highest_education"
             data={dataDegree ? dataDegree : []}
           />

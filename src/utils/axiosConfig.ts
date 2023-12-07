@@ -28,4 +28,17 @@ instance.interceptors.response.use(
   }
 );
 
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (500 === error.response.status) {
+      window.location.href = "/500-error";
+
+      return Promise.reject(error);
+    } else {
+      return Promise.reject(error);
+    }
+  }
+);
+
 export default instance;

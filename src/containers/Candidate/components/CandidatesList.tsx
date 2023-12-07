@@ -7,18 +7,20 @@ import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi } from "apis/index";
 import { candidateColumns, candidateTable } from "_constants/index";
-import { pageChange } from "utils/filter";
-import { getStore } from "utils/localStorage";
 import Tag from "components/Table/Tag";
+import useFilter from "src/hooks/useFilter";
 
 export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const navigate = useNavigate();
+  const { getAllParams, pageChange } = useFilter();
+
+  // console.log(getAllParams());
 
   const [total, setTotal] = useState(0);
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    pageChange(candidateTable, page, refetch);
+    pageChange(getAllParams(), page);
   };
 
   const pageSize = 10;
@@ -29,14 +31,13 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ["Candidates", getStore(candidateTable).page],
+  const { data, isPending } = useQuery({
+    queryKey: ["Candidates", window.location.href],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
           perPage: pageSize,
-          page: getStore(candidateTable).page,
-          ...getStore(candidateTable).filter,
+          ...getAllParams(),
           creator_id: userDetail?.id,
         })
         .then((res) => {
@@ -72,16 +73,16 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={candidateTable} refetch={refetch} />
+      <Tag tableName={candidateTable} />
       <DataTable
         titleTable={`Candidates List`}
         tableName={candidateTable}
-        refetch={refetch}
         data={data}
         createBtn={createBtn}
         showDetail={goDetail}
         rawColumns={candidateColumns}
         paginationOption={paginationOption}
+        noFilter={userDetail?.id !== ""}
       />
     </div>
   );

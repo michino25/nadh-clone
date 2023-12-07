@@ -10,7 +10,8 @@ import CandidateDetail from "containers/Candidate/CandidateDetail";
 import CandidateAdd from "containers/Candidate/CandidateAdd";
 import ClientAdd from "containers/Client/ClientAdd";
 import ClientDetail from "containers/Client/ClientDetail";
-import NotFound from "containers/NotFound";
+import Page404 from "containers/Page404";
+import Page500 from "containers/Page500";
 
 const routesConfig = [
   { path: "/dashboard", element: <Dashboard /> },
@@ -38,7 +39,8 @@ export default function App() {
         {routesConfig.map(({ path, element }) => (
           <Route key={path} path={path} element={element} />
         ))}
-        <Route path="*" element={<NotFound />} />
+        <Route path="/500-error" element={<Page500 />} />
+        <Route path="*" element={<Page404 />} />
       </Route>
     </Routes>
   );

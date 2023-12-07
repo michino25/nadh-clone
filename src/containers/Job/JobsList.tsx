@@ -7,17 +7,17 @@ import { formatDate } from "utils/format";
 import { useNavigate } from "react-router-dom";
 import { jobApi } from "apis/index";
 import { jobColumns, jobTable } from "_constants/index";
-import { pageChange } from "utils/filter";
-import { getStore } from "utils/localStorage";
 import Tag from "components/Table/Tag";
+import useFilter from "src/hooks/useFilter";
 
 export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const { getAllParams, pageChange } = useFilter();
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
-    pageChange(jobTable, page, refetch);
+    pageChange(getAllParams(), page);
   };
 
   const pageSize = 10;
@@ -28,14 +28,13 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
-  const { data, status, isPending, refetch } = useQuery({
-    queryKey: ["Jobs", getStore(jobTable).page],
+  const { data, status, isPending } = useQuery({
+    queryKey: ["Jobs", window.location.href],
     queryFn: async () =>
       await jobApi
         .getJobs({
           perPage: pageSize,
-          page: getStore(jobTable).page,
-          ...getStore(jobTable).filter,
+          ...getAllParams(),
           mapping_by_recruiters: userDetail?.id,
         })
         .then((res) => {
@@ -68,17 +67,17 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={jobTable} refetch={refetch} />
+      <Tag tableName={jobTable} />
       {data && (
         <DataTable
           titleTable={`Jobs List`}
           tableName={jobTable}
-          refetch={refetch}
           createBtn={createBtn}
           data={data}
           showDetail={() => {}}
           rawColumns={jobColumns}
           paginationOption={paginationOption}
+          noFilter={userDetail?.id !== ""}
         />
       )}
     </div>

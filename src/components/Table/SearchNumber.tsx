@@ -1,35 +1,25 @@
 import { Button, InputNumber } from "antd";
 import { useState } from "react";
-import { changeOneFilter, removeOneFilter } from "utils/filter";
-import { getStore } from "utils/localStorage";
+import useFilter from "src/hooks/useFilter";
 
-export default function SearchNumber({
-  columnKey,
-  table,
-  refetch,
-}: {
-  columnKey: string;
-  table: string;
-  refetch: () => void;
-}) {
-  const [from, setFrom] = useState(
-    getStore(table)?.filter[columnKey + "_from"]
-  );
+export default function SearchNumber({ columnKey }: { columnKey: string }) {
+  const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [to, setTo] = useState(getStore(table)?.filter[columnKey + "_to"]);
+  const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
+  const [to, setTo] = useState(getAllParams()[columnKey + "_to"]);
 
   const submit = () => {
     //   // console.log(filter);
     if (to || from) {
-      if (from) changeOneFilter(table, columnKey + "_from", from, refetch);
-      if (to) changeOneFilter(table, columnKey + "_to", to, refetch);
+      if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
+      if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
     } else reset();
   };
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(table, columnKey + "_from", refetch);
-    removeOneFilter(table, columnKey + "_to", refetch);
+    removeOneFilter(getAllParams(), columnKey + "_from");
+    removeOneFilter(getAllParams(), columnKey + "_to");
     setFrom(null);
     setTo(null);
   };
@@ -50,7 +40,7 @@ export default function SearchNumber({
         style={{ width: "100%" }}
         placeholder={"From"}
         // value={from}
-        value={getStore(table)?.filter[columnKey + "_from"] && from}
+        value={getAllParams()[columnKey + "_from"] && from}
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
@@ -60,7 +50,7 @@ export default function SearchNumber({
         style={{ width: "100%" }}
         placeholder={"To"}
         // value={to}
-        value={getStore(table)?.filter[columnKey + "_to"] && to}
+        value={getAllParams()[columnKey + "_to"] && to}
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
