@@ -1,3 +1,31 @@
+export interface StatusData {
+  [key: number]: string;
+}
+
+export const statusData: StatusData[] = [
+  { 1: "Raw" },
+  { 2: "Screening Call" },
+  { "-4": "Client Canceled" },
+  { 3: "Interview with NADH" },
+  { 4: "Shortlisting" },
+  { 5: "Submit to Client" },
+  { 6: "Interview with Client - Round 1" },
+  { 7: "Reference Check" },
+  { 8: "Negotiation" },
+  { 9: "Offer Accepted" },
+  { 10: "Placement" },
+  { 11: "Follow-up" },
+  { "-2": "Rejected by NADH" },
+  { "-1": "Candidate Declined" },
+];
+
+export const getStatusDataByKey = (key: number): string | undefined => {
+  const statusObject = statusData.find((status) =>
+    Object.keys(status).includes(key.toString())
+  );
+  return statusObject ? statusObject[key] : undefined;
+};
+
 export const primaryStatus = [
   { label: "Active", value: "1" },
   { label: "Off - limit", value: "-1" },
@@ -99,22 +127,48 @@ export const candidateColumns = [
     key: "full_name",
   },
   {
+    title: "Primary Status",
+    key: "priority_status",
+  },
+  {
+    title: "Languages",
+    key: "language",
+  },
+  {
+    title: "Highest degree",
+    key: "highest_education",
+  },
+  {
+    title: "City",
+    key: "location",
+  },
+  {
+    title: "Industry",
+    key: "industry",
+  },
+  {
+    title: "YOB",
+    key: "yob",
+  },
+  {
+    title: "Activity",
+    key: "flow_status",
+  },
+  {
     title: "Recent companies",
-    key: "companies",
+    key: "current_company",
   },
   {
     title: "Recent positions",
-    key: "positions",
+    key: "current_position",
   },
   {
     title: "Year of services",
     key: "industry_years",
-    type: "number",
   },
   {
     title: "Year of management",
     key: "management_years",
-    type: "number",
   },
 ];
 
@@ -129,30 +183,51 @@ export const clientColumns = [
   },
   {
     title: "City",
-    key: "city",
+    key: "location",
   },
   {
     title: "Lead Consultant",
     key: "lead_consultants",
-    type: "multiple_select",
+  },
+  {
+    title: "Activity",
+    key: "account_status",
   },
   {
     title: "Tax Code",
     key: "tax_code",
   },
   {
+    title: "CPA",
+    key: "cpa",
+  },
+  {
     title: "Industry",
     key: "industry",
   },
   {
-    title: "Jobs",
+    title: "Job(s)",
     key: "client_jobs",
-    type: "number",
+  },
+  {
+    title: "Type",
+    key: "type",
+  },
+  {
+    title: "Status",
+    key: "status",
+  },
+  {
+    title: "Contact Person's Name",
+    key: "contact_person_name",
+  },
+  {
+    title: "Contact Person's Title",
+    key: "contact_person_title",
   },
   {
     title: "Updated by",
     key: "update_last_by",
-    type: "select",
   },
   {
     title: "Updated on",
@@ -208,15 +283,19 @@ export const rawColumnsByTable = (tableName: string) => {
   return rawColumns;
 };
 
-export const getObjByKey = (objs: any[], key: string, data: string) => {
+export const getObjByKey = (
+  objs: any[],
+  key: string,
+  data: string | number
+) => {
   const obj = objs.find((obj) => obj[key] === data);
   return obj;
 };
 
-export const getColByKey = (cols: any[], key: string) => {
+export const getColByKey = (cols: any[], key: string | number) => {
   return getObjByKey(cols, "key", key);
 };
 
-export const getSelectByValue = (selectData: any[], value: string) => {
+export const getSelectByValue = (selectData: any[], value: string | number) => {
   return getObjByKey(selectData, "value", value);
 };

@@ -53,15 +53,15 @@ const _otherApi = {
     });
   },
 
-  // getOneUser(id: string) {
-  //   const url = "api/users/" + id;
-  //   return axios().get(url);
-  // },
+  getCol(page: string) {
+    const url = "api/user_pages?key_page=" + page;
+    return axios().get(url);
+  },
 
-  // logout() {
-  //   const url = "logout";
-  //   return axios().get(url);
-  // },
+  changeCol(page: string, col: string[]) {
+    const url = "api/user_pages";
+    return axios().put(url, { data: col, key_page: page });
+  },
 };
 
 export default _otherApi;

@@ -15,13 +15,17 @@ const useFilter = () => {
     return allParams;
   };
 
-  const removeOneFilter = (filterName: string, params: any) => {
+  const getPathname = () => location.pathname;
+
+  const removeOneFilter = (params: any, filterName: string) => {
     if (filterName !== "page") {
-      console.log(filterName);
+      // console.log(filterName);
 
       delete params[filterName];
       delete params["page"];
     } else delete params[filterName];
+
+    console.log(params);
 
     navigate({
       pathname: location.pathname,
@@ -57,6 +61,7 @@ const useFilter = () => {
     removeAllFilter,
     changeOneFilter,
     pageChange,
+    getPathname,
   };
 };
 

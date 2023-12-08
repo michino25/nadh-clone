@@ -7,7 +7,15 @@ import { Skeleton } from "antd";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi, userApi } from "apis/index";
-import { clientColumns, clientTable } from "_constants/index";
+import {
+  clientColumns,
+  clientTable,
+  clientType,
+  cpa,
+  getSelectByValue,
+  getStatusDataByKey,
+  primaryStatus2,
+} from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
 
@@ -29,13 +37,25 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
+  const allParams = getAllParams()["city"]
+    ? getAllParams()["city"].split(",").length === 2
+      ? {
+          ...getAllParams(),
+          city: getAllParams()["city"].split(",")[1],
+        }
+      : {
+          ...getAllParams(),
+          country: getAllParams()["city"].split(",")[0],
+        }
+    : getAllParams();
+
   const { data, status, isPending } = useQuery({
     queryKey: ["Clients", window.location.href],
     queryFn: async () =>
       await clientApi
         .getClients({
           perPage: pageSize,
-          ...getAllParams(),
+          ...allParams,
           lead_consultant: userDetail?.id,
         })
         .then((res) => {
@@ -44,7 +64,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
 
           return res.data.data.map((client: iClient) => ({
             ...client,
-            city: Object.values(client.address).map((location) =>
+            location: Object.values(client.address).map((location) =>
               typeof location === "object" ? location.label : location
             ),
             lead_consultants: client.lead_consultants.map((item) =>
@@ -58,8 +78,25 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
               "timestamp",
               "date"
             ),
+            account_status: getStatusDataByKey(
+              client.account_development.status
+            ),
+
             client_jobs: client.jobs_count,
             industry: client.business_line.map((item) => item.sector?.name),
+            type: getSelectByValue(clientType, client.type).label,
+            status: getSelectByValue(primaryStatus2, client.status).label,
+            cpa: getSelectByValue(cpa, client.cpa).label,
+            contact_person_name:
+              client.contact_person_current &&
+              client.contact_person_current[0] &&
+              formatName(client.contact_person_current[0].full_name),
+            contact_person_title:
+              client.contact_person_current &&
+              client.contact_person_current[0] &&
+              formatName(
+                client.contact_person_current[0].extra?.contact_info?.title
+              ),
           }));
         }),
     enabled: userDetail?.id !== undefined,

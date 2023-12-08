@@ -1,21 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   SearchOutlined,
   EyeOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import { Pagination, Button, Space, Table, Flex, Dropdown } from "antd";
+import {
+  Pagination,
+  Button,
+  Space,
+  Table,
+  Flex,
+  Dropdown,
+  Skeleton,
+} from "antd";
 import { iUser } from "../../utils/models";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
-import { changeCustomColumn } from "utils/filter";
-import { getStore } from "utils/localStorage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchNumber from "./SearchNumber";
-import { getColByKey } from "_constants/index";
+import { getColByKey, rawColumnsByTable } from "_constants/index";
 import SearchSelect from "./SearchSelect";
 import SearchDate from "./SearchDate";
 import useFilter from "src/hooks/useFilter";
 import SearchMultiSelect from "./SearchMultiSelect";
+import SearchIndustry from "./SearchIndustry";
+import SearchAddress from "./SearchAddress";
+import { otherApi } from "apis/index";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 type DataType = iUser;
 
@@ -35,7 +47,7 @@ interface DataTableProps {
   noFilter?: boolean;
 }
 
-const DataTable: React.FC<DataTableProps> = ({
+const DataTable = ({
   titleTable,
   tableName,
   data,
@@ -45,23 +57,23 @@ const DataTable: React.FC<DataTableProps> = ({
   createBtn,
   paginationOption,
   noFilter,
-}) => {
-  const { getAllParams, removeAllFilter } = useFilter();
+}: DataTableProps) => {
+  const { getAllParams, removeAllFilter, getPathname } = useFilter();
+  let filterCol: string[] = [];
 
   const getColumnSearchProps = (columnKey: string): ColumnType<DataType> => {
+    const col = getColByKey(rawColumns, columnKey);
     if (!noFilter)
       return {
         filterDropdown: () => (
           <>
-            {!getColByKey(rawColumns, columnKey).type && (
+            {!col.type && (
               <SearchInput table={tableName} columnKey={columnKey} />
             )}
 
-            {getColByKey(rawColumns, columnKey).type === "number" && (
-              <SearchNumber columnKey={columnKey} />
-            )}
+            {col.type === "number" && <SearchNumber columnKey={columnKey} />}
 
-            {getColByKey(rawColumns, columnKey).type === "select" && (
+            {col.type === "select" && (
               <SearchSelect
                 filterSelectData={filterSelectData}
                 table={tableName}
@@ -69,7 +81,13 @@ const DataTable: React.FC<DataTableProps> = ({
               />
             )}
 
-            {getColByKey(rawColumns, columnKey).type === "multiple_select" && (
+            {col.type === "industry" && (
+              <SearchIndustry columnKey={columnKey} />
+            )}
+
+            {col.type === "address" && <SearchAddress />}
+
+            {col.type === "multiple_select" && (
               <SearchMultiSelect
                 filterSelectData={filterSelectData}
                 table={tableName}
@@ -77,9 +95,7 @@ const DataTable: React.FC<DataTableProps> = ({
               />
             )}
 
-            {getColByKey(rawColumns, columnKey).type === "date" && (
-              <SearchDate columnKey={columnKey} />
-            )}
+            {col.type === "date" && <SearchDate columnKey={columnKey} />}
           </>
         ),
         filterIcon: () => (
@@ -97,9 +113,22 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const [render, setRender] = useState(true);
 
+  const changeCol = async (data: any) => {
+    try {
+      const res = await otherApi.changeCol(getPathname().slice(1), data);
+      filterCol = res.data.data;
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+
+  const loginMutation = useMutation({
+    mutationFn: (formData: any) => changeCol(formData),
+  });
+
   const handleMenuSelect = ({ selectedKeys }: { selectedKeys: string[] }) => {
     console.log("Selected keys:", selectedKeys);
-    changeCustomColumn(tableName, selectedKeys);
+    loginMutation.mutate(selectedKeys);
     setRender(!render);
   };
 
@@ -108,10 +137,41 @@ const DataTable: React.FC<DataTableProps> = ({
     label: column.title,
   }));
 
+  const { isPending: colIsPending, data: colData } = useQuery({
+    queryKey: ["col"],
+    queryFn: async () =>
+      await otherApi
+        .getCol(getPathname().slice(1))
+        .then((res: any) => res.data.data),
+    enabled: getPathname() === "/candidates" || getPathname() === "/clients",
+  });
+
+  useEffect(() => {
+    switch (getPathname()) {
+      case "/candidates":
+        filterCol = !colIsPending
+          ? colData
+          : rawColumnsByTable(tableName).map((column: any) => column.key);
+        break;
+      case "/clients":
+        filterCol = !colIsPending
+          ? colData
+          : rawColumnsByTable(tableName).map((column: any) => column.key);
+        break;
+      case "/dashboard":
+        filterCol = rawColumnsByTable(tableName).map(
+          (column: any) => column.key
+        );
+        break;
+    }
+  }, [colIsPending]);
+
+  console.log(colData);
+
   let columns: ColumnsType<DataType> = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns
-      .filter((column) => getStore(tableName).col.includes(column.key))
+      .filter((column) => filterCol.includes(column.key))
       .map((column) => ({
         ...column,
         dataIndex: column.key,
@@ -155,28 +215,30 @@ const DataTable: React.FC<DataTableProps> = ({
 
       <Flex gap="middle">
         {createBtn && !noFilter && (
-          <Button onClick={createBtn.handler}>{createBtn.title}</Button>
+          <>
+            <Button onClick={createBtn.handler}>{createBtn.title}</Button>
+            <Dropdown
+              menu={{
+                items,
+                selectable: true,
+                multiple: true,
+                defaultSelectedKeys: filterCol,
+                onSelect: handleMenuSelect,
+                onDeselect: handleMenuSelect,
+              }}
+            >
+              <Button>
+                <div className="flex items-center justify-center">
+                  <span className="pr-1">Custom Column</span>
+                  <CaretDownOutlined />
+                </div>
+              </Button>
+            </Dropdown>
+          </>
         )}
-
-        <Dropdown
-          menu={{
-            items,
-            selectable: true,
-            multiple: true,
-            defaultSelectedKeys: getStore(tableName).col,
-            onSelect: handleMenuSelect,
-            onDeselect: handleMenuSelect,
-          }}
-        >
-          <Button>
-            <div className="flex items-center justify-center">
-              <span className="pr-1">Custom Column</span>
-              <CaretDownOutlined />
-            </div>
-          </Button>
-        </Dropdown>
-
-        <Button onClick={() => removeAllFilter()}>Clear filters</Button>
+        {!noFilter && (
+          <Button onClick={() => removeAllFilter()}>Clear All Filters</Button>
+        )}{" "}
       </Flex>
     </Flex>
   );
@@ -194,6 +256,12 @@ const DataTable: React.FC<DataTableProps> = ({
       />
     </div>
   );
+
+  if (
+    colIsPending &&
+    (getPathname() === "/candidates" || getPathname() === "/clients")
+  )
+    return <Skeleton active />;
 
   return (
     <>

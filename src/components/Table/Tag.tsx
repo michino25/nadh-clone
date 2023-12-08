@@ -3,8 +3,10 @@ import {
   getSelectByValue,
   rawColumnsByTable,
 } from "_constants/index";
-import { Tag } from "antd";
+import { Skeleton, Tag } from "antd";
+import { otherApi } from "apis/index";
 import useFilter from "src/hooks/useFilter";
+import { useQuery } from "@tanstack/react-query";
 
 const pageCol = { title: "Page" };
 
@@ -39,9 +41,9 @@ const App = ({
     console.log(tag);
     if (type) {
       const colName = tag.replace(/_(from|to)$/, "");
-      removeOneFilter(colName + "_from", getAllParams());
-      removeOneFilter(colName + "_to", getAllParams());
-    } else removeOneFilter(tag, getAllParams());
+      removeOneFilter(getAllParams(), colName + "_from");
+      removeOneFilter(getAllParams(), colName + "_to");
+    } else removeOneFilter(getAllParams(), tag);
   };
 
   const tagName = (
@@ -68,7 +70,7 @@ const App = ({
     tableCol.map((item) => item.key)
   );
 
-  const multiSelectHander = (paramItem: string, tagName: string) => {
+  const multiSelectHandler = (paramItem: string, tagName: string) => {
     return paramItem
       .split(",")
       .map(
@@ -77,13 +79,97 @@ const App = ({
       .join(", ");
   };
 
-  const fromToHander = (tagName: string, nextTagName: string) => {
+  const fromToHandler = (tagName: string, nextTagName: string) => {
     const valueNext = nextTagName ? " to " + getAllParams()[nextTagName] : "";
     return (
       (tagName.match(/_(from)$/) ? "from " : "to ") +
       getAllParams()[tagName] +
       valueNext
     );
+  };
+
+  const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
+    queryKey: ["allindustry"],
+    queryFn: async () =>
+      await otherApi.getIndustry({ getAll: true }).then((res: any) =>
+        res.data.data.map((item: any) => ({
+          value: item.key,
+          label: item.label,
+          parent_id: item.parent_id,
+        }))
+      ),
+  });
+
+  const industryHandler = (paramItem: string) => {
+    if (paramItem) {
+      const data = [];
+      const init = parseInt(paramItem);
+
+      const option = allIndustryData.filter(
+        (item: any) => item.value === init
+      )[0];
+
+      data.push(option.label);
+
+      if (option.parent_id) {
+        const option2 = allIndustryData.filter(
+          (item: any) => item.value === option.parent_id
+        )[0];
+        data.push(option2.label);
+
+        if (option2.parent_id) {
+          const option3 = allIndustryData.filter(
+            (item: any) => item.value === option2.parent_id
+          )[0];
+          data.push(option3.label);
+        }
+      }
+
+      data.reverse();
+      return data.join(" / ");
+    }
+    return "";
+  };
+
+  const { isPending: cityIsPending, data: cityData } = useQuery({
+    queryKey: ["city"],
+    queryFn: async () =>
+      await otherApi.getLocation(1, "1280").then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.key.toString(),
+          label: item.label,
+        }))
+      ),
+  });
+
+  const { data: countryData, isPending: countryIsPending } = useQuery({
+    queryKey: ["country"],
+    queryFn: async () =>
+      await otherApi.getCountries().then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.key.toString(),
+          label: item.label,
+        }))
+      ),
+  });
+
+  const cityHandler = (paramItem: string) => {
+    const data = paramItem.split(",");
+    if (data[0]) {
+      if (data[0] === "1280") {
+        const city = data[1]
+          ? " / " +
+            cityData.filter((item: any) => item.value === data[1])[0].label
+          : "";
+        return "Viet Nam" + city;
+      } else {
+        const country = countryData.filter(
+          (item: any) => item.value === data[0]
+        )[0].label;
+        return country;
+      }
+    }
+    return "";
   };
 
   return (
@@ -109,7 +195,7 @@ const App = ({
               ) &&
               tagName(
                 col.title,
-                fromToHander(
+                fromToHandler(
                   tag,
                   index !== array.length - 1 ? array[index + 1] : ""
                 ),
@@ -130,9 +216,21 @@ const App = ({
               filterSelectData[tag] &&
               tagName(
                 col.title,
-                multiSelectHander(getAllParams()[tag], tag),
+                multiSelectHandler(getAllParams()[tag], tag),
                 tag
               )}
+            {col.type === "industry" &&
+              (!allIndustryIsPending ? (
+                tagName("Industry", industryHandler(getAllParams()[tag]), tag)
+              ) : (
+                <Skeleton active />
+              ))}
+            {col.type === "address" &&
+              (!(countryIsPending || cityIsPending) ? (
+                tagName("City", cityHandler(getAllParams()["city"]), "city")
+              ) : (
+                <Skeleton active />
+              ))}
           </span>
         );
       })}

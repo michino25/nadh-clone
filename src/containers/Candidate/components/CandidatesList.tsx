@@ -6,7 +6,13 @@ import { Skeleton } from "antd";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi } from "apis/index";
-import { candidateColumns, candidateTable } from "_constants/index";
+import {
+  candidateColumns,
+  candidateTable,
+  getSelectByValue,
+  getStatusDataByKey,
+  primaryStatus,
+} from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
 
@@ -46,10 +52,28 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
           return res.data.data.map((user: iCandidate) => ({
             ...user,
             full_name: formatName(user.full_name),
-            companies: user.current_employments.map(
+            priority_status: getSelectByValue(
+              primaryStatus,
+              user.priority_status.toString()
+            ).label,
+            language: user.languages.map((lang: any) => lang.label),
+            location:
+              user.addresses.length > 0 &&
+              Object.values(user.addresses[0]).map((location: any) =>
+                typeof location === "object" && location !== null
+                  ? location.label
+                  : ""
+              ),
+            highest_education: user.highest_education.label,
+
+            yob: user.dob ? user.dob.substring(0, 4) : "",
+            industry: user.business_line.map((item: any) => item.sector?.name),
+            flow_status: getStatusDataByKey(user.flow_status),
+
+            current_company: user.current_employments.map(
               (employment) => employment.organization.label
             ),
-            positions: user.current_employments.map(
+            current_position: user.current_employments.map(
               (employment) => employment.title.label
             ),
           }));

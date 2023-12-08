@@ -45,9 +45,15 @@ export interface iClient {
       time: string;
     };
   };
+  account_development: { status: number };
   type: number;
+  cpa: number;
   gender: number;
   district_id: null;
+  contact_person_current?: {
+    full_name: string;
+    extra: { contact_info: { title: string } };
+  }[];
   jobs_count: number;
   city_id: null;
   country_id: null;
