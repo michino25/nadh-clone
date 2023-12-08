@@ -59,7 +59,9 @@ const DataTable = ({
   noFilter,
 }: DataTableProps) => {
   const { getAllParams, removeAllFilter, getPathname } = useFilter();
-  let filterCol: string[] = [];
+  const [filterCol, setFilterCol] = useState(
+    rawColumnsByTable(tableName).map((column: any) => column.key)
+  );
 
   const getColumnSearchProps = (columnKey: string): ColumnType<DataType> => {
     const col = getColByKey(rawColumns, columnKey);
@@ -116,7 +118,7 @@ const DataTable = ({
   const changeCol = async (data: any) => {
     try {
       const res = await otherApi.changeCol(getPathname().slice(1), data);
-      filterCol = res.data.data;
+      setFilterCol(res.data.data);
     } catch (error: any) {
       console.error(error);
     }
@@ -147,31 +149,17 @@ const DataTable = ({
   });
 
   useEffect(() => {
-    switch (getPathname()) {
-      case "/candidates":
-        filterCol = !colIsPending
-          ? colData
-          : rawColumnsByTable(tableName).map((column: any) => column.key);
-        break;
-      case "/clients":
-        filterCol = !colIsPending
-          ? colData
-          : rawColumnsByTable(tableName).map((column: any) => column.key);
-        break;
-      case "/dashboard":
-        filterCol = rawColumnsByTable(tableName).map(
-          (column: any) => column.key
-        );
-        break;
+    if (getPathname() === "/candidates" || getPathname() === "/clients") {
+      setFilterCol(colData);
     }
   }, [colIsPending]);
 
-  console.log(colData);
+  console.log(filterCol);
 
   let columns: ColumnsType<DataType> = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns
-      .filter((column) => filterCol.includes(column.key))
+      .filter((column) => filterCol && filterCol.includes(column.key))
       .map((column) => ({
         ...column,
         dataIndex: column.key,
