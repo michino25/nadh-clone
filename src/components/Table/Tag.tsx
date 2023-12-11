@@ -181,6 +181,12 @@ const App = ({
             : getColByKey(tableCol, tag.replace(/_(from|to)$/, ""));
         console.log(col);
         console.log(tag);
+        console.log(col.type);
+
+        // console.log(
+        //   col.type === "select" &&
+        //     getSelectByValue(filterSelectData[tag], getAllParams()[tag])
+        // );
 
         return (
           <span key={tag} className="inline-block mb-6">
@@ -208,7 +214,7 @@ const App = ({
               tagName(
                 col.title,
                 getSelectByValue(filterSelectData[tag], getAllParams()[tag])
-                  .label,
+                  ?.label,
                 tag
               )}
             {/* multi select input */}

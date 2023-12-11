@@ -141,14 +141,17 @@ export const candidateColumns = [
   {
     title: "City",
     key: "location",
+    type: "address",
   },
   {
     title: "Industry",
     key: "industry",
+    type: "industry",
   },
   {
     title: "YOB",
     key: "yob",
+    type: "number",
   },
   {
     title: "Activity",
@@ -165,10 +168,12 @@ export const candidateColumns = [
   {
     title: "Year of services",
     key: "industry_years",
+    type: "number",
   },
   {
     title: "Year of management",
     key: "management_years",
+    type: "number",
   },
 ];
 
@@ -184,10 +189,12 @@ export const clientColumns = [
   {
     title: "City",
     key: "location",
+    // type: "address",
   },
   {
     title: "Lead Consultant",
     key: "lead_consultants",
+    type: "multiple_select",
   },
   {
     title: "Activity",
@@ -204,14 +211,17 @@ export const clientColumns = [
   {
     title: "Industry",
     key: "industry",
+    type: "industry",
   },
   {
     title: "Job(s)",
     key: "client_jobs",
+    type: "number",
   },
   {
     title: "Type",
     key: "type",
+    type: "select",
   },
   {
     title: "Status",
@@ -228,10 +238,12 @@ export const clientColumns = [
   {
     title: "Updated by",
     key: "update_last_by",
+    type: "select",
   },
   {
     title: "Updated on",
     key: "updated_on",
+    type: "date",
   },
 ];
 

@@ -63,7 +63,7 @@ export default function DashboardUserList() {
         }),
   });
 
-  const { data: roleData } = useQuery({
+  const { data: roleData, isPending: rolePending } = useQuery({
     queryKey: ["Role"],
     queryFn: async () =>
       otherApi.getRoles().then((res) =>
@@ -84,7 +84,7 @@ export default function DashboardUserList() {
 
   console.log(filterSelectData.type);
 
-  if (isPending) return <Skeleton active />;
+  if (isPending && rolePending) return <Skeleton active />;
 
   if (error) return <p>An error has occurred: {error.message}</p>;
 

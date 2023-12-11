@@ -100,15 +100,27 @@ const DataTable = ({
             {col.type === "date" && <SearchDate columnKey={columnKey} />}
           </>
         ),
-        filterIcon: () => (
-          <SearchOutlined
-            style={{
-              color: Object.keys(getAllParams()).includes(columnKey)
-                ? "#1677ff"
-                : undefined,
-            }}
-          />
-        ),
+        filterIcon: () => {
+          console.log(columnKey.replace(/_(from|to)$/, ""));
+          console.log(Object.keys(getAllParams()));
+          console.log(
+            Object.keys(getAllParams()).includes(
+              columnKey.replace(/_(from|to)$/, "")
+            )
+          );
+
+          return (
+            <SearchOutlined
+              style={{
+                color: Object.keys(getAllParams()).includes(
+                  columnKey.replace(/_(from|to)$/, "")
+                )
+                  ? "#1677ff"
+                  : undefined,
+              }}
+            />
+          );
+        },
       };
     else return {};
   };
