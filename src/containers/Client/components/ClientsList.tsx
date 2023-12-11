@@ -15,6 +15,7 @@ import {
   getSelectByValue,
   getStatusDataByKey,
   primaryStatus2,
+  statusData2,
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
@@ -84,9 +85,10 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
 
             client_jobs: client.jobs_count,
             industry: client.business_line.map((item) => item.sector?.name),
-            type: getSelectByValue(clientType, client.type).label,
-            status: getSelectByValue(primaryStatus2, client.status).label,
-            cpa: getSelectByValue(cpa, client.cpa).label,
+            type: getSelectByValue(clientType, client.type.toString()).label,
+            status: getSelectByValue(primaryStatus2, client.status.toString())
+              .label,
+            cpa: getSelectByValue(cpa, client.cpa.toString()).label,
             contact_person_name:
               client.contact_person_current &&
               client.contact_person_current[0] &&
@@ -133,6 +135,10 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const filterSelectData = {
     update_last_by: userData,
     lead_consultants: userData,
+    cpa: cpa,
+    type: clientType,
+    account_status: statusData2,
+    status: primaryStatus2,
   };
 
   if (isPending) return <Skeleton active />;

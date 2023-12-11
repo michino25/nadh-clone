@@ -101,22 +101,45 @@ const DataTable = ({
           </>
         ),
         filterIcon: () => {
-          console.log(columnKey.replace(/_(from|to)$/, ""));
-          console.log(Object.keys(getAllParams()));
+          // console.log(columnKey.replace(/_(from|to)$/, ""));
+          // console.log(Object.keys(getAllParams()));
+          // console.log(
+          //   Object.keys(getAllParams()).includes(
+          //     columnKey.replace(/_(from|to)$/, "")
+          //   )
+          // );
+
+          // console.log(
+          //   Object.keys(getAllParams()).includes(
+          //     getColByParam(
+          //       rawColumnsByTable(tableName),
+          //       columnKey.replace(/_(from|to)$/, "")
+          //     ).key
+          //   )
+          // );
           console.log(
-            Object.keys(getAllParams()).includes(
+            getColByKey(
+              rawColumnsByTable(tableName),
               columnKey.replace(/_(from|to)$/, "")
             )
+          );
+
+          console.log(columnKey);
+          console.log(
+            Object.keys(getAllParams()).filter(
+              (item) => item.replace(/_(from|to)$/, "") === columnKey
+            ).length
           );
 
           return (
             <SearchOutlined
               style={{
-                color: Object.keys(getAllParams()).includes(
-                  columnKey.replace(/_(from|to)$/, "")
-                )
-                  ? "#1677ff"
-                  : undefined,
+                color:
+                  Object.keys(getAllParams()).filter(
+                    (item) => item.replace(/_(from|to)$/, "") === columnKey
+                  ).length > 0
+                    ? "#1677ff"
+                    : undefined,
               }}
             />
           );

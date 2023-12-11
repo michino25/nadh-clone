@@ -11,7 +11,9 @@ import {
   candidateTable,
   getSelectByValue,
   getStatusDataByKey,
+  highest_education,
   primaryStatus,
+  statusData2,
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
@@ -37,13 +39,21 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
+  const allParams = getAllParams()["city"]
+    ? getAllParams()["city"].split(",").length > 0 && {
+        ...getAllParams(),
+        country: getAllParams()["city"].split(",")[0],
+        city: getAllParams()["city"].split(",")[1],
+      }
+    : getAllParams();
+
   const { data, isPending } = useQuery({
     queryKey: ["Candidates", window.location.href],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
           perPage: pageSize,
-          ...getAllParams(),
+          ...allParams,
           creator_id: userDetail?.id,
         })
         .then((res) => {
@@ -93,13 +103,21 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     title: "Create Candidate",
   };
 
+  const filterSelectData = {
+    flow_status: statusData2,
+    highest_education: highest_education,
+
+    priority_status: primaryStatus,
+  };
+
   if (isPending) return <Skeleton active />;
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={candidateTable} />
+      <Tag tableName={candidateTable} filterSelectData={filterSelectData} />
       <DataTable
         titleTable={`Candidates List`}
+        filterSelectData={filterSelectData}
         tableName={candidateTable}
         data={data}
         createBtn={createBtn}

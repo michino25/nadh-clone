@@ -1,5 +1,5 @@
 import {
-  getColByKey,
+  getColByParam,
   getSelectByValue,
   rawColumnsByTable,
 } from "_constants/index";
@@ -178,7 +178,7 @@ const App = ({
         const col =
           tag === "page"
             ? pageCol
-            : getColByKey(tableCol, tag.replace(/_(from|to)$/, ""));
+            : getColByParam(tableCol, tag.replace(/_(from|to)$/, ""));
         console.log(col);
         console.log(tag);
         console.log(col.type);
@@ -214,7 +214,7 @@ const App = ({
               tagName(
                 col.title,
                 getSelectByValue(filterSelectData[tag], getAllParams()[tag])
-                  ?.label,
+                  .label,
                 tag
               )}
             {/* multi select input */}

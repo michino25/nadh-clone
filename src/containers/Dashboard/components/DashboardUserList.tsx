@@ -6,8 +6,8 @@ import Tag from "components/Table/Tag";
 import { formatDate, formatName } from "utils/format";
 import { Skeleton } from "antd";
 import { iUser } from "utils/models";
-import { otherApi, userApi } from "apis/index";
-import { userColumns, userTable } from "_constants/index";
+import { userApi } from "apis/index";
+import { roleData, userColumns, userTable } from "_constants/index";
 import useFilter from "src/hooks/useFilter";
 
 export default function DashboardUserList() {
@@ -63,17 +63,6 @@ export default function DashboardUserList() {
         }),
   });
 
-  const { data: roleData, isPending: rolePending } = useQuery({
-    queryKey: ["Role"],
-    queryFn: async () =>
-      otherApi.getRoles().then((res) =>
-        res.data.data.map((item: any) => ({
-          value: item.id,
-          label: item.name,
-        }))
-      ),
-  });
-
   const filterSelectData = {
     type: roleData,
     status: [
@@ -84,7 +73,7 @@ export default function DashboardUserList() {
 
   console.log(filterSelectData.type);
 
-  if (isPending && rolePending) return <Skeleton active />;
+  if (isPending) return <Skeleton active />;
 
   if (error) return <p>An error has occurred: {error.message}</p>;
 
