@@ -139,7 +139,8 @@ const DataTable = ({
     setRender(!render);
   };
 
-  const items = rawColumns.map((column: any) => ({
+  const items = rawColumns.map((column: any, index: number) => ({
+    disabled: index === 0 || index === 1,
     key: column.key,
     label: column.title,
   }));
@@ -212,7 +213,14 @@ const DataTable = ({
             <Button onClick={createBtn.handler}>{createBtn.title}</Button>
             <Dropdown
               menu={{
-                items,
+                items: [
+                  ...items,
+                  {
+                    disabled: true,
+                    key: "action",
+                    label: "Action",
+                  },
+                ],
                 selectable: true,
                 multiple: true,
                 defaultSelectedKeys: filterCol,
