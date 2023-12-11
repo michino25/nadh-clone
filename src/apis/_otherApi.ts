@@ -62,6 +62,11 @@ const _otherApi = {
     const url = "api/user_pages";
     return axios().put(url, { data: col, key_page: page });
   },
+
+  getOneProperty() {
+    const url = "api/properties/default";
+    return axios().get(url);
+  },
 };
 
 export default _otherApi;

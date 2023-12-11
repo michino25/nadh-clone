@@ -15,6 +15,9 @@ interface iDataInput {
   disabled?: boolean;
 }
 
+const filterOption = (input: string, option?: iOption) =>
+  (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
 const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
   const [cities, setCities] = useState<iOption[]>([]);
   const [district, setDistrict] = useState<iOption[]>([]);
@@ -135,6 +138,8 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                     >
                       <Select
                         allowClear
+                        showSearch
+                        filterOption={filterOption}
                         placeholder="Country"
                         onChange={handleChangeCountry}
                         options={countries}
@@ -153,8 +158,11 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                     >
                       <Select
                         allowClear
+                        showSearch
+                        filterOption={filterOption}
                         options={cities}
                         onChange={handleChangeCity}
+                        disabled={!cities || cities.length === 0}
                         placeholder="City"
                       />
                     </Form.Item>
@@ -171,7 +179,10 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                     >
                       <Select
                         allowClear
+                        showSearch
+                        filterOption={filterOption}
                         options={district}
+                        disabled={!district || district.length === 0}
                         placeholder="District"
                       />
                     </Form.Item>

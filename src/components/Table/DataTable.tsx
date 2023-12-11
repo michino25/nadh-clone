@@ -101,13 +101,6 @@ const DataTable = ({
           </>
         ),
         filterIcon: () => {
-          console.log(columnKey);
-          console.log(
-            Object.keys(getAllParams()).filter(
-              (item) => item.replace(/_(from|to)$/, "") === columnKey
-            ).length
-          );
-
           return (
             <SearchOutlined
               style={{

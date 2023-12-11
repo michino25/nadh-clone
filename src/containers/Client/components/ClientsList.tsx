@@ -122,7 +122,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   };
 
   const { data: userData } = useQuery({
-    queryKey: ["Role"],
+    queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
         res.data.data.map((item: any) => ({

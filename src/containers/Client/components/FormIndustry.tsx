@@ -8,9 +8,11 @@ import Industry from "components/DataEntry/Industry";
 interface iDataInput {
   value: any;
   setValue: (value: any) => void;
+  create?: boolean;
+  saveClick?: () => void;
 }
 
-const App = ({ value, setValue }: iDataInput) => {
+const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
   const [industry, setIndustry] = useState<iOption>();
   const [sector, setSector] = useState<iOption>();
   const [category, setCategory] = useState<iOption>();
@@ -49,13 +51,17 @@ const App = ({ value, setValue }: iDataInput) => {
           </div>
 
           <div className="flex justify-end pb-4">
-            <Button disabled={!industry} onClick={saveData} type="primary">
+            <Button
+              disabled={!industry}
+              onClick={create ? saveData : saveClick}
+              type="primary"
+            >
               Save Industry
             </Button>
           </div>
         </div>
       </Form.Item>
-      {value.length > 0 && (
+      {create && value.length > 0 && (
         <IndustryTable data={value} deleteItem={deleteItem} />
       )}
     </>

@@ -60,6 +60,19 @@ export const roleData = [
   { label: "Partner", value: "8" },
 ];
 
+export const languageData = [
+  { label: "Arabic", value: 830 },
+  { label: "Benga", value: 832 },
+  { label: "Cantonese", value: 848 },
+  { label: "duonganh", value: 1032 },
+  { label: "English", value: 828 },
+  { label: "French", value: 842 },
+  { label: "German", value: 836 },
+  { label: "Gujarati", value: 851 },
+  { label: "Hindi", value: 829 },
+  { label: "Italian", value: 849 },
+];
+
 export const getStatusDataByKey = (key: number): string | undefined => {
   const statusObject = statusData.find((status) =>
     Object.keys(status).includes(key.toString())
@@ -187,6 +200,7 @@ export const candidateColumns = [
     title: "Languages",
     key: "language",
     search: "language",
+    type: "multiple_select",
   },
   {
     title: "Highest degree",

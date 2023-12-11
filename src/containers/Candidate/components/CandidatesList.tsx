@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Skeleton } from "antd";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
-import { candidateApi } from "apis/index";
+import { candidateApi, otherApi } from "apis/index";
 import {
   candidateColumns,
   candidateTable,
@@ -103,10 +103,27 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     title: "Create Candidate",
   };
 
+  const { data: langData, isPending: langPending } = useQuery({
+    queryKey: ["langData"],
+    queryFn: async () =>
+      otherApi
+        .getOneProperty()
+        .then((res) =>
+          res.data
+            .filter((item: any) => item.name === "language")[0]
+            .values.map((item: any) => ({
+              label: item.label,
+              value: item.key.toString(),
+            }))
+        ),
+  });
+
+  // console.log(langData);
+
   const filterSelectData = {
     flow_status: statusData2,
     highest_education: highest_education,
-
+    language: langData,
     priority_status: primaryStatus,
   };
 
@@ -114,7 +131,9 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={candidateTable} filterSelectData={filterSelectData} />
+      {!langPending && (
+        <Tag tableName={candidateTable} filterSelectData={filterSelectData} />
+      )}
       <DataTable
         titleTable={`Candidates List`}
         filterSelectData={filterSelectData}

@@ -29,3 +29,24 @@ input[type="text"]:focus {
 .ant-btn-primary {
   background-color: #1677ff;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #dbdbdb;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #9b9b9b;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #636363;
+}

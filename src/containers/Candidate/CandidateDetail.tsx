@@ -31,11 +31,13 @@ import DataInputNumber from "components/DataEntry/InputNumber";
 import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { candidateApi, otherApi } from "apis/index";
 import { getUser } from "utils/getUser";
+import FormIndustry from "containers/Client/components/FormIndustry";
 
 export default function Candidates() {
   const { id } = useParams();
 
   const [value, setValue] = useState<string[]>([]);
+  const [industry, setIndustry] = useState<any[]>([]);
 
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
@@ -177,8 +179,11 @@ export default function Candidates() {
   };
 
   const [showBtn, setShowBtn] = useState(false);
-  const showSave = () => {
-    setShowBtn(true);
+  const [showOverviewSave, setShowOverviewSave] = useState(false);
+
+  const onFinishOverview = (values: any) => {
+    updateMutation.mutate(values);
+    console.log("Received values of form: ", value);
   };
 
   console.log(candidateData?.business_line);
@@ -241,10 +246,26 @@ export default function Candidates() {
           <div className="flex-col w-2/3 space-y-4">
             <div id="part-1" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Overview</p>
-              <TextArea
-                label=""
-                defaultValue={candidateData.overview_text_new}
-              />
+              <Form
+                layout="vertical"
+                className="w-full"
+                onFinish={onFinishOverview}
+                onValuesChange={() => setShowOverviewSave(true)}
+              >
+                <TextArea
+                  name="overview_text_new"
+                  label=""
+                  placeholder="Overview"
+                  defaultValue={candidateData.overview_text_new}
+                />
+                {showOverviewSave && (
+                  <Form.Item className="flex justify-end space-x-2">
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                  </Form.Item>
+                )}
+              </Form>
             </div>
             <div id="part-2" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
@@ -253,7 +274,7 @@ export default function Candidates() {
                 layout="vertical"
                 className="w-full"
                 onFinish={onFinish}
-                onValuesChange={showSave}
+                onValuesChange={() => setShowBtn(true)}
               >
                 <Row gutter={16}>
                   <Col span={12}>
@@ -459,6 +480,12 @@ export default function Candidates() {
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
+              <FormIndustry
+                value={industry}
+                setValue={setIndustry}
+                create={false}
+                saveClick={() => console.log(industry)}
+              />
               <Table
                 deleteItem={() => {}}
                 data={candidateData?.business_line}

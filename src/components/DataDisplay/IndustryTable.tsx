@@ -1,4 +1,4 @@
-import { Button, Table } from "antd";
+import { Button, Table, Checkbox } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -18,6 +18,12 @@ export default function IndustryTable({
   deleteItem: (id: string) => void;
 }) {
   const columns: ColumnsType<DataType> = [
+    {
+      title: "Primary",
+      key: "id",
+      dataIndex: "id",
+      render: (id: string) => <Checkbox onChange={() => console.log(id)} />,
+    },
     {
       title: "Industry",
       dataIndex: "industry",
@@ -58,7 +64,6 @@ export default function IndustryTable({
     bordered: false,
     loading: false,
     size: "middle",
-    rowSelection: {},
     scroll: undefined,
     tableLayout: undefined,
   };
@@ -67,7 +72,7 @@ export default function IndustryTable({
     <>
       <Table
         {...tableProps}
-        pagination={{ position: ["none", "bottomRight"] }}
+        pagination={{ position: ["none", "bottomRight"], defaultPageSize: 5 }}
         scroll={{ x: true }}
         columns={tableColumns}
         dataSource={dataShow}

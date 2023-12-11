@@ -1,23 +1,41 @@
 import { Form, Input } from "antd";
 
 interface iDataInput {
-  label: string;
-  defaultValue?: string;
-  placeholder?: string;
+  label?: string;
+  name: string;
+  type?: string | undefined;
+  placeholder: string;
+  required?: boolean;
+  defaultValue?: string | number;
+  disabled?: boolean;
 }
 
 export default function TextArea({
   label,
-  placeholder,
+  name,
+  required,
   defaultValue,
+  type,
+  placeholder,
+  disabled,
 }: iDataInput) {
   return (
-    <Form.Item label={label} initialValue={defaultValue}>
-      <Input.TextArea
-        rows={4}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-      />
+    <Form.Item
+      label={label}
+      name={name}
+      initialValue={defaultValue}
+      rules={[
+        {
+          type: type as any,
+          message: `The input is not valid ${label}!`,
+        },
+        {
+          required: required,
+          message: label ? `Please input your ${label}!` : "Missing this field",
+        },
+      ]}
+    >
+      <Input.TextArea rows={4} placeholder={placeholder} disabled={disabled} />
     </Form.Item>
   );
 }
