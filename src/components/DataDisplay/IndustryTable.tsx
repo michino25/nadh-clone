@@ -20,9 +20,16 @@ export default function IndustryTable({
   const columns: ColumnsType<DataType> = [
     {
       title: "Primary",
-      key: "id",
-      dataIndex: "id",
-      render: (id: string) => <Checkbox onChange={() => console.log(id)} />,
+      key: "primary",
+      dataIndex: "primary",
+      render: (primary: any) => {
+        return (
+          <Checkbox
+            checked={primary === 1}
+            onChange={() => console.log(primary, "hello")}
+          />
+        );
+      },
     },
     {
       title: "Industry",
@@ -41,7 +48,13 @@ export default function IndustryTable({
       key: "id",
       dataIndex: "id",
       render: (id: string) => (
-        <Button type="text" onClick={() => deleteItem(id)}>
+        <Button
+          type="text"
+          onClick={() => {
+            deleteItem(id);
+            console.log("hello");
+          }}
+        >
           <DeleteOutlined />
         </Button>
       ),
@@ -53,6 +66,7 @@ export default function IndustryTable({
     data.map((item: any, value: any) => ({
       key: value,
       id: item.id,
+      primary: item.primary,
       industry: item.industry?.label,
       sector: item.sector?.label,
       category: item.category?.label,

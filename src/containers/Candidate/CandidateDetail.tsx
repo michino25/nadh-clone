@@ -3,7 +3,7 @@ import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
-import Table from "components/DataDisplay/IndustryTable";
+import IndustryTable from "components/DataDisplay/IndustryTable";
 import Image from "components/DataDisplay/Image";
 
 import {
@@ -32,6 +32,9 @@ import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { candidateApi, otherApi } from "apis/index";
 import { getUser } from "utils/getUser";
 import FormIndustry from "containers/Client/components/FormIndustry";
+import WorkingHistory from "./components/WorkingHistory";
+import Academic from "./components/Academic";
+import Certificate from "./components/Certificate";
 
 export default function Candidates() {
   const { id } = useParams();
@@ -486,12 +489,26 @@ export default function Candidates() {
                 create={false}
                 saveClick={() => console.log(industry)}
               />
-              <Table
+              <IndustryTable
                 deleteItem={() => {}}
                 data={candidateData?.business_line}
               />
             </div>
             <div id="part-4" className="p-4 bg-white rounded-lg">
+              <p className="mb-4 font-bold text-lg">Education</p>
+              <Academic data={candidateData?.histories} />
+              <span className="p-1"></span>
+              <Certificate data={candidateData?.histories} />
+            </div>
+            <div id="part-5" className="p-4 bg-white rounded-lg">
+              <p className="mb-4 font-bold text-lg">Working History</p>
+              <WorkingHistory data={candidateData?.histories} />
+            </div>
+            <div id="part-6" className="p-4 bg-white rounded-lg">
+              <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>
+              {/* <CkEditor /> */}
+            </div>
+            <div id="part-7" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>
               <div className="flex space-x-2">
                 {candidateImage?.length > 0 &&
