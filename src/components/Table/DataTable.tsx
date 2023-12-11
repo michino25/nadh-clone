@@ -101,29 +101,6 @@ const DataTable = ({
           </>
         ),
         filterIcon: () => {
-          // console.log(columnKey.replace(/_(from|to)$/, ""));
-          // console.log(Object.keys(getAllParams()));
-          // console.log(
-          //   Object.keys(getAllParams()).includes(
-          //     columnKey.replace(/_(from|to)$/, "")
-          //   )
-          // );
-
-          // console.log(
-          //   Object.keys(getAllParams()).includes(
-          //     getColByParam(
-          //       rawColumnsByTable(tableName),
-          //       columnKey.replace(/_(from|to)$/, "")
-          //     ).key
-          //   )
-          // );
-          console.log(
-            getColByKey(
-              rawColumnsByTable(tableName),
-              columnKey.replace(/_(from|to)$/, "")
-            )
-          );
-
           console.log(columnKey);
           console.log(
             Object.keys(getAllParams()).filter(

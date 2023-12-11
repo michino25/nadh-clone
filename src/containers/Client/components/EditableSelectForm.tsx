@@ -40,7 +40,13 @@ export default function EditableForm({
           className="w-[500px]"
         >
           <Col span={12}>
-            <DataSelect label="" name={name} defaultValue={value} data={data} />
+            <DataSelect
+              placeholder=""
+              label=""
+              name={name}
+              defaultValue={value}
+              data={data}
+            />
           </Col>
 
           <Form.Item>

@@ -169,6 +169,7 @@ export default function UserInfo() {
             <DataSelect
               label="Role"
               name="type"
+              placeholder="Role"
               required={true}
               defaultValue={data.role.id}
               data={roleData}

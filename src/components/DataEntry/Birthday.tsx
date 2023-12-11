@@ -44,7 +44,24 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
     <Form.Item className="mb-0" label={label ? label : "Birthday"}>
       <Row gutter={16}>
         <Col span={8}>
-          <Form.Item name={["birthday", "day"]} initialValue={day}>
+          <Form.Item
+            name={["birthday", "day"]}
+            initialValue={day}
+            dependencies={["birthday", "month"]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    (!value && !getFieldValue(["birthday", "month"])) ||
+                    (value && getFieldValue(["birthday", "month"]))
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Phải nhập đủ các mục!"));
+                },
+              }),
+            ]}
+          >
             <Select
               placeholder="Day"
               showSearch
@@ -55,7 +72,24 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={["birthday", "month"]} initialValue={month}>
+          <Form.Item
+            name={["birthday", "month"]}
+            initialValue={month}
+            dependencies={["birthday", "day"]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    (!value && !getFieldValue(["birthday", "day"])) ||
+                    (value && getFieldValue(["birthday", "day"]))
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Phải nhập đủ các mục!"));
+                },
+              }),
+            ]}
+          >
             <Select
               placeholder="Month"
               showSearch

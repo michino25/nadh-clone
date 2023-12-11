@@ -1,7 +1,7 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Select, Button, Form, Input, Skeleton } from "antd";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { otherApi } from "apis/index";
 import type { iOption } from "_constants/index";
 
@@ -19,8 +19,25 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
   const [cities, setCities] = useState<iOption[]>([]);
   const [district, setDistrict] = useState<iOption[]>([]);
 
+  const getInit = async () => {
+    console.log(defaultValue);
+
+    defaultValue.forEach((item: any) => {
+      if (item.country) {
+        getCity(item.country.split("_")[0]);
+      }
+      if (item.city) getDistrict(item.city.split("_")[0]);
+    });
+  };
+
+  useEffect(() => {
+    if (defaultValue[0] !== "") {
+      getInit();
+    }
+  }, []);
+
   const { data: countries, isPending } = useQuery({
-    queryKey: ["countries"],
+    queryKey: ["countries", "address"],
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
         res.data.data.map((item: any) => ({
@@ -117,6 +134,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                       ]}
                     >
                       <Select
+                        allowClear
                         placeholder="Country"
                         onChange={handleChangeCountry}
                         options={countries}
@@ -134,6 +152,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                       ]}
                     >
                       <Select
+                        allowClear
                         options={cities}
                         onChange={handleChangeCity}
                         placeholder="City"
@@ -150,7 +169,11 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                         },
                       ]}
                     >
-                      <Select options={district} placeholder="District" />
+                      <Select
+                        allowClear
+                        options={district}
+                        placeholder="District"
+                      />
                     </Form.Item>
                   </div>
 
