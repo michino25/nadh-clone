@@ -89,6 +89,16 @@ export const cpa = [
   { label: "Lost", value: "5" },
 ];
 
+export const years: any = [];
+for (let year = 1960; year <= 2023; year++) {
+  years.push({ label: year.toString(), value: year.toString() });
+}
+
+export const months: any = [];
+for (let month = 1; month <= 12; month++) {
+  months.push({ label: month.toString(), value: month.toString() });
+}
+
 export const clientType = [
   { label: "Type A", value: "1" },
   { label: "Type B", value: "2" },
@@ -96,6 +106,11 @@ export const clientType = [
   { label: "Type D", value: "4" },
   { label: "Type T", value: "5" },
   { label: "Type L", value: "6" },
+];
+
+export const YNquestion = [
+  { label: "Yes", value: "1" },
+  { label: "No", value: "-1" },
 ];
 
 export const gender = ["Male", "Female", "Complicated"];

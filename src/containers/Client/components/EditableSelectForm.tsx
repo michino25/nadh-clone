@@ -18,6 +18,8 @@ export default function EditableForm({
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
   const showData = data.filter((item) => item.value === value)[0];
+  console.log(showData);
+
   // const transData = data.map((item) => ({
   //   ...item,
   //   value: JSON.stringify(item),

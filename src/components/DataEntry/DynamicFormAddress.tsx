@@ -120,11 +120,8 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name }) => (
-              <div className="flex space-x-4">
-                <div
-                  key={key}
-                  className="flex-col w-full justify-between items-center"
-                >
+              <div className="flex space-x-4" key={key}>
+                <div className="flex-col w-full justify-between items-center">
                   <div className="flex w-full space-x-3">
                     <Form.Item
                       name={[name, "country"]}

@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import Image from "components/DataDisplay/Image";
@@ -35,12 +36,68 @@ import FormIndustry from "containers/Client/components/FormIndustry";
 import WorkingHistory from "./components/WorkingHistory";
 import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
+import Remuneration from "./components/Remuneration";
 
 export default function Candidates() {
   const { id } = useParams();
 
   const [value, setValue] = useState<string[]>([]);
-  const [industry, setIndustry] = useState<any[]>([]);
+
+  const addIndustry = (data: any) => {
+    const newData: any = {};
+    if (data.industry) newData.industry_id = data.industry.value;
+    if (data.sector) newData.sector_id = data.sector.value;
+    if (data.category) newData.category_id = data.category.value;
+    newData.primary = -1;
+
+    const transformedData = candidateData?.business_line.map((item: any) => {
+      const transformedItem: any = {
+        industry_id: item.industry.id,
+        primary: item.primary,
+      };
+
+      if (item.sector) transformedItem.sector_id = item.sector.id;
+      if (item.category) transformedItem.category_id = item.category.id;
+
+      return transformedItem;
+    });
+
+    updateMutation.mutate({ business_line: [...transformedData, newData] });
+  };
+
+  const deleteIndustry = (id: string) => {
+    const transformedData = candidateData?.business_line
+      .filter((item: any) => item.id !== id)
+      .map((item: any) => {
+        const transformedItem: any = {
+          industry_id: item.industry.id,
+          primary: item.primary,
+        };
+
+        if (item.sector) transformedItem.sector_id = item.sector.id;
+        if (item.category) transformedItem.category_id = item.category.id;
+
+        return transformedItem;
+      });
+
+    updateMutation.mutate({ business_line: transformedData });
+  };
+
+  const primaryIndustry = (id: string) => {
+    const transformedData = candidateData?.business_line.map((item: any) => {
+      const transformedItem: any = {
+        industry_id: item.industry.id,
+        primary: item.id === id ? item.primary * -1 : item.primary,
+      };
+
+      if (item.sector) transformedItem.sector_id = item.sector.id;
+      if (item.category) transformedItem.category_id = item.category.id;
+
+      return transformedItem;
+    });
+
+    updateMutation.mutate({ business_line: transformedData });
+  };
 
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
@@ -64,7 +121,11 @@ export default function Candidates() {
       }),
   });
 
-  const { data: candidateData, isPending } = useQuery({
+  const {
+    data: candidateData,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["candidate", id],
     queryFn: async () =>
       await candidateApi.getOneCandidate(id as string).then((res) => {
@@ -82,6 +143,10 @@ export default function Candidates() {
             district: addressItem.district
               ? addressItem.district.key + "_" + addressItem.district.label
               : null,
+          })),
+          business_line: res.data.business_line.map((item: any) => ({
+            ...item,
+            id: uuidv4(),
           })),
         };
       }),
@@ -108,6 +173,7 @@ export default function Candidates() {
         message: "Update Candidate",
         description: "Update success.",
       });
+      refetch();
     } catch (error: any) {
       // error
       // console.error("Update failed", error);
@@ -238,6 +304,21 @@ export default function Candidates() {
             {
               key: "part-3",
               href: "#part-3",
+              title: "Education",
+            },
+            {
+              key: "part-4",
+              href: "#part-4",
+              title: "Working History",
+            },
+            {
+              key: "part-5",
+              href: "#part-5",
+              title: "Remuneration And Rewards",
+            },
+            {
+              key: "part-6",
+              href: "#part-6",
               title: "Attachments",
             },
           ]}
@@ -483,14 +564,10 @@ export default function Candidates() {
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-              <FormIndustry
-                value={industry}
-                setValue={setIndustry}
-                create={false}
-                saveClick={() => console.log(industry)}
-              />
+              <FormIndustry saveData={addIndustry} />
               <IndustryTable
-                deleteItem={() => {}}
+                deleteItem={deleteIndustry}
+                primaryItem={primaryIndustry}
                 data={candidateData?.business_line}
               />
             </div>
@@ -506,7 +583,7 @@ export default function Candidates() {
             </div>
             <div id="part-6" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>
-              {/* <CkEditor /> */}
+              <Remuneration data={candidateData?.remuneration} />
             </div>
             <div id="part-7" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>

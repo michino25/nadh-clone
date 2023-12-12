@@ -1,42 +1,20 @@
 import { Button, Form } from "antd";
 import { useState } from "react";
 import type { iOption } from "_constants/index";
-import IndustryTable from "components/DataDisplay/IndustryTable";
 import { v4 as uuidv4 } from "uuid";
 import Industry from "components/DataEntry/Industry";
 
 interface iDataInput {
-  value: any;
-  setValue: (value: any) => void;
-  create?: boolean;
-  saveClick?: () => void;
+  saveData: (data: any) => void;
 }
 
-const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
+const App = ({ saveData }: iDataInput) => {
   const [industry, setIndustry] = useState<iOption>();
   const [sector, setSector] = useState<iOption>();
   const [category, setCategory] = useState<iOption>();
 
   const [sectorData, setSectorData] = useState<iOption[]>();
   const [categoryData, setCategoryData] = useState<iOption[]>();
-
-  const saveData = () => {
-    setValue([
-      ...value,
-      {
-        id: uuidv4(),
-        industry,
-        sector,
-        category,
-      },
-    ]);
-  };
-
-  // console.log(value);
-
-  const deleteItem = (id: string) => {
-    setValue(value.filter((item: any) => item.id !== id));
-  };
 
   return (
     <>
@@ -59,8 +37,15 @@ const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
 
           <div className="flex justify-end pb-4">
             <Button
-              disabled={!industry}
-              onClick={create ? saveData : saveClick}
+              hidden={!industry}
+              onClick={() =>
+                saveData({
+                  id: uuidv4(),
+                  industry,
+                  sector,
+                  category,
+                })
+              }
               type="primary"
             >
               Save Industry
@@ -68,9 +53,6 @@ const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
           </div>
         </div>
       </Form.Item>
-      {create && value.length > 0 && (
-        <IndustryTable data={value} deleteItem={deleteItem} />
-      )}
     </>
   );
 };

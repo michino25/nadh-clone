@@ -15,12 +15,13 @@ import { formatDate, formatName } from "utils/format";
 import FormIndustry from "./components/FormIndustry";
 import { useState } from "react";
 import ContactPerson from "./components/ContactPerson";
+import IndustryTable from "components/DataDisplay/IndustryTable";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
 
 export default function Candidates() {
   const { id } = useParams();
-  const [value, setValue] = useState();
+  const [value, setValue] = useState<any[]>();
   const {
     data: clientData,
     isPending,
@@ -81,6 +82,10 @@ export default function Candidates() {
 
     updateMutation.mutate(values);
     console.log("Received values of form: ", values);
+  };
+
+  const deleteItem = (id: string) => {
+    if (value) setValue(value.filter((item: any) => item.id !== id));
   };
 
   if (isPending || !id) return <Skeleton active />;
@@ -168,7 +173,7 @@ export default function Candidates() {
                 <Descriptions.Item label="Status">
                   <EditableSelectForm
                     name="status"
-                    value={clientData.status}
+                    value={clientData.status.toString()}
                     data={primaryStatus2}
                     onSubmit={onFinishSelect}
                   />
@@ -197,7 +202,7 @@ export default function Candidates() {
                 <Descriptions.Item label="Client Type">
                   <EditableSelectForm
                     name="type"
-                    value={clientData.type}
+                    value={clientData.type.toString()}
                     data={clientType}
                     onSubmit={onFinishSelect}
                   />
@@ -205,7 +210,7 @@ export default function Candidates() {
                 <Descriptions.Item label="CPA">
                   <EditableSelectForm
                     name="cpa"
-                    value={clientData.cpa}
+                    value={clientData.cpa.toString()}
                     data={cpa}
                     onSubmit={onFinishSelect}
                   />
@@ -230,7 +235,10 @@ export default function Candidates() {
             <div className="w-2/3">
               <div className="bg-white rounded-lg p-6 mb-5">
                 <p className="mb-4 font-bold text-lg">Industry</p>
-                <FormIndustry setValue={setValue} value={value} />
+                <FormIndustry
+                  saveData={(data) => setValue([...(value as any[]), data])}
+                />
+                <IndustryTable data={value} deleteItem={deleteItem} />
               </div>
               <div className="bg-white rounded-lg p-6">
                 <p className="mb-4 font-bold text-lg">Contact Person</p>

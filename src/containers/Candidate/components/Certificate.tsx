@@ -1,4 +1,7 @@
 import CandidateTable from "components/DataDisplay/CandidateTable";
+import { Modal } from "antd";
+import { useState } from "react";
+import ModelCertificate from "./ModelCertificate";
 
 const columns = [
   {
@@ -36,16 +39,44 @@ export default function Certificate({ data }: { data: any }) {
       school: item.organization?.label,
     }));
 
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   return (
-    <CandidateTable
-      editClick={(id: any) => console.log(id)}
-      createBtn={{
-        title: "Add Certificate",
-        handler: () => console.log("hello"),
-      }}
-      data={certData}
-      titleTable="CERTIFICATE"
-      rawColumns={columns}
-    />
+    <>
+      <CandidateTable
+        editClick={(id: any) => {
+          console.log(id);
+          setIsEditOpen(true);
+        }}
+        createBtn={{
+          title: "Add Certificate",
+          handler: () => setIsAddOpen(true),
+        }}
+        data={certData}
+        titleTable="CERTIFICATE"
+        rawColumns={columns}
+      />
+      <Modal
+        title="Add Certificate"
+        open={isAddOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelCertificate closeModal={() => setIsAddOpen(false)} />
+      </Modal>
+      <Modal
+        title="Edit Certificate"
+        open={isEditOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelCertificate closeModal={() => setIsEditOpen(false)} edit={true} />
+      </Modal>
+    </>
   );
 }

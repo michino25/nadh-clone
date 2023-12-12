@@ -67,7 +67,11 @@ export default function CandidateTable({
       <Table
         {...tableProps}
         title={() => header}
-        pagination={{ position: ["none", "bottomRight"], defaultPageSize: 5 }}
+        pagination={{
+          position: ["none", "bottomRight"],
+          defaultPageSize: 5,
+          size: "default",
+        }}
         scroll={{ x: true }}
         columns={tableColumns}
         dataSource={data}

@@ -1,4 +1,7 @@
 import CandidateTable from "components/DataDisplay/CandidateTable";
+import { Modal } from "antd";
+import { useState } from "react";
+import ModelWorking from "./ModelWorking";
 
 const columns = [
   {
@@ -31,16 +34,46 @@ export default function WorkingHistory({ data }: { data: any }) {
 
   console.log(workingHistory);
 
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   return (
-    <CandidateTable
-      editClick={(id: any) => console.log(id)}
-      createBtn={{
-        title: "Add Working History",
-        handler: () => console.log("hello"),
-      }}
-      data={workingHistory}
-      titleTable="WORKING HISTORY"
-      rawColumns={columns}
-    />
+    <>
+      <CandidateTable
+        editClick={(id: any) => {
+          console.log(id);
+          setIsEditOpen(true);
+        }}
+        createBtn={{
+          title: "Add Working History",
+          handler: () => setIsAddOpen(true),
+        }}
+        data={workingHistory}
+        titleTable="WORKING HISTORY"
+        rawColumns={columns}
+      />
+
+      <Modal
+        title="Add Working History"
+        open={isAddOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelWorking closeModal={() => setIsAddOpen(false)} />
+      </Modal>
+
+      <Modal
+        title="Edit Working History"
+        open={isEditOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelWorking closeModal={() => setIsEditOpen(false)} edit={true} />
+      </Modal>
+    </>
   );
 }

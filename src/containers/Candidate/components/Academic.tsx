@@ -1,4 +1,7 @@
 import CandidateTable from "components/DataDisplay/CandidateTable";
+import { Modal } from "antd";
+import { useState } from "react";
+import ModelAcademic from "./ModelAcademic";
 
 const columns = [
   {
@@ -41,16 +44,46 @@ export default function Academic({ data }: { data: any }) {
 
   console.log(eduData);
 
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   return (
-    <CandidateTable
-      editClick={(id: any) => console.log(id)}
-      createBtn={{
-        title: "Add Education",
-        handler: () => console.log("hello"),
-      }}
-      data={eduData}
-      titleTable="ACADEMIC"
-      rawColumns={columns}
-    />
+    <>
+      <CandidateTable
+        editClick={(id: any) => {
+          console.log(id);
+          setIsEditOpen(true);
+        }}
+        createBtn={{
+          title: "Add Education",
+          handler: () => setIsAddOpen(true),
+        }}
+        data={eduData}
+        titleTable="ACADEMIC"
+        rawColumns={columns}
+      />
+
+      <Modal
+        title="Add Education"
+        open={isAddOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelAcademic closeModal={() => setIsAddOpen(false)} />
+      </Modal>
+
+      <Modal
+        title="Edit Education"
+        open={isEditOpen}
+        closeIcon={null}
+        footer={null}
+        centered
+        maskClosable={false}
+      >
+        <ModelAcademic closeModal={() => setIsEditOpen(false)} edit={true} />
+      </Modal>
+    </>
   );
 }

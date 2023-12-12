@@ -13,20 +13,24 @@ interface DataType {
 export default function IndustryTable({
   data,
   deleteItem,
+  primaryItem,
 }: {
   data: any;
   deleteItem: (id: string) => void;
+  primaryItem: (id: string) => void;
 }) {
+  console.log(data);
+
   const columns: ColumnsType<DataType> = [
     {
       title: "Primary",
       key: "primary",
       dataIndex: "primary",
-      render: (primary: any) => {
+      render: (primary: any, data: any) => {
         return (
           <Checkbox
             checked={primary === 1}
-            onChange={() => console.log(primary, "hello")}
+            onChange={() => primaryItem(data.id)}
           />
         );
       },
@@ -48,13 +52,7 @@ export default function IndustryTable({
       key: "id",
       dataIndex: "id",
       render: (id: string) => (
-        <Button
-          type="text"
-          onClick={() => {
-            deleteItem(id);
-            console.log("hello");
-          }}
-        >
+        <Button type="text" onClick={() => deleteItem(id)}>
           <DeleteOutlined />
         </Button>
       ),
@@ -86,7 +84,11 @@ export default function IndustryTable({
     <>
       <Table
         {...tableProps}
-        pagination={{ position: ["none", "bottomRight"], defaultPageSize: 5 }}
+        pagination={{
+          position: ["none", "bottomRight"],
+          defaultPageSize: 5,
+          size: "default",
+        }}
         scroll={{ x: true }}
         columns={tableColumns}
         dataSource={dataShow}

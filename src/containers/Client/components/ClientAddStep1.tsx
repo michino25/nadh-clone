@@ -9,6 +9,7 @@ import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import IndustryTable from "components/DataDisplay/IndustryTable";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -18,6 +19,9 @@ export default function CandidateAddStep1({
   setData: (value: any) => void;
 }) {
   const [industry, setIndustry] = useState<any[]>([]);
+  const deleteItem = (id: string) => {
+    if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
+  };
 
   const { data: userData } = useQuery({
     queryKey: ["User"],
@@ -234,7 +238,10 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={24}>
-          <FormIndustry value={industry} setValue={setIndustry} />
+          <FormIndustry
+            saveData={(data) => setIndustry([...(industry as any[]), data])}
+          />
+          <IndustryTable data={industry} deleteItem={deleteItem} />
         </Col>
       </Row>
 
