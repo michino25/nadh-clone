@@ -188,6 +188,8 @@ const App = ({
         //     getSelectByValue(filterSelectData[tag], getAllParams()[tag])
         // );
 
+        if (tag === "page") return;
+
         return (
           <span key={tag} className="inline-block mb-6">
             {/* nomal input */}

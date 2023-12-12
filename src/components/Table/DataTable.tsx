@@ -6,6 +6,7 @@ import {
 } from "@ant-design/icons";
 import {
   Pagination,
+  Card,
   Button,
   Space,
   Table,
@@ -265,7 +266,7 @@ const DataTable = ({
     return <Skeleton active />;
 
   return (
-    <>
+    <Card>
       <Space
         style={{
           marginBottom: 16,
@@ -281,7 +282,7 @@ const DataTable = ({
         dataSource={data}
         pagination={false}
       />
-    </>
+    </Card>
   );
 };
 export default DataTable;

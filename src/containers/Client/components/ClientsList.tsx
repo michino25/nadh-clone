@@ -3,7 +3,6 @@ import DataTable from "components/Table/DataTable";
 import { formatName, formatDate } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Skeleton } from "antd";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi, userApi } from "apis/index";
@@ -50,7 +49,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         }
     : getAllParams();
 
-  const { data, status, isPending } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["Clients", window.location.href],
     queryFn: async () =>
       await clientApi
@@ -141,7 +140,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     status: primaryStatus2,
   };
 
-  if (isPending) return <Skeleton active />;
+  // if (isPending) return <Skeleton active />;
 
   return (
     <div className="flex-col w-full">

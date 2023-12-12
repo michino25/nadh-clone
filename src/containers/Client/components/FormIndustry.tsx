@@ -17,6 +17,9 @@ const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
   const [sector, setSector] = useState<iOption>();
   const [category, setCategory] = useState<iOption>();
 
+  const [sectorData, setSectorData] = useState<iOption[]>();
+  const [categoryData, setCategoryData] = useState<iOption[]>();
+
   const saveData = () => {
     setValue([
       ...value,
@@ -47,6 +50,10 @@ const App = ({ value, setValue, create = true, saveClick }: iDataInput) => {
               setSector={setSector}
               category={category}
               setCategory={setCategory}
+              sectorData={sectorData}
+              setSectorData={setSectorData}
+              categoryData={categoryData}
+              setCategoryData={setCategoryData}
             />
           </div>
 

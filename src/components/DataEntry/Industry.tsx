@@ -2,7 +2,7 @@ import { Select, Form, Skeleton } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import { iOption } from "_constants/index";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface iData {
   industry: iOption | undefined;
@@ -12,6 +12,10 @@ interface iData {
   category: iOption | undefined;
   setCategory: (value: iOption | undefined) => void;
   industry_id?: string;
+  sectorData: iOption[] | undefined;
+  setSectorData: (value: iOption[] | undefined) => void;
+  categoryData: iOption[] | undefined;
+  setCategoryData: (value: iOption[] | undefined) => void;
 }
 
 const filterOption = (input: string, option?: iOption) =>
@@ -25,12 +29,13 @@ export default function Industry({
   category,
   setCategory,
   industry_id,
+  sectorData,
+  setSectorData,
+  categoryData,
+  setCategoryData,
 }: iData) {
   // industry: {key: 54, label: 'INDUSTRIAL & MANUFACTURING'}
   // sector: {key: 92, label: 'IDM. - NATURAL RESOURCES'}
-
-  const [sectorData, setSectorData] = useState<iOption[]>();
-  const [categoryData, setCategoryData] = useState<iOption[]>();
 
   const { isPending: industryIsPending, data: industryData } = useQuery({
     queryKey: ["industry"],
@@ -152,7 +157,7 @@ export default function Industry({
           filterOption={filterOption}
           options={sectorData}
           value={sector ? (sector.value as number) : undefined}
-          disabled={!sectorData}
+          disabled={!sectorData || sectorData.length === 0}
           onChange={handleChangeSector}
           placeholder="Sector"
         />
@@ -165,7 +170,7 @@ export default function Industry({
           filterOption={filterOption}
           options={categoryData}
           value={category ? (category.value as number) : undefined}
-          disabled={!categoryData}
+          disabled={!categoryData || categoryData.length === 0}
           onChange={handleChangeCategory}
           placeholder="Category"
         />

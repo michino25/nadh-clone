@@ -2,7 +2,6 @@ import DataTable from "components/Table/DataTable";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Skeleton } from "antd";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi, otherApi } from "apis/index";
@@ -47,7 +46,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       }
     : getAllParams();
 
-  const { data, isPending } = useQuery({
+  const { data } = useQuery({
     queryKey: ["Candidates", window.location.href],
     queryFn: async () =>
       await candidateApi
@@ -106,16 +105,14 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const { data: langData, isPending: langPending } = useQuery({
     queryKey: ["langData"],
     queryFn: async () =>
-      otherApi
-        .getOneProperty()
-        .then((res) =>
-          res.data
-            .filter((item: any) => item.name === "language")[0]
-            .values.map((item: any) => ({
-              label: item.label,
-              value: item.key.toString(),
-            }))
-        ),
+      otherApi.getOneProperty().then((res) =>
+        res.data
+          .filter((item: any) => item.name === "language")[0]
+          .values.map((item: any) => ({
+            label: item.label,
+            value: item.key.toString(),
+          }))
+      ),
   });
 
   // console.log(langData);
@@ -127,7 +124,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     priority_status: primaryStatus,
   };
 
-  if (isPending) return <Skeleton active />;
+  // if (isPending) return <Skeleton active />;
 
   return (
     <div className="flex-col w-full">

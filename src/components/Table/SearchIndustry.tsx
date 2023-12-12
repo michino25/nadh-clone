@@ -11,6 +11,11 @@ export default function SearchIndustry({ columnKey }: { columnKey: string }) {
   const [sector, setSector] = useState<iOption>();
   const [category, setCategory] = useState<iOption>();
 
+  const [sectorData, setSectorData] = useState<iOption[]>();
+  const [categoryData, setCategoryData] = useState<iOption[]>();
+
+  // const [resetData, setResetData] = useState<() => void>(() => {});
+
   const getData = () => {
     if (category) return category.value;
     if (sector) return sector.value;
@@ -33,6 +38,8 @@ export default function SearchIndustry({ columnKey }: { columnKey: string }) {
     setIndustry(undefined);
     setSector(undefined);
     setCategory(undefined);
+    setSectorData(undefined);
+    setCategoryData(undefined);
   };
 
   return (
@@ -55,6 +62,10 @@ export default function SearchIndustry({ columnKey }: { columnKey: string }) {
           category={category}
           setCategory={setCategory}
           industry_id={getAllParams()[columnKey]}
+          sectorData={sectorData}
+          setSectorData={setSectorData}
+          categoryData={categoryData}
+          setCategoryData={setCategoryData}
         />
       </div>
     </div>
