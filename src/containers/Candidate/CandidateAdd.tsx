@@ -65,6 +65,9 @@ export default function CadidateAdd() {
           <>
             <Academic
               data={[]}
+              addFn={() => {}}
+              deleteFn={() => {}}
+              updateFn={() => {}}
               // data={candidateData?.histories}
             />
             <span className="p-1"></span>

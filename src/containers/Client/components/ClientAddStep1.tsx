@@ -241,7 +241,11 @@ export default function CandidateAddStep1({
           <FormIndustry
             saveData={(data) => setIndustry([...(industry as any[]), data])}
           />
-          <IndustryTable data={industry} deleteItem={deleteItem} />
+          <IndustryTable
+            data={industry}
+            deleteItem={deleteItem}
+            primaryItem={() => {}}
+          />
         </Col>
       </Row>
 

@@ -238,7 +238,11 @@ export default function Candidates() {
                 <FormIndustry
                   saveData={(data) => setValue([...(value as any[]), data])}
                 />
-                <IndustryTable data={value} deleteItem={deleteItem} />
+                <IndustryTable
+                  data={value}
+                  deleteItem={deleteItem}
+                  primaryItem={() => {}}
+                />
               </div>
               <div className="bg-white rounded-lg p-6">
                 <p className="mb-4 font-bold text-lg">Contact Person</p>
