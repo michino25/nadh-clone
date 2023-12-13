@@ -41,7 +41,7 @@ export default function Certificate({
   const [editId, setEditId] = useState("");
 
   const certData = data
-    .filter((item: any) => item.type === 3)
+    ?.filter((item: any) => item.type === 3)
     .map((item: any) => ({
       id: item.id.toString(),
       status: item.status === 1 ? "Is current school" : "",
@@ -51,7 +51,7 @@ export default function Certificate({
       school: item.organization,
     }));
 
-  const certDataTable = certData.map((item: any) => ({
+  const certDataTable = certData?.map((item: any) => ({
     ...item,
     degree: item?.degree?.label,
     school: item?.school?.label,

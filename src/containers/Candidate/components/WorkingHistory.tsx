@@ -36,7 +36,7 @@ export default function WorkingHistory({
   const [editId, setEditId] = useState("");
 
   const workingHistory = data
-    .filter((item: any) => item.type === 2)
+    ?.filter((item: any) => item.type === 2)
     .map((item: any) => ({
       id: item.id.toString(),
       end_time: item.end_time || "Present",
@@ -45,7 +45,7 @@ export default function WorkingHistory({
       company: item.organization,
     }));
 
-  const workingHistoryTable = workingHistory.map((item: any) => ({
+  const workingHistoryTable = workingHistory?.map((item: any) => ({
     ...item,
     position: item?.position?.label,
     company: item?.company?.label,

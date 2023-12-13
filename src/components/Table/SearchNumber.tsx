@@ -56,7 +56,7 @@ export default function SearchNumber({ columnKey }: { columnKey: string }) {
         className="mt-3 block"
       />
 
-      {from >= to && (
+      {from > to && (
         <span className="block w-[160px] mt-2 text-red-500/80 font-medium text-sm">
           * From's value must be lower than to's value
         </span>

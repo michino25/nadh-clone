@@ -43,7 +43,7 @@ export default function Academic({
 }) {
   const [editId, setEditId] = useState("");
   const eduData = data
-    .filter((item: any) => item.type === 1)
+    ?.filter((item: any) => item.type === 1)
     .map((item: any) => ({
       id: item.id.toString(),
       status: item.status === 1 ? "Is current school" : "",
@@ -54,7 +54,7 @@ export default function Academic({
       degree: item.degree,
     }));
 
-  const eduDataTable = eduData.map((item: any) => ({
+  const eduDataTable = eduData?.map((item: any) => ({
     ...item,
     major: item?.major?.label,
     school: item?.school?.label,
