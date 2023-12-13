@@ -40,10 +40,8 @@ const useFilter = () => {
   const changeOneFilter = (params: any, filterName: string, data: string) => {
     const filterParams = { ...params };
 
-    if (filterName !== "page") {
-      filterParams[filterName] = data;
-      delete params["page"];
-    } else filterParams[filterName] = data;
+    delete filterParams["page"];
+    filterParams[filterName] = data;
 
     navigate({
       pathname: location.pathname,
