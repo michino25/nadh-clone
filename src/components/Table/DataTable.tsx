@@ -68,16 +68,23 @@ const DataTable = ({
     const col = getColByKey(rawColumns, columnKey);
     if (!noFilter)
       return {
-        filterDropdown: () => (
+        filterDropdown: ({ close }) => (
           <>
             {!col.type && (
-              <SearchInput table={tableName} columnKey={columnKey} />
+              <SearchInput
+                closeFn={close}
+                table={tableName}
+                columnKey={columnKey}
+              />
             )}
 
-            {col.type === "number" && <SearchNumber columnKey={columnKey} />}
+            {col.type === "number" && (
+              <SearchNumber closeFn={close} columnKey={columnKey} />
+            )}
 
             {col.type === "select" && (
               <SearchSelect
+                closeFn={close}
                 filterSelectData={filterSelectData}
                 table={tableName}
                 columnKey={columnKey}
@@ -85,20 +92,23 @@ const DataTable = ({
             )}
 
             {col.type === "industry" && (
-              <SearchIndustry columnKey={columnKey} />
+              <SearchIndustry closeFn={close} columnKey={columnKey} />
             )}
 
-            {col.type === "address" && <SearchAddress />}
+            {col.type === "address" && <SearchAddress closeFn={close} />}
 
             {col.type === "multiple_select" && (
               <SearchMultiSelect
+                closeFn={close}
                 filterSelectData={filterSelectData}
                 table={tableName}
                 columnKey={columnKey}
               />
             )}
 
-            {col.type === "date" && <SearchDate columnKey={columnKey} />}
+            {col.type === "date" && (
+              <SearchDate closeFn={close} columnKey={columnKey} />
+            )}
           </>
         ),
         filterIcon: () => {

@@ -8,7 +8,7 @@ import { iOption } from "_constants/index";
 const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
-export default function SearchAddress() {
+export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
   const [country, setCountry] = useState<number>();
@@ -58,6 +58,7 @@ export default function SearchAddress() {
 
     if (data) {
       changeOneFilter(getAllParams(), "city", data);
+      closeFn();
     } else reset();
   };
 
@@ -68,6 +69,7 @@ export default function SearchAddress() {
     removeOneFilter(getAllParams(), "city");
     setCountry(undefined);
     setCity(undefined);
+    closeFn();
   };
 
   const handleChangeCountry = async (value: number) => {

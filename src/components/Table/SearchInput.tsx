@@ -6,9 +6,11 @@ import useFilter from "src/hooks/useFilter";
 export default function SearchInput({
   columnKey,
   table,
+  closeFn,
 }: {
   columnKey: string;
   table: string;
+  closeFn: () => void;
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
@@ -21,12 +23,14 @@ export default function SearchInput({
     if (filter) {
       changeOneFilter(getAllParams(), columnKey, filter);
     } else removeOneFilter(getAllParams(), columnKey);
+    closeFn();
   };
 
   const reset = () => {
     // console.log(filter);
     removeOneFilter(getAllParams(), columnKey);
     setFilter("");
+    closeFn();
   };
 
   return (

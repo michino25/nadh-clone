@@ -4,7 +4,13 @@ import Industry from "components/DataEntry/Industry";
 import { useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
-export default function SearchIndustry({ columnKey }: { columnKey: string }) {
+export default function SearchIndustry({
+  columnKey,
+  closeFn,
+}: {
+  columnKey: string;
+  closeFn: () => void;
+}) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
   const [industry, setIndustry] = useState<iOption>();
@@ -27,6 +33,7 @@ export default function SearchIndustry({ columnKey }: { columnKey: string }) {
     //   // console.log(filter);
     if (industry_id) {
       changeOneFilter(getAllParams(), columnKey, industry_id.toString());
+      closeFn();
     } else reset();
   };
 
@@ -40,6 +47,7 @@ export default function SearchIndustry({ columnKey }: { columnKey: string }) {
     setCategory(undefined);
     setSectorData(undefined);
     setCategoryData(undefined);
+    closeFn();
   };
 
   return (

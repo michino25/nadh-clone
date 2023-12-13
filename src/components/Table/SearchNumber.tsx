@@ -2,7 +2,13 @@ import { Button, InputNumber } from "antd";
 import { useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
-export default function SearchNumber({ columnKey }: { columnKey: string }) {
+export default function SearchNumber({
+  columnKey,
+  closeFn,
+}: {
+  columnKey: string;
+  closeFn: () => void;
+}) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
   const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
@@ -14,6 +20,7 @@ export default function SearchNumber({ columnKey }: { columnKey: string }) {
       if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
       if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
     } else reset();
+    closeFn();
   };
 
   const reset = () => {
@@ -22,6 +29,7 @@ export default function SearchNumber({ columnKey }: { columnKey: string }) {
     removeOneFilter(getAllParams(), columnKey + "_to");
     setFrom(null);
     setTo(null);
+    closeFn();
   };
 
   return (

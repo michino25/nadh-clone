@@ -10,7 +10,13 @@ const formatDate = (date: dayjs.Dayjs, format: string) => {
   return date.format(format);
 };
 
-export default function SearchDate({ columnKey }: { columnKey: string }) {
+export default function SearchDate({
+  columnKey,
+  closeFn,
+}: {
+  columnKey: string;
+  closeFn: () => void;
+}) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
   const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
@@ -21,6 +27,7 @@ export default function SearchDate({ columnKey }: { columnKey: string }) {
     if (to || from) {
       if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
       if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
+      closeFn();
     } else reset();
   };
 
@@ -30,6 +37,7 @@ export default function SearchDate({ columnKey }: { columnKey: string }) {
     removeOneFilter(getAllParams(), columnKey + "_to");
     setFrom(null);
     setTo(null);
+    closeFn();
   };
 
   return (

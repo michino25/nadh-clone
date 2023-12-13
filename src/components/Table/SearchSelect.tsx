@@ -7,10 +7,12 @@ export default function SearchSelect({
   columnKey,
   table,
   filterSelectData,
+  closeFn,
 }: {
   columnKey: string;
   table: string;
   filterSelectData: any;
+  closeFn: () => void;
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
@@ -20,6 +22,7 @@ export default function SearchSelect({
     //   // console.log(filter);
     if (selected) {
       changeOneFilter(getAllParams(), columnKey, selected);
+      closeFn();
     } else reset();
   };
 
@@ -27,6 +30,7 @@ export default function SearchSelect({
     // console.log(filter);
     removeOneFilter(getAllParams(), columnKey);
     setSelected(null);
+    closeFn();
   };
 
   const filterOption = (

@@ -7,10 +7,12 @@ export default function SearchMultiSelect({
   columnKey,
   table,
   filterSelectData,
+  closeFn,
 }: {
   columnKey: string;
   table: string;
   filterSelectData: any;
+  closeFn: () => void;
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
@@ -23,6 +25,7 @@ export default function SearchMultiSelect({
 
     if (selected) {
       changeOneFilter(getAllParams(), columnKey, selected.join(","));
+      closeFn();
     } else reset();
   };
 
@@ -30,6 +33,7 @@ export default function SearchMultiSelect({
     // console.log(filter);
     removeOneFilter(getAllParams(), columnKey);
     setSelected(null);
+    closeFn();
   };
 
   const filterOption = (
