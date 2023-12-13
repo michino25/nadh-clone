@@ -262,16 +262,16 @@ export default function Candidates() {
       // success
       // console.log(res.data);
       notification.success({
-        message: "Update Histories",
-        description: "Update success.",
+        message: "Create Histories",
+        description: "Create success.",
       });
       refetch();
     } catch (error: any) {
       // error
-      // console.error("Update failed", error);
+      // console.error("Create failed", error);
       notification.error({
-        message: "Update Histories",
-        description: `Update failed. ${
+        message: "Create Histories",
+        description: `Create failed. ${
           error.response.data[0].message || "Please try again."
         }`,
       });
@@ -673,11 +673,21 @@ export default function Candidates() {
                 updateFn={(data, id) => updateCandidateHistories(data, id)}
               />
               <span className="p-1"></span>
-              <Certificate data={candidateData?.histories} />
+              <Certificate
+                data={candidateData?.histories}
+                addFn={createCandidateHistories}
+                deleteFn={(id) => deleteCandidateHistoriesMutation.mutate(id)}
+                updateFn={(data, id) => updateCandidateHistories(data, id)}
+              />
             </div>
             <div id="part-5" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Working History</p>
-              <WorkingHistory data={candidateData?.histories} />
+              <WorkingHistory
+                data={candidateData?.histories}
+                addFn={createCandidateHistories}
+                deleteFn={(id) => deleteCandidateHistoriesMutation.mutate(id)}
+                updateFn={(data, id) => updateCandidateHistories(data, id)}
+              />
             </div>
             <div id="part-6" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>

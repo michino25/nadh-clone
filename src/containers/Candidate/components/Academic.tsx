@@ -87,6 +87,7 @@ export default function Academic({
         open={isAddOpen}
         closeIcon={null}
         footer={null}
+        destroyOnClose
         centered
         maskClosable={false}
       >
@@ -103,6 +104,7 @@ export default function Academic({
         title="Edit Education"
         open={isEditOpen}
         closeIcon={null}
+        destroyOnClose
         footer={null}
         centered
         maskClosable={false}

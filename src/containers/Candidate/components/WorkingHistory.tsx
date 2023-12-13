@@ -22,15 +22,34 @@ const columns = [
   },
 ];
 
-export default function WorkingHistory({ data }: { data: any }) {
+export default function WorkingHistory({
+  data,
+  addFn,
+  updateFn,
+  deleteFn,
+}: {
+  data: any;
+  addFn: (data: any) => void;
+  updateFn: (data: any, id: string) => void;
+  deleteFn: (data: any) => void;
+}) {
+  const [editId, setEditId] = useState("");
+
   const workingHistory = data
     .filter((item: any) => item.type === 2)
     .map((item: any) => ({
+      id: item.id.toString(),
       end_time: item.end_time || "Present",
       start_time: item.start_time,
-      position: item.title.label,
-      company: item.organization.label,
+      position: item.title,
+      company: item.organization,
     }));
+
+  const workingHistoryTable = workingHistory.map((item: any) => ({
+    ...item,
+    position: item?.position?.label,
+    company: item?.company?.label,
+  }));
 
   console.log(workingHistory);
 
@@ -41,14 +60,14 @@ export default function WorkingHistory({ data }: { data: any }) {
     <>
       <CandidateTable
         editClick={(id: any) => {
-          console.log(id);
+          setEditId(id);
           setIsEditOpen(true);
         }}
         createBtn={{
           title: "Add Working History",
           handler: () => setIsAddOpen(true),
         }}
-        data={workingHistory}
+        data={workingHistoryTable}
         titleTable="WORKING HISTORY"
         rawColumns={columns}
       />
@@ -58,10 +77,17 @@ export default function WorkingHistory({ data }: { data: any }) {
         open={isAddOpen}
         closeIcon={null}
         footer={null}
+        destroyOnClose
         centered
         maskClosable={false}
       >
-        <ModelWorking closeModal={() => setIsAddOpen(false)} />
+        <ModelWorking
+          closeModal={() => setIsAddOpen(false)}
+          execute={(data) => {
+            addFn(data);
+            setIsAddOpen(false);
+          }}
+        />
       </Modal>
 
       <Modal
@@ -69,10 +95,24 @@ export default function WorkingHistory({ data }: { data: any }) {
         open={isEditOpen}
         closeIcon={null}
         footer={null}
+        destroyOnClose
         centered
         maskClosable={false}
       >
-        <ModelWorking closeModal={() => setIsEditOpen(false)} edit={true} />
+        <ModelWorking
+          closeModal={() => setIsEditOpen(false)}
+          edit={true}
+          execute={(data, id) => {
+            updateFn(data, id as string);
+            setIsEditOpen(false);
+          }}
+          onDelete={(id) => {
+            deleteFn(id);
+            setIsEditOpen(false);
+          }}
+          data={workingHistory}
+          id={editId}
+        />
       </Modal>
     </>
   );

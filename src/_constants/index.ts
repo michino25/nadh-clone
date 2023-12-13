@@ -94,10 +94,20 @@ for (let year = 1960; year <= 2023; year++) {
   years.push({ label: year.toString(), value: year.toString() });
 }
 
-export const months: any = [];
-for (let month = 1; month <= 12; month++) {
-  months.push({ label: month.toString(), value: month.toString() });
-}
+export const months = [
+  { label: "01", value: "01" },
+  { label: "02", value: "02" },
+  { label: "03", value: "03" },
+  { label: "04", value: "04" },
+  { label: "05", value: "05" },
+  { label: "06", value: "06" },
+  { label: "07", value: "07" },
+  { label: "08", value: "08" },
+  { label: "09", value: "09" },
+  { label: "10", value: "10" },
+  { label: "11", value: "11" },
+  { label: "12", value: "12" },
+];
 
 export const clientType = [
   { label: "Type A", value: "1" },
