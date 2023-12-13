@@ -255,6 +255,99 @@ export default function Candidates() {
     console.log("Received values of form: ", value);
   };
 
+  const createCandidateHistoriesApi = async (userData: any) => {
+    try {
+      await candidateApi.createCandidateHistories(userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Update Histories",
+        description: "Update success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update Histories",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const deleteCandidateHistoriesApi = async (userData: any) => {
+    try {
+      await candidateApi.deleteCandidateHistories(userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Delete Histories",
+        description: "Delete success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Delete failed", error);
+      notification.error({
+        message: "Delete Histories",
+        description: `Delete failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const updateCandidateHistoriesApi = async (userData: any, id: string) => {
+    try {
+      await candidateApi.updateCandidateHistories(id, userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Update Histories",
+        description: "Update success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update Histories",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const createCandidateHistoriesMutation = useMutation({
+    mutationFn: (formData: any) => createCandidateHistoriesApi(formData),
+  });
+
+  const deleteCandidateHistoriesMutation = useMutation({
+    mutationFn: (formData: any) => deleteCandidateHistoriesApi(formData),
+  });
+
+  const updateCandidateHistoriesMutation = useMutation({
+    mutationFn: (formData: any) =>
+      updateCandidateHistoriesApi(formData, formData.id),
+  });
+
+  const updateCandidateHistories = (data: any, id: string) => {
+    data.candidate_id = candidateData.id;
+    data.id = id;
+    updateCandidateHistoriesMutation.mutate(data);
+  };
+
+  const createCandidateHistories = (data: any) => {
+    data.candidate_id = candidateData.id;
+    createCandidateHistoriesMutation.mutate(data);
+  };
+
   console.log(candidateData?.business_line);
 
   if (isPending || !id) return <Skeleton active />;
@@ -573,7 +666,12 @@ export default function Candidates() {
             </div>
             <div id="part-4" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Education</p>
-              <Academic data={candidateData?.histories} />
+              <Academic
+                data={candidateData?.histories}
+                addFn={createCandidateHistories}
+                deleteFn={(id) => deleteCandidateHistoriesMutation.mutate(id)}
+                updateFn={(data, id) => updateCandidateHistories(data, id)}
+              />
               <span className="p-1"></span>
               <Certificate data={candidateData?.histories} />
             </div>

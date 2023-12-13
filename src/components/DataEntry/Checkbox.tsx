@@ -16,7 +16,12 @@ export default function CheckboxData({
   disabled,
 }: iDataInput) {
   return (
-    <Form.Item label={label} name={name} initialValue={defaultValue}>
+    <Form.Item
+      valuePropName="checked"
+      label={label}
+      name={name}
+      initialValue={defaultValue}
+    >
       <Checkbox disabled={disabled}>{placeholder}</Checkbox>
     </Form.Item>
   );

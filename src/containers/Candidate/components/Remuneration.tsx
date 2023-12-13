@@ -4,21 +4,23 @@ import { YNquestion } from "_constants/index";
 import { useEffect, useState } from "react";
 
 export default function Remuneration({ data }: { data: any }) {
-  const currencyData = Object.keys(data.converted_salary).map((item) => ({
-    value: data.converted_salary[item].id,
-    label: data.converted_salary[item].name,
-    current_salary: data.converted_salary[item].current_salary,
-    salary_from: data.converted_salary[item].salary.from,
-    salary_to: data.converted_salary[item].salary.to,
-  }));
+  const currencyData =
+    data?.converted_salary &&
+    Object.keys(data.converted_salary).map((item) => ({
+      value: data.converted_salary[item].id,
+      label: data.converted_salary[item].name,
+      current_salary: data.converted_salary[item].current_salary,
+      salary_from: data.converted_salary[item].salary.from,
+      salary_to: data.converted_salary[item].salary.to,
+    }));
   console.log();
 
   const [form] = Form.useForm();
-  const [currency, setCurrency] = useState<number>(data.currency.id);
+  const [currency, setCurrency] = useState<number>(data?.currency?.id);
 
   useEffect(() => {
-    const currencyChoose = currencyData.filter(
-      (item) => item.value === currency
+    const currencyChoose = currencyData?.filter(
+      (item: any) => item.value === currency
     )[0];
     form.setFieldsValue({
       current_salary: currencyChoose?.current_salary,
@@ -41,7 +43,7 @@ export default function Remuneration({ data }: { data: any }) {
               label="Based salary (USD)"
               name="current_salary"
               defaultValue={
-                currencyData.filter((item) => item.value === currency)[0]
+                currencyData?.filter((item: any) => item.value === currency)[0]
                   ?.current_salary
               }
             />
@@ -65,7 +67,7 @@ export default function Remuneration({ data }: { data: any }) {
           <Col span={12}>
             <DataRadio
               data={YNquestion}
-              defaultValue={data.benefit.over_thirteen.toString()}
+              defaultValue={data?.benefit?.over_thirteen.toString()}
               label="Over x month"
               name="over_thirteen"
             />
@@ -73,7 +75,7 @@ export default function Remuneration({ data }: { data: any }) {
           <Col span={12}>
             <DataRadio
               data={YNquestion}
-              defaultValue={data.benefit.lunch_check.toString()}
+              defaultValue={data?.benefit?.lunch_check.toString()}
               label="Lunch check"
               name="lunch_check"
             />
@@ -84,7 +86,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Parking check"
-              defaultValue={data.benefit.car_parking.toString()}
+              defaultValue={data?.benefit?.car_parking.toString()}
               name="car_parking"
             />
           </Col>
@@ -92,7 +94,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Car allowance"
-              defaultValue={data.benefit.car_allowance.toString()}
+              defaultValue={data?.benefit?.car_allowance.toString()}
               name="car_allowance"
             />
           </Col>
@@ -102,7 +104,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Phone allowance"
-              defaultValue={data.benefit.phone.toString()}
+              defaultValue={data?.benefit?.phone.toString()}
               name="phone"
             />
           </Col>
@@ -110,7 +112,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Laptop"
-              defaultValue={data.benefit.laptop.toString()}
+              defaultValue={data?.benefit?.laptop.toString()}
               name="laptop"
             />
           </Col>
@@ -120,7 +122,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Share options"
-              defaultValue={data.benefit.share_option.toString()}
+              defaultValue={data?.benefit?.share_option.toString()}
               name="share_option"
             />
           </Col>
@@ -128,7 +130,7 @@ export default function Remuneration({ data }: { data: any }) {
             <DataRadio
               data={YNquestion}
               label="Health cover"
-              defaultValue={data.benefit.health_cover.toString()}
+              defaultValue={data?.benefit?.health_cover.toString()}
               name="health_cover"
             />
           </Col>
@@ -144,8 +146,9 @@ export default function Remuneration({ data }: { data: any }) {
                   label="From"
                   name="salary_from"
                   defaultValue={
-                    currencyData.filter((item) => item.value === currency)[0]
-                      ?.salary_from
+                    currencyData?.filter(
+                      (item: any) => item.value === currency
+                    )[0]?.salary_from
                   }
                 />
               </Col>
@@ -161,8 +164,9 @@ export default function Remuneration({ data }: { data: any }) {
                   label="To"
                   name="salary_to"
                   defaultValue={
-                    currencyData.filter((item) => item.value === currency)[0]
-                      ?.salary_to
+                    currencyData?.filter(
+                      (item: any) => item.value === currency
+                    )[0]?.salary_to
                   }
                 />
               </Col>
@@ -180,7 +184,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label="Pension scheme"
                   name="pension_scheme"
-                  defaultValue={data.benefit.pension_scheme.toString()}
+                  defaultValue={data?.benefit?.pension_scheme.toString()}
                 />
               </Col>
               <Col span={8}>
@@ -194,7 +198,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label="Annual leaves"
                   name="no_holiday"
-                  defaultValue={data.benefit.no_holiday.toString()}
+                  defaultValue={data?.benefit?.no_holiday.toString()}
                 />
               </Col>
               <Col span={8}>
@@ -210,7 +214,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label="Hours of work/overtime"
                   name="working_hour"
-                  defaultValue={data.benefit.working_hour.toString()}
+                  defaultValue={data?.benefit?.working_hour.toString()}
                 />
               </Col>
               <Col span={8}>
@@ -224,7 +228,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label=""
                   name="overtime_hour"
-                  defaultValue={data.benefit.overtime_hour.toString()}
+                  defaultValue={data?.benefit?.overtime_hour.toString()}
                 />
               </Col>
               <Col span={8}>
@@ -240,7 +244,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label="Notice days"
                   name="notice_days"
-                  defaultValue={data.notice_days.toString()}
+                  defaultValue={data?.notice_days?.toString()}
                 />
               </Col>
               <Col span={8}>

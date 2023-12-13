@@ -20,6 +20,21 @@ const _candidateApi = {
     const url = "api/candidates/" + id;
     return axios().put(url, params);
   },
+
+  createCandidateHistories(params: any) {
+    const url = "api/candidate_histories";
+    return axios().post(url, params);
+  },
+
+  updateCandidateHistories(id: string, params: any) {
+    const url = "api/candidate_histories/" + id;
+    return axios().put(url, params);
+  },
+
+  deleteCandidateHistories(id: string) {
+    const url = "api/candidate_histories/" + id;
+    return axios().delete(url);
+  },
 };
 
 export default _candidateApi;

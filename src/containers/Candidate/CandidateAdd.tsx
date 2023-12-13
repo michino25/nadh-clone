@@ -4,8 +4,22 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import CandidateAddStep1 from "./components/CandidateAddStep1";
 import CandidateAddFinish from "./components/CandidateAddFinish";
+import FormIndustry from "containers/Client/components/FormIndustry";
+import IndustryTable from "components/DataDisplay/IndustryTable";
+import { Button } from "antd";
+import Academic from "./components/Academic";
+import Certificate from "./components/Certificate";
+import WorkingHistory from "./components/WorkingHistory";
+import Remuneration from "./components/Remuneration";
 
-const step = ["Personal Information", "Finish"];
+const step = [
+  "Personal Information",
+  "Skills and Industry",
+  "Education",
+  "Working History",
+  "Remunertion and Rewards",
+  "Finish",
+];
 
 export default function CadidateAdd() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -29,8 +43,60 @@ export default function CadidateAdd() {
         {currentStep === 0 && (
           <CandidateAddStep1 nextStep={() => setCurrentStep(currentStep + 1)} />
         )}
-        {currentStep === 1 && <CandidateAddFinish />}
+
+        {currentStep === 1 && (
+          <>
+            <FormIndustry
+              saveData={() => {}}
+              // saveData={addIndustry}
+            />
+            <IndustryTable
+              deleteItem={() => {}}
+              primaryItem={() => {}}
+              data={[]}
+              // deleteItem={deleteIndustry}
+              // primaryItem={primaryIndustry}
+              // data={candidateData?.business_line}
+            />
+          </>
+        )}
+
+        {currentStep === 2 && (
+          <>
+            <Academic
+              data={[]}
+              // data={candidateData?.histories}
+            />
+            <span className="p-1"></span>
+            <Certificate
+              data={[]}
+              // data={candidateData?.histories}
+            />
+          </>
+        )}
+
+        {currentStep === 3 && (
+          <>
+            <WorkingHistory
+              data={[]}
+              // data={candidateData?.histories}
+            />
+          </>
+        )}
+
+        {currentStep === 4 && (
+          <>
+            <Remuneration
+              data={{}}
+              // data={candidateData?.remuneration}
+            />
+          </>
+        )}
+
+        {currentStep === 5 && <CandidateAddFinish />}
       </div>
+      <Button onClick={() => setCurrentStep(currentStep - 1)}>prev</Button>
+      <Button onClick={() => setCurrentStep(currentStep + 1)}>next</Button>
     </div>
   );
 }

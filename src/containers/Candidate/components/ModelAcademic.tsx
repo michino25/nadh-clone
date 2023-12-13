@@ -8,10 +8,24 @@ import { otherApi } from "apis/index";
 export default function ModelAcademic({
   closeModal,
   edit = false,
+  execute,
+  onDelete,
+  data,
+  id,
 }: {
   closeModal: () => void;
   edit?: boolean;
+  execute: (data: any, id?: string) => void;
+  data?: any;
+  onDelete?: (id: any) => void;
+  id?: string;
 }) {
+  console.log(data);
+  console.log(id);
+
+  const defaultData = data?.filter((item: any) => item.id === id)[0];
+  console.log(defaultData);
+
   const { data: schoolData } = useQuery({
     queryKey: ["school"],
     queryFn: () =>
@@ -68,7 +82,8 @@ export default function ModelAcademic({
       status: values.current_school ? 1 : -1,
     };
 
-    console.log("Received values of form: ", outputData);
+    edit ? execute(outputData, defaultData.id) : execute(outputData);
+    // console.log("Received values of form: ", outputData);
   };
 
   console.log(schoolData);
@@ -80,7 +95,7 @@ export default function ModelAcademic({
           <CheckboxData
             name="current_school"
             placeholder="Current school"
-            defaultValue={true}
+            defaultValue={defaultData?.status === "Is current school"}
           />
         </Col>
       </Row>
@@ -92,6 +107,7 @@ export default function ModelAcademic({
             placeholder="Choose year"
             label="Start year"
             name="Start_year"
+            defaultValue={defaultData?.start_time}
           />
         </Col>
         <Col span={12}>
@@ -100,6 +116,7 @@ export default function ModelAcademic({
             placeholder="Choose year"
             label="Graduation year"
             name="Graduation_year"
+            defaultValue={defaultData?.end_time}
           />
         </Col>
       </Row>
@@ -111,6 +128,10 @@ export default function ModelAcademic({
             placeholder="Choose school"
             label="School"
             name="school"
+            defaultValue={
+              defaultData &&
+              defaultData.school.key + "_" + defaultData.school.label
+            }
           />
         </Col>
       </Row>
@@ -122,6 +143,10 @@ export default function ModelAcademic({
             placeholder="Choose major"
             label="Major"
             name="major"
+            defaultValue={
+              defaultData &&
+              defaultData.major.key + "_" + defaultData.major.label
+            }
           />
         </Col>
       </Row>
@@ -134,6 +159,10 @@ export default function ModelAcademic({
             label="Degree"
             name="degree"
             required
+            defaultValue={
+              defaultData &&
+              defaultData.degree.key + "_" + defaultData.degree.label
+            }
           />
         </Col>
       </Row>
@@ -141,7 +170,11 @@ export default function ModelAcademic({
       <Row gutter={16} justify={edit ? "space-between" : "end"}>
         {edit && (
           <Col>
-            <Button type="primary" danger onClick={closeModal}>
+            <Button
+              type="primary"
+              danger
+              onClick={() => onDelete && onDelete(defaultData?.id)}
+            >
               Delete
             </Button>
           </Col>
@@ -149,7 +182,7 @@ export default function ModelAcademic({
         <Col>
           <Button onClick={closeModal}>Cancel</Button>
           <Button type="primary" htmlType="submit" className="ml-3">
-            Add
+            {edit ? "Save" : "Add"}
           </Button>
         </Col>
       </Row>

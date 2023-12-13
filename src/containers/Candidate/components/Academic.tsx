@@ -30,17 +30,36 @@ const columns = [
   },
 ];
 
-export default function Academic({ data }: { data: any }) {
+export default function Academic({
+  data,
+  addFn,
+  updateFn,
+  deleteFn,
+}: {
+  data: any;
+  addFn: (data: any) => void;
+  updateFn: (data: any, id: string) => void;
+  deleteFn: (data: any) => void;
+}) {
+  const [editId, setEditId] = useState("");
   const eduData = data
     .filter((item: any) => item.type === 1)
     .map((item: any) => ({
+      id: item.id.toString(),
       status: item.status === 1 ? "Is current school" : "",
       end_time: item.end_time?.split("-")[0],
       start_time: item.start_time?.split("-")[0],
-      major: item.title?.label,
-      school: item.organization?.label,
-      degree: item.degree.label,
+      major: item.title,
+      school: item.organization,
+      degree: item.degree,
     }));
+
+  const eduDataTable = eduData.map((item: any) => ({
+    ...item,
+    major: item?.major?.label,
+    school: item?.school?.label,
+    degree: item?.degree?.label,
+  }));
 
   console.log(eduData);
 
@@ -51,14 +70,14 @@ export default function Academic({ data }: { data: any }) {
     <>
       <CandidateTable
         editClick={(id: any) => {
-          console.log(id);
+          setEditId(id);
           setIsEditOpen(true);
         }}
         createBtn={{
           title: "Add Education",
           handler: () => setIsAddOpen(true),
         }}
-        data={eduData}
+        data={eduDataTable}
         titleTable="ACADEMIC"
         rawColumns={columns}
       />
@@ -71,7 +90,13 @@ export default function Academic({ data }: { data: any }) {
         centered
         maskClosable={false}
       >
-        <ModelAcademic closeModal={() => setIsAddOpen(false)} />
+        <ModelAcademic
+          closeModal={() => setIsAddOpen(false)}
+          execute={(data) => {
+            addFn(data);
+            setIsAddOpen(false);
+          }}
+        />
       </Modal>
 
       <Modal
@@ -82,7 +107,20 @@ export default function Academic({ data }: { data: any }) {
         centered
         maskClosable={false}
       >
-        <ModelAcademic closeModal={() => setIsEditOpen(false)} edit={true} />
+        <ModelAcademic
+          closeModal={() => setIsEditOpen(false)}
+          edit={true}
+          execute={(data, id) => {
+            updateFn(data, id as string);
+            setIsEditOpen(false);
+          }}
+          onDelete={(id) => {
+            deleteFn(id);
+            setIsEditOpen(false);
+          }}
+          data={eduData}
+          id={editId}
+        />
       </Modal>
     </>
   );
