@@ -73,6 +73,9 @@ export default function CadidateAdd() {
             <span className="p-1"></span>
             <Certificate
               data={[]}
+              addFn={() => {}}
+              deleteFn={() => {}}
+              updateFn={() => {}}
               // data={candidateData?.histories}
             />
           </>
@@ -82,6 +85,9 @@ export default function CadidateAdd() {
           <>
             <WorkingHistory
               data={[]}
+              addFn={() => {}}
+              deleteFn={() => {}}
+              updateFn={() => {}}
               // data={candidateData?.histories}
             />
           </>
