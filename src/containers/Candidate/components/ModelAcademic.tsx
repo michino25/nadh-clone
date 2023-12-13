@@ -63,7 +63,7 @@ export default function ModelAcademic({
       },
 
       achievement: null,
-      candidate_id: "e413a13e-469c-4b2a-a3a1-9e7e6dcc8e90",
+      // candidate_id: "e413a13e-469c-4b2a-a3a1-9e7e6dcc8e90",
       type: 1,
       status: values.current_school ? 1 : -1,
     };
