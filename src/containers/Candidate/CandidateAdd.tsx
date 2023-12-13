@@ -91,6 +91,7 @@ export default function CadidateAdd() {
           <>
             <Remuneration
               data={{}}
+              onSave={() => {}}
               // data={candidateData?.remuneration}
             />
           </>

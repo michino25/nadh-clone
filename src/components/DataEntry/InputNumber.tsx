@@ -21,6 +21,7 @@ export default function DataInputNumber({
     <Form.Item
       label={label}
       name={name}
+      initialValue={defaultValue}
       rules={[
         {
           required: required,
@@ -31,7 +32,6 @@ export default function DataInputNumber({
       <InputNumber
         style={{ width: "100%" }}
         min={0}
-        defaultValue={defaultValue}
         placeholder={placeholder}
         disabled={disabled}
       />

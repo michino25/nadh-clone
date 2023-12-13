@@ -681,7 +681,10 @@ export default function Candidates() {
             </div>
             <div id="part-6" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>
-              <Remuneration data={candidateData?.remuneration} />
+              <Remuneration
+                data={candidateData?.remuneration}
+                onSave={(data) => updateMutation.mutate(data)}
+              />
             </div>
             <div id="part-7" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>

@@ -1,9 +1,16 @@
 import { DataRadio, InputNumber } from "components/DataEntry";
-import { Col, Row, Form, Select } from "antd";
+import { Col, Row, Button, Form, Select } from "antd";
 import { YNquestion } from "_constants/index";
 import { useEffect, useState } from "react";
 
-export default function Remuneration({ data }: { data: any }) {
+export default function Remuneration({
+  data,
+  onSave,
+}: {
+  data: any;
+  onSave: (data: any) => void;
+}) {
+  const [showSave, setShowSave] = useState(false);
   const currencyData =
     data?.converted_salary &&
     Object.keys(data.converted_salary).map((item) => ({
@@ -29,13 +36,54 @@ export default function Remuneration({ data }: { data: any }) {
     });
   }, [currency]);
 
+  const onFinish = (values: any) => {
+    const transformObject = {
+      notice_days: parseInt(values.notice_days),
+      remuneration: {
+        benefit: {
+          over_thirteen: parseInt(values.over_thirteen),
+          lunch_check: parseInt(values.lunch_check),
+          car_parking: parseInt(values.car_parking),
+          car_allowance: parseInt(values.car_allowance),
+          phone: parseInt(values.phone),
+          laptop: parseInt(values.laptop),
+          share_option: parseInt(values.share_option),
+          health_cover: parseInt(values.health_cover),
+          pension_scheme: parseInt(values.pension_scheme),
+          no_holiday: parseInt(values.no_holiday),
+          working_hour: parseInt(values.working_hour),
+          overtime_hour: parseInt(values.overtime_hour),
+          lunch_check_text: "",
+          over_thirteen_text: "",
+          car_parking_text: "",
+          car_allowance_text: "",
+          phone_text: "",
+          laptop_text: "",
+        },
+        currency,
+        current_salary: values.current_salary,
+        salary: {
+          from: values.salary_from,
+          to: values.salary_to,
+        },
+        expectations: null,
+        future_prospects: null,
+        notice_days: parseInt(values.notice_days),
+      },
+    };
+
+    onSave(transformObject);
+    console.log("Received values of form: ", transformObject);
+  };
+
   return (
     <>
       <Form
         form={form}
         layout="vertical"
         className="w-full"
-        onFinish={() => {}}
+        onFinish={onFinish}
+        onValuesChange={() => setShowSave(true)}
       >
         <Row gutter={16}>
           <Col span={12}>
@@ -214,7 +262,7 @@ export default function Remuneration({ data }: { data: any }) {
                 <InputNumber
                   label="Hours of work/overtime"
                   name="working_hour"
-                  defaultValue={data?.benefit?.working_hour.toString()}
+                  defaultValue={data?.benefit?.working_hour}
                 />
               </Col>
               <Col span={8}>
@@ -253,6 +301,14 @@ export default function Remuneration({ data }: { data: any }) {
             </Row>
           </Col>
         </Row>
+
+        {showSave && (
+          <Form.Item className="flex justify-end space-x-2">
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
+          </Form.Item>
+        )}
       </Form>
     </>
   );
