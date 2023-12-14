@@ -1,6 +1,6 @@
 import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Input } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
 export default function SearchInput({
@@ -14,9 +14,11 @@ export default function SearchInput({
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [filter, setFilter] = useState(
-    getAllParams()[columnKey] ? getAllParams()[columnKey] : ""
-  );
+  const [filter, setFilter] = useState(getAllParams()[columnKey] || "");
+
+  useEffect(() => {
+    setFilter(getAllParams()[columnKey] || "");
+  }, [window.location.href]);
 
   const submit = () => {
     // console.log(filter);
@@ -48,7 +50,8 @@ export default function SearchInput({
         placeholder={
           "Search " + getColByKey(rawColumnsByTable(table), columnKey).title
         }
-        value={getAllParams()[columnKey] && filter}
+        value={filter}
+        defaultValue={getAllParams()[columnKey] || filter}
         onChange={(e) => setFilter(e.target.value)}
         onPressEnter={submit}
         className="mt-3 block"

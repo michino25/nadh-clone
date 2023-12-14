@@ -4,6 +4,7 @@ import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
+import { useState } from "react";
 
 export default function ModelCertificate({
   closeModal,
@@ -22,6 +23,9 @@ export default function ModelCertificate({
 }) {
   const defaultData = data?.filter((item: any) => item.id === id)[0];
   console.log(defaultData);
+  const [checkbox, setCheckbox] = useState(
+    defaultData?.status === "Is current school"
+  );
 
   const { data: schoolData } = useQuery({
     queryKey: ["school"],
@@ -48,7 +52,8 @@ export default function ModelCertificate({
   const onFinish = (values: any) => {
     const outputData = {
       start_time: values.Start_year + "-01-01",
-      end_time: values.Graduation_year + "-01-01",
+      ...(!checkbox ? { end_time: values.Graduation_year + "-01-01" } : {}),
+
       organization: {
         key: values.school.split("_")[0],
         label: values.school.split("_")[1],
@@ -80,7 +85,9 @@ export default function ModelCertificate({
           <CheckboxData
             name="current_school"
             placeholder="Current school"
-            defaultValue={defaultData?.status === "Is current school"}
+            checked={checkbox}
+            onChange={setCheckbox}
+            defaultValue={checkbox}
           />
         </Col>
       </Row>
@@ -101,6 +108,7 @@ export default function ModelCertificate({
             placeholder="Choose year"
             label="Graduation year"
             name="Graduation_year"
+            disable={checkbox}
             defaultValue={defaultData?.end_time}
           />
         </Col>

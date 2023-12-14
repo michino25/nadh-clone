@@ -41,7 +41,8 @@ import Remuneration from "./components/Remuneration";
 export default function Candidates() {
   const { id } = useParams();
 
-  const [value, setValue] = useState<string[]>([]);
+  const [nationality, setNationality] = useState<string[]>([]);
+  const [position, setPosition] = useState<string[]>([]);
 
   const addIndustry = (data: any) => {
     const newData: any = {};
@@ -114,6 +115,17 @@ export default function Candidates() {
     queryKey: ["position"],
     queryFn: async () =>
       await otherApi.getProperty("position").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.label,
+          value: item.key + "_" + item.label,
+        }));
+      }),
+  });
+
+  const { data: dataNationality } = useQuery({
+    queryKey: ["nationality"],
+    queryFn: async () =>
+      await otherApi.getProperty("nationality").then((res) => {
         return res.data.data.map((item: any) => ({
           label: item.label,
           value: item.key + "_" + item.label,
@@ -226,7 +238,10 @@ export default function Candidates() {
         key: values.highest_education.split("_")[0],
         label: values.highest_education.split("_")[1],
       },
-      nationality: [],
+      nationality: values.nationality.map((item: any) => ({
+        key: item.split("_")[0],
+        label: item.split("_")[1],
+      })),
       phones: values.phones.map((item: any) => ({
         number: item,
         current: -1,
@@ -252,7 +267,7 @@ export default function Candidates() {
 
   const onFinishOverview = (values: any) => {
     updateMutation.mutate(values);
-    console.log("Received values of form: ", value);
+    console.log("Received values of form: ", values);
   };
 
   const createCandidateHistoriesApi = async (userData: any) => {
@@ -499,6 +514,20 @@ export default function Candidates() {
                   <Col xs={24} lg={12}>
                     <Birthday defaultValue={candidateData.dob} />
                   </Col>
+                  <Col span={12}>
+                    <DataSelect
+                      label="Highest Education"
+                      placeholder="Highest Education"
+                      name="highest_education"
+                      defaultValue={
+                        candidateData?.highest_education?.key &&
+                        candidateData.highest_education.key +
+                          "_" +
+                          candidateData.highest_education.label
+                      }
+                      data={dataDegree ? dataDegree : []}
+                    />
+                  </Col>
                 </Row>
 
                 <Row gutter={16}>
@@ -606,23 +635,22 @@ export default function Candidates() {
                       defaultValue={candidateData.prefer_position.positions.map(
                         (item: any) => item.key + "_" + item.label
                       )}
-                      value={value}
-                      setValue={setValue}
+                      value={position}
+                      setValue={setPosition}
                       options={dataPosition ? dataPosition : []}
                     />
                   </Col>
                   <Col span={12}>
-                    <DataSelect
-                      label="Highest Education"
-                      placeholder="Highest Education"
-                      name="highest_education"
-                      defaultValue={
-                        candidateData?.highest_education?.key &&
-                        candidateData.highest_education.key +
-                          "_" +
-                          candidateData.highest_education.label
-                      }
-                      data={dataDegree ? dataDegree : []}
+                    <MultiSelect
+                      label="Nationality"
+                      name="nationality"
+                      required={false}
+                      defaultValue={candidateData.nationality.map(
+                        (item: any) => item.key + "_" + item.label
+                      )}
+                      value={nationality}
+                      setValue={setNationality}
+                      options={dataNationality ? dataNationality : []}
                     />
                   </Col>
                 </Row>

@@ -46,14 +46,15 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       }
     : getAllParams();
 
-  const { data } = useQuery({
+  const [data, setData] = useState<any[]>([]);
+  useQuery({
     queryKey: ["Candidates", window.location.href],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
           perPage: pageSize,
           ...allParams,
-          creator_id: userDetail?.id,
+          ...(userDetail?.id !== "" ? { creator_id: userDetail.id } : {}),
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -86,7 +87,8 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
               (employment) => employment.title.label
             ),
           }));
-        }),
+        })
+        .then((res) => setData(res)),
     enabled: userDetail?.id !== undefined,
   });
 

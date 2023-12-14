@@ -5,7 +5,7 @@ interface iDataInput {
   name: string;
   required?: boolean;
   defaultValue?: string | number;
-  placeholder?: string;
+  placeholder: string;
   disabled?: boolean;
 }
 

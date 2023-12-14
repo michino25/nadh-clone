@@ -1,6 +1,6 @@
 import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Select } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
 export default function SearchSelect({
@@ -17,6 +17,10 @@ export default function SearchSelect({
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
   const [selected, setSelected] = useState(getAllParams()[columnKey]);
+
+  useEffect(() => {
+    setSelected(getAllParams()[columnKey]);
+  }, [window.location.href]);
 
   const submit = () => {
     //   // console.log(filter);
@@ -53,7 +57,8 @@ export default function SearchSelect({
         className="w-[200px] mt-3"
         showSearch
         allowClear
-        value={getAllParams()[columnKey] && selected}
+        value={selected}
+        defaultValue={getAllParams()[columnKey] && selected}
         placeholder={
           "Select a " + getColByKey(rawColumnsByTable(table), columnKey).title
         }

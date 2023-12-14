@@ -128,7 +128,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                       className="w-full mb-3"
                       rules={[
                         {
-                          required: required,
+                          required: true,
                           message: `Please input your your Country!`,
                         },
                       ]}

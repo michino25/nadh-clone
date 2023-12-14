@@ -8,6 +8,9 @@ interface iDataInput {
   defaultValue?: string | number;
   placeholder: string;
   data: iOption[];
+  disable?: boolean;
+  value?: any;
+  setChange?: (value: any) => void;
 }
 
 const filterOption = (input: string, option?: iOption) =>
@@ -20,6 +23,9 @@ export default function DataSelect({
   defaultValue,
   placeholder,
   data,
+  disable,
+  value,
+  setChange,
 }: iDataInput) {
   return (
     <Form.Item
@@ -36,6 +42,9 @@ export default function DataSelect({
       <Select
         filterOption={filterOption}
         allowClear
+        value={value}
+        onChange={(e) => setChange && setChange(e.target.value)}
+        disabled={disable}
         options={data}
         showSearch
         placeholder={placeholder}

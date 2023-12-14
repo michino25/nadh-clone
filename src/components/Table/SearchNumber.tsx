@@ -1,5 +1,5 @@
 import { Button, InputNumber } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
 export default function SearchNumber({
@@ -14,13 +14,20 @@ export default function SearchNumber({
   const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
   const [to, setTo] = useState(getAllParams()[columnKey + "_to"]);
 
+  useEffect(() => {
+    setFrom(getAllParams()[columnKey + "_from"]);
+    setTo(getAllParams()[columnKey + "_to"]);
+  }, [window.location.href]);
+
   const submit = () => {
     //   // console.log(filter);
-    if (to || from) {
-      if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
-      if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
+    if (from || to) {
+      if (!((!!to || to === 0) && !!from && from > to)) {
+        if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
+        if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
+        closeFn();
+      }
     } else reset();
-    closeFn();
   };
 
   const reset = () => {
@@ -47,8 +54,8 @@ export default function SearchNumber({
         min={0}
         style={{ width: "100%" }}
         placeholder={"From"}
-        // value={from}
-        value={getAllParams()[columnKey + "_from"] && from}
+        value={from}
+        defaultValue={getAllParams()[columnKey + "_from"] || from}
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
@@ -57,14 +64,14 @@ export default function SearchNumber({
         min={0}
         style={{ width: "100%" }}
         placeholder={"To"}
-        // value={to}
-        value={getAllParams()[columnKey + "_to"] && to}
+        value={to}
+        defaultValue={getAllParams()[columnKey + "_to"] || to}
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
       />
 
-      {from > to && (
+      {(!!to || to === 0) && !!from && from > to && (
         <span className="block w-[160px] mt-2 text-red-500/80 font-medium text-sm">
           * From's value must be lower than to's value
         </span>

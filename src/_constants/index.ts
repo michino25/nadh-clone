@@ -95,18 +95,18 @@ for (let year = 1960; year <= 2023; year++) {
 }
 
 export const months = [
-  { label: "01", value: "01" },
-  { label: "02", value: "02" },
-  { label: "03", value: "03" },
-  { label: "04", value: "04" },
-  { label: "05", value: "05" },
-  { label: "06", value: "06" },
-  { label: "07", value: "07" },
-  { label: "08", value: "08" },
-  { label: "09", value: "09" },
-  { label: "10", value: "10" },
-  { label: "11", value: "11" },
-  { label: "12", value: "12" },
+  { label: "January", value: "01" },
+  { label: "February", value: "02" },
+  { label: "March", value: "03" },
+  { label: "April", value: "04" },
+  { label: "May", value: "05" },
+  { label: "June", value: "06" },
+  { label: "Jul", value: "07" },
+  { label: "Augus", value: "08" },
+  { label: "September", value: "09" },
+  { label: "October", value: "10" },
+  { label: "November", value: "11" },
+  { label: "December", value: "12" },
 ];
 
 export const clientType = [
@@ -218,7 +218,7 @@ export const candidateColumns = [
     title: "Highest degree",
     key: "highest_education",
     search: "highest_education",
-    type: "select",
+    type: "multiple_select",
   },
   {
     title: "City",
@@ -242,7 +242,7 @@ export const candidateColumns = [
     title: "Activity",
     key: "flow_status",
     search: "flow_status",
-    type: "select",
+    type: "multiple_select",
   },
   {
     title: "Recent companies",

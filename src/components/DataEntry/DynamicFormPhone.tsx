@@ -14,7 +14,7 @@ interface iDataInput {
 }
 
 const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
-  const { data: countries, isPending } = useQuery({
+  const { data: countries } = useQuery({
     queryKey: ["countries", "phone"],
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
@@ -27,7 +27,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
       <Select style={{ width: 120 }} defaultValue={"+84"}>
-        {!isPending &&
+        {countries &&
           countries.length > 0 &&
           countries.map((item: any) => (
             <Select.Option key={item.code} value={item.dial_code}>

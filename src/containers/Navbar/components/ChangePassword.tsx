@@ -88,12 +88,19 @@ export default function ChangePassword() {
           >
             <InputPassword
               label="Current password"
+              placeholder="Current password"
               name="old_password"
               required
             />
-            <InputPassword label="New password" name="new_password" required />
+            <InputPassword
+              label="New password"
+              placeholder="New password"
+              name="new_password"
+              required
+            />
             <InputPassword
               label="Confirm new password"
+              placeholder="Confirm new password"
               name="re_new_password"
               dependencies="new_password"
               required

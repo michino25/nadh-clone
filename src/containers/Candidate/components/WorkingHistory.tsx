@@ -39,6 +39,7 @@ export default function WorkingHistory({
     ?.filter((item: any) => item.type === 2)
     .map((item: any) => ({
       id: item.id.toString(),
+      status: item.status,
       end_time: item.end_time || "Present",
       start_time: item.start_time,
       position: item.title,

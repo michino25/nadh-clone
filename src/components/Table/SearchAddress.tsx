@@ -13,22 +13,27 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
 
   const [country, setCountry] = useState<number>();
   const [city, setCity] = useState<number>();
-  const [cityData, setCityData] = useState<iOption[]>([]);
+  const [cityData, setCityData] = useState<iOption[]>();
 
   const getInit = async () => {
-    const data = getAllParams()["city"].split(",");
-    if (data[0]) {
-      setCountry(parseInt(data[0]));
-      setCityData(await getCity(parseInt(data[0])));
+    if (getAllParams()["city"]) {
+      const data = getAllParams()["city"].split(",");
+      if (data[0]) {
+        setCountry(parseInt(data[0]));
+        if (parseInt(data[0]) === 1280) setCityData(cityDataVN);
+        else setCityData([]);
+      }
+      if (data[1]) setCity(parseInt(data[1]));
+    } else {
+      setCountry(undefined);
+      setCity(undefined);
+      setCityData(undefined);
     }
-    if (data[1]) setCity(parseInt(data[1]));
   };
 
   useEffect(() => {
-    if (getAllParams()["city"]) {
-      getInit();
-    }
-  }, [getAllParams()["city"]]);
+    getInit();
+  }, [window.location.href]);
 
   const { data: countryData, isPending } = useQuery({
     queryKey: ["countries"],
@@ -41,24 +46,27 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
       ),
   });
 
-  console.log(countryData);
+  const { data: cityDataVN } = useQuery({
+    queryKey: ["cityVN"],
+    queryFn: async () =>
+      await otherApi.getLocation(1, "1280").then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.key,
+          label: item.label,
+        }))
+      ),
+  });
 
-  const getCity = async (id: any) => {
-    const res = await otherApi.getLocation(1, id);
-
-    return res.data.data.map((item: any) => ({
-      value: item.key,
-      label: item.label,
-    }));
-  };
+  // console.log(countryData);
 
   const submit = () => {
-    console.log(city, country);
-    const data = country + (city ? "," + city : "");
+    if (country) {
+      const data = country + (city ? "," + city : "");
 
-    if (data) {
-      changeOneFilter(getAllParams(), "city", data);
-      closeFn();
+      if (data) {
+        changeOneFilter(getAllParams(), "city", data);
+        closeFn();
+      }
     } else reset();
   };
 
@@ -69,13 +77,16 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
     removeOneFilter(getAllParams(), "city");
     setCountry(undefined);
     setCity(undefined);
+    setCityData(undefined);
     closeFn();
   };
 
   const handleChangeCountry = async (value: number) => {
     setCountry(value);
 
-    setCityData(await getCity(value));
+    if (!value) setCityData(undefined);
+    else if (value === 1280) setCityData(cityDataVN);
+    else setCityData([]);
     setCity(undefined);
   };
 
@@ -116,7 +127,7 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
             filterOption={filterOption}
             options={cityData}
             value={city}
-            disabled={!cityData || cityData.length === 0}
+            disabled={!cityData}
             onChange={handleChangeCity}
             placeholder="City"
           />

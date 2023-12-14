@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Button, DatePicker } from "antd";
@@ -19,8 +19,25 @@ export default function SearchDate({
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [from, setFrom] = useState(getAllParams()[columnKey + "_from"]);
-  const [to, setTo] = useState(getAllParams()[columnKey + "_to"]);
+  const [from, setFrom] = useState(
+    getAllParams()[columnKey + "_from"] &&
+      dayjs(getAllParams()[columnKey + "_from"])
+  );
+  const [to, setTo] = useState(
+    getAllParams()[columnKey + "_to"] &&
+      dayjs(getAllParams()[columnKey + "_to"])
+  );
+
+  useEffect(() => {
+    setFrom(
+      getAllParams()[columnKey + "_from"] &&
+        dayjs(getAllParams()[columnKey + "_from"])
+    );
+    setTo(
+      getAllParams()[columnKey + "_to"] &&
+        dayjs(getAllParams()[columnKey + "_to"])
+    );
+  }, [window.location.href]);
 
   const submit = () => {
     console.log(to, from);
@@ -53,7 +70,7 @@ export default function SearchDate({
 
       <DatePicker
         format="DD-MM-YYYY"
-        value={getAllParams()[columnKey + "_from"] && dayjs(from)}
+        value={from && dayjs(from)}
         placeholder="Start date"
         disabledDate={(date) => to && date > dayjs(to)}
         onChange={(date) =>
@@ -64,7 +81,7 @@ export default function SearchDate({
 
       <DatePicker
         format="DD-MM-YYYY"
-        value={getAllParams()[columnKey + "_to"] && dayjs(to)}
+        value={to && dayjs(to)}
         placeholder="End date"
         disabledDate={(date) => from && date < dayjs(from)}
         onChange={(date) =>

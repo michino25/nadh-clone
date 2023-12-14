@@ -67,6 +67,11 @@ const _otherApi = {
     const url = "api/properties/default";
     return axios().get(url);
   },
+
+  getExchangeCurrencies() {
+    const url = "api/exchange_currencies";
+    return axios().get(url);
+  },
 };
 
 export default _otherApi;

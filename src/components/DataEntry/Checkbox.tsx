@@ -6,6 +6,8 @@ interface iDataInput {
   placeholder: string;
   defaultValue?: boolean;
   disabled?: boolean;
+  checked?: boolean;
+  onChange?: (value: any) => void;
 }
 
 export default function CheckboxData({
@@ -14,6 +16,8 @@ export default function CheckboxData({
   defaultValue,
   placeholder,
   disabled,
+  checked,
+  onChange,
 }: iDataInput) {
   return (
     <Form.Item
@@ -22,7 +26,13 @@ export default function CheckboxData({
       name={name}
       initialValue={defaultValue}
     >
-      <Checkbox disabled={disabled}>{placeholder}</Checkbox>
+      <Checkbox
+        checked={checked}
+        onChange={(e) => onChange && onChange(e.target.checked)}
+        disabled={disabled}
+      >
+        {placeholder}
+      </Checkbox>
     </Form.Item>
   );
 }

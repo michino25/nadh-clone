@@ -11,12 +11,20 @@ interface iDataInput {
   name: string;
   required?: boolean;
   defaultValue?: string | number;
+  placeholder?: string;
 }
 
 /** Manually entering any of the following formats will perform date parsing */
 const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
-const App = ({ label, name, required, defaultValue, disabled }: iDataInput) => (
+const App = ({
+  label,
+  name,
+  required,
+  defaultValue,
+  disabled,
+  placeholder = "Choose date",
+}: iDataInput) => (
   <Form.Item
     label={label}
     name={name}
@@ -35,6 +43,7 @@ const App = ({ label, name, required, defaultValue, disabled }: iDataInput) => (
       format={dateFormatList}
       disabled={disabled}
       className="w-full"
+      placeholder={placeholder}
     />
   </Form.Item>
 );

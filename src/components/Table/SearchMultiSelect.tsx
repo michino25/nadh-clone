@@ -1,6 +1,6 @@
 import { getColByKey, rawColumnsByTable } from "_constants/index";
 import { Button, Select } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
 
 export default function SearchMultiSelect({
@@ -20,6 +20,10 @@ export default function SearchMultiSelect({
     getAllParams()[columnKey]?.split(",")
   );
 
+  useEffect(() => {
+    setSelected(getAllParams()[columnKey]?.split(","));
+  }, [window.location.href]);
+
   const submit = () => {
     // console.log(selected.join(","));
 
@@ -32,7 +36,7 @@ export default function SearchMultiSelect({
   const reset = () => {
     // console.log(filter);
     removeOneFilter(getAllParams(), columnKey);
-    setSelected(null);
+    setSelected([]);
     closeFn();
   };
 
@@ -57,7 +61,8 @@ export default function SearchMultiSelect({
         showSearch
         allowClear
         mode="multiple"
-        value={getAllParams()[columnKey] && selected}
+        value={selected}
+        defaultValue={getAllParams()[columnKey] && selected}
         placeholder={
           "Select a " + getColByKey(rawColumnsByTable(table), columnKey).title
         }

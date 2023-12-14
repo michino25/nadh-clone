@@ -5,6 +5,7 @@ import { iOption } from "_constants/index";
 import { useEffect } from "react";
 
 interface iData {
+  direction?: "row" | "col";
   industry: iOption | undefined;
   setIndustry: (value: iOption | undefined) => void;
   sector: iOption | undefined;
@@ -22,6 +23,7 @@ const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
 export default function Industry({
+  direction = "col",
   industry,
   setIndustry,
   sector,
@@ -103,12 +105,15 @@ export default function Industry({
     } else {
       setSectorData(undefined);
       setCategoryData(undefined);
+      setSector(undefined);
+      setCategory(undefined);
+      setIndustry(undefined);
     }
   };
 
   useEffect(() => {
     if (!allIndustryIsPending) initData();
-  }, [allIndustryIsPending, industry_id]);
+  }, [allIndustryIsPending, industry_id, window.location.href]);
 
   const getChildren = (key: number) =>
     allIndustryData.filter((item: any) => item.parent_id === key);
@@ -116,17 +121,20 @@ export default function Industry({
   const handleChangeIndustry = (value: number) => {
     setIndustry(industryData.filter((item: any) => item.value === value)[0]);
 
-    setSectorData(getChildren(value));
+    if (value) setSectorData(getChildren(value));
+    else setSectorData(undefined);
     setSector(undefined);
 
-    setCategoryData([]);
+    setCategoryData(undefined);
     setCategory(undefined);
   };
 
   const handleChangeSector = (value: number) => {
     setSector(sectorData?.filter((item: any) => item.value === value)[0]);
 
-    setCategoryData(getChildren(value));
+    if (value) setCategoryData(getChildren(value));
+    else setCategoryData(undefined);
+
     setCategory(undefined);
   };
 
@@ -138,7 +146,7 @@ export default function Industry({
 
   return (
     <>
-      <Form.Item className="w-full mb-3">
+      <Form.Item className={direction === "row" ? "w-1/3 mb-3" : "w-full mb-3"}>
         <Select
           allowClear
           showSearch
@@ -150,27 +158,27 @@ export default function Industry({
         />
       </Form.Item>
 
-      <Form.Item className="w-full mb-3">
+      <Form.Item className={direction === "row" ? "w-1/3 mb-3" : "w-full mb-3"}>
         <Select
           allowClear
           showSearch
           filterOption={filterOption}
           options={sectorData}
           value={sector ? (sector.value as number) : undefined}
-          disabled={!sectorData || sectorData.length === 0}
+          disabled={!sectorData}
           onChange={handleChangeSector}
           placeholder="Sector"
         />
       </Form.Item>
 
-      <Form.Item className="w-full mb-3">
+      <Form.Item className={direction === "row" ? "w-1/3 mb-3" : "w-full mb-3"}>
         <Select
           allowClear
           showSearch
           filterOption={filterOption}
           options={categoryData}
           value={category ? (category.value as number) : undefined}
-          disabled={!categoryData || categoryData.length === 0}
+          disabled={!categoryData}
           onChange={handleChangeCategory}
           placeholder="Category"
         />

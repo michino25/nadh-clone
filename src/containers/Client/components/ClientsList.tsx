@@ -2,7 +2,7 @@
 import DataTable from "components/Table/DataTable";
 import { formatName, formatDate } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { clientApi, userApi } from "apis/index";
@@ -49,14 +49,15 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         }
     : getAllParams();
 
-  const { data, status } = useQuery({
+  const [data, setData] = useState<any[]>([]);
+  useQuery({
     queryKey: ["Clients", window.location.href],
     queryFn: async () =>
       await clientApi
         .getClients({
           perPage: pageSize,
           ...allParams,
-          lead_consultant: userDetail?.id,
+          ...(userDetail?.id !== "" ? { lead_consultant: userDetail.id } : {}),
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -99,14 +100,10 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
                 client.contact_person_current[0].extra?.contact_info?.title
               ),
           }));
-        }),
+        })
+        .then((res) => setData(res)),
     enabled: userDetail?.id !== undefined,
   });
-
-  useEffect(() => {
-    console.log("Data status:", status);
-    console.log("Data:", data);
-  }, [data, status]);
 
   const goDetail = (id: string) => {
     const clients = data.filter((item: iClient) => item.id === id);

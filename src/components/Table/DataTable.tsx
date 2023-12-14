@@ -118,7 +118,8 @@ const DataTable = ({
                 color:
                   Object.keys(getAllParams()).filter(
                     (item) => item.replace(/_(from|to)$/, "") === columnKey
-                  ).length > 0
+                  ).length > 0 ||
+                  (columnKey === "location" && getAllParams()["city"])
                     ? "#1677ff"
                     : undefined,
               }}
@@ -171,7 +172,7 @@ const DataTable = ({
     }
   }, [colIsPending]);
 
-  console.log(filterCol);
+  // console.log(filterCol);
 
   let columns: ColumnsType<DataType> = [];
   if (Array.isArray(rawColumns)) {

@@ -22,6 +22,7 @@ const App = ({ saveData }: iDataInput) => {
         <div className="flex-col w-full justify-between items-center">
           <div className="flex w-full space-x-3">
             <Industry
+              direction="row"
               industry={industry}
               setIndustry={setIndustry}
               sector={sector}
@@ -38,14 +39,19 @@ const App = ({ saveData }: iDataInput) => {
           <div className="flex justify-end pb-4">
             <Button
               hidden={!industry}
-              onClick={() =>
+              onClick={() => {
                 saveData({
                   id: uuidv4(),
                   industry,
                   sector,
                   category,
-                })
-              }
+                });
+                setSectorData(undefined);
+                setCategoryData(undefined);
+                setCategory(undefined);
+                setIndustry(undefined);
+                setSector(undefined);
+              }}
               type="primary"
             >
               Save Industry

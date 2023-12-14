@@ -4,6 +4,7 @@ import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
+import { useState } from "react";
 
 export default function ModelWorking({
   closeModal,
@@ -22,6 +23,7 @@ export default function ModelWorking({
 }) {
   const defaultData = data?.filter((item: any) => item.id === id)[0];
   console.log(defaultData);
+  const [checkbox, setCheckbox] = useState(defaultData?.status === 1);
 
   const { data: companyData } = useQuery({
     queryKey: ["company"],
@@ -48,7 +50,10 @@ export default function ModelWorking({
   const onFinish = (values: any) => {
     const outputData = {
       start_time: values.Start_year + "-" + values.Start_month + "-01",
-      end_time: values.End_year + "-" + values.End_month + "-01",
+      ...(!checkbox
+        ? { end_time: values.End_year + "-" + values.End_month + "-01" }
+        : {}),
+
       organization: {
         key: values.company.split("_")[0],
         label: values.company.split("_")[1],
@@ -73,7 +78,13 @@ export default function ModelWorking({
     >
       <Row gutter={16}>
         <Col span={12}>
-          <CheckboxData name="current_job" placeholder="Current job" />
+          <CheckboxData
+            name="current_job"
+            placeholder="Current job"
+            checked={checkbox}
+            onChange={setCheckbox}
+            defaultValue={checkbox}
+          />
         </Col>
       </Row>
 
@@ -102,6 +113,7 @@ export default function ModelWorking({
             placeholder="Choose month"
             label="End year"
             name="End_month"
+            disable={checkbox}
             defaultValue={defaultData?.end_time?.split("-")[1]}
           />
         </Col>
@@ -111,6 +123,7 @@ export default function ModelWorking({
             placeholder="Choose year"
             label=""
             name="End_year"
+            disable={checkbox}
             defaultValue={defaultData?.end_time?.split("-")[0]}
           />
         </Col>

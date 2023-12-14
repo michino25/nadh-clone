@@ -4,6 +4,7 @@ interface iDataInput {
   label: string;
   name: string;
   dependencies?: string;
+  placeholder: string;
   required: boolean;
 }
 
@@ -11,6 +12,7 @@ export default function DataInputPassword({
   label,
   name,
   required,
+  placeholder,
   dependencies,
 }: iDataInput) {
   return (
@@ -36,7 +38,7 @@ export default function DataInputPassword({
         }),
       ]}
     >
-      <Input.Password />
+      <Input.Password placeholder={placeholder} />
     </Form.Item>
   );
 }

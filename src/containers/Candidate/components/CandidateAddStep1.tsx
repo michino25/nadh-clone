@@ -25,7 +25,8 @@ export default function CandidateAddStep1({
 }) {
   // const navigate = useNavigate();
 
-  const [value, setValue] = useState<string[]>([]);
+  const [nationality, setNationality] = useState<string[]>([]);
+  const [position, setPosition] = useState<string[]>([]);
 
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
@@ -41,15 +42,23 @@ export default function CandidateAddStep1({
   const { data: dataPosition } = useQuery({
     queryKey: ["position"],
     queryFn: async () =>
-      await otherApi
-        .getProperty("position")
-        .then((res) => {
-          return res.data.data.map((item: any) => ({
-            label: item.label,
-            value: item.key + "_" + item.label,
-          }));
-        })
-        .then((res) => res.splice(5)),
+      await otherApi.getProperty("position").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.label,
+          value: item.key + "_" + item.label,
+        }));
+      }),
+  });
+
+  const { data: dataNationality } = useQuery({
+    queryKey: ["nationality"],
+    queryFn: async () =>
+      await otherApi.getProperty("nationality").then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: item.label,
+          value: item.key + "_" + item.label,
+        }));
+      }),
   });
 
   const createCandidate = async (userData: any) => {
@@ -117,11 +126,15 @@ export default function CandidateAddStep1({
             label: values.highest_education.split("_")[1],
           }
         : null,
-      nationality: [],
       phones: values.phones.map((item: any) => ({
         number: item,
         current: -1,
         phone_code: { key: 1280 },
+      })),
+
+      nationality: values.nationality.map((item: any) => ({
+        key: item.split("_")[0],
+        label: item.split("_")[1],
       })),
 
       prefer_position: values.prefer_position
@@ -191,6 +204,14 @@ export default function CandidateAddStep1({
         <Col span={12}>
           <Birthday defaultValue="" />
         </Col>
+        <Col span={12}>
+          <DataSelect
+            label="Highest Education"
+            placeholder="Highest Education"
+            name="highest_education"
+            data={dataDegree ? dataDegree : []}
+          />
+        </Col>
       </Row>
 
       <Row gutter={16}>
@@ -257,17 +278,19 @@ export default function CandidateAddStep1({
             label="Position Applied"
             name="prefer_position"
             required={false}
-            value={value}
-            setValue={setValue}
+            value={position}
+            setValue={setPosition}
             options={dataPosition ? dataPosition : []}
           />
         </Col>
         <Col span={12}>
-          <DataSelect
-            label="Highest Education"
-            placeholder="Highest Education"
-            name="highest_education"
-            data={dataDegree ? dataDegree : []}
+          <MultiSelect
+            label="Nationality"
+            name="nationality"
+            required={false}
+            value={nationality}
+            setValue={setNationality}
+            options={dataNationality ? dataNationality : []}
           />
         </Col>
       </Row>
