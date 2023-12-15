@@ -13,32 +13,35 @@ interface iDataInput {
 const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
   // console.log(defaultValue);
   useEffect(() => {
-    setAddress(
-      defaultValue?.map((item: any) => ({
-        id: uuidv4(),
-        address: {
-          ...{
-            country: item?.country && {
-              value: item.country.key,
-              label: item.country.label,
+    console.log(defaultValue);
+
+    if (defaultValue[0])
+      setAddress(
+        defaultValue.map((item: any) => ({
+          id: uuidv4(),
+          address: {
+            ...{
+              country: item?.country && {
+                value: item.country.key,
+                label: item.country.label,
+              },
             },
-          },
-          ...{
-            city: item?.city && {
-              value: item.city.key,
-              label: item.city.label,
+            ...{
+              city: item?.city && {
+                value: item.city.key,
+                label: item.city.label,
+              },
             },
-          },
-          ...{
-            district: item?.district && {
-              value: item.district.key,
-              label: item.district.label,
+            ...{
+              district: item?.district && {
+                value: item.district.key,
+                label: item.district.label,
+              },
             },
+            address: item?.address,
           },
-          address: item?.address,
-        },
-      }))
-    );
+        }))
+      );
   }, []);
 
   const remove = (key: any) => {
