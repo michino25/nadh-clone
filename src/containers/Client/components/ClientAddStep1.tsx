@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import IndustryTable from "components/DataDisplay/IndustryTable";
+import Address from "components/DataEntry/Address";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -19,6 +20,7 @@ export default function CandidateAddStep1({
   setData: (value: any) => void;
 }) {
   const [industry, setIndustry] = useState<any[]>([]);
+
   const deleteItem = (id: string) => {
     if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
   };
@@ -193,10 +195,23 @@ export default function CandidateAddStep1({
           <Input label="Email" placeholder="Email" name="email" />
         </Col>
         <Col span={12}>
-          <Input
-            label="Address"
-            name="address"
-            placeholder={"ex: 2 Hai Trieu, Bitexco Financial Tower"}
+          <Address
+            defaultValue={{
+              address: null,
+              country: {
+                key: 1280,
+                label: "Viet Nam",
+              },
+              city: {
+                key: 2,
+                label: "Ba Ria - Vung Tau",
+              },
+              district: {
+                key: 78,
+                label: "Tan Thanh",
+              },
+            }}
+            onChange={(data) => console.log(data)}
           />
         </Col>
       </Row>

@@ -1,35 +1,20 @@
 import { useParams, Link } from "react-router-dom";
-import { Anchor, Col, Row, Button, Form, Skeleton, notification } from "antd";
+import { Anchor, Button, Form, Skeleton, notification } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import Image from "components/DataDisplay/Image";
 
-import {
-  DataUpload,
-  TextArea,
-  Input,
-  DataSelect,
-  Birthday,
-  DataRadio,
-  DataDatePicker,
-  MultiSelect,
-  DynamicFormEmail,
-  DynamicFormPhone,
-  DynamicFormAddress,
-} from "components/DataEntry/index";
+import { DataUpload, TextArea } from "components/DataEntry/index";
 
 import BackToTopButton from "components/BackToTopButton";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-import { formatName } from "utils/format";
 import InterviewLoop from "containers/Candidate/components/InterviewLoop";
-import DataInputNumber from "components/DataEntry/InputNumber";
 
-import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { candidateApi, otherApi } from "apis/index";
 import { getUser } from "utils/getUser";
 import FormIndustry from "containers/Client/components/FormIndustry";
@@ -37,12 +22,11 @@ import WorkingHistory from "./components/WorkingHistory";
 import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
 import Remuneration from "./components/Remuneration";
+import PersonalInformationForm from "./components/PersonalInformationForm";
 
 export default function Candidates() {
   const { id } = useParams();
-
-  const [nationality, setNationality] = useState<string[]>([]);
-  const [position, setPosition] = useState<string[]>([]);
+  const [address, setAddress] = useState<any[]>();
 
   const addIndustry = (data: any) => {
     const newData: any = {};
@@ -100,39 +84,6 @@ export default function Candidates() {
     updateMutation.mutate({ business_line: transformedData });
   };
 
-  const { data: dataDegree } = useQuery({
-    queryKey: ["degree"],
-    queryFn: async () =>
-      await otherApi.getProperty("degree").then((res) => {
-        return res.data.data.map((item: any) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
-  });
-
-  const { data: dataPosition } = useQuery({
-    queryKey: ["position"],
-    queryFn: async () =>
-      await otherApi.getProperty("position").then((res) => {
-        return res.data.data.map((item: any) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
-  });
-
-  const { data: dataNationality } = useQuery({
-    queryKey: ["nationality"],
-    queryFn: async () =>
-      await otherApi.getProperty("nationality").then((res) => {
-        return res.data.data.map((item: any) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
-  });
-
   const {
     data: candidateData,
     isPending,
@@ -144,18 +95,18 @@ export default function Candidates() {
         // console.log(!res.data.addresses[0].city);
         return {
           ...res.data,
-          addresses: res.data.addresses.map((addressItem: any) => ({
-            address: addressItem.address,
-            country: addressItem.country
-              ? addressItem.country.key + "_" + addressItem.country.label
-              : null,
-            city: addressItem.city
-              ? addressItem.city.key + "_" + addressItem.city.label
-              : null,
-            district: addressItem.district
-              ? addressItem.district.key + "_" + addressItem.district.label
-              : null,
-          })),
+          // addresses: res.data.addresses.map((addressItem: any) => ({
+          //   address: addressItem.address,
+          //   country: addressItem.country
+          //     ? addressItem.country.key + "_" + addressItem.country.label
+          //     : null,
+          //   city: addressItem.city
+          //     ? addressItem.city.key + "_" + addressItem.city.label
+          //     : null,
+          //   district: addressItem.district
+          //     ? addressItem.district.key + "_" + addressItem.district.label
+          //     : null,
+          // })),
           business_line: res.data.business_line.map((item: any) => ({
             ...item,
             id: uuidv4(),
@@ -208,30 +159,34 @@ export default function Candidates() {
         ? `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`
         : null;
 
-    console.log(values.addresses[0].country);
+    // console.log(values.addresses[0].country);
 
     const data = {
       ...values,
-      addresses: values.addresses.map((item: any) => ({
-        address: item.address,
-        country:
-          item.country && typeof item.country === "string"
-            ? {
-                key: item.country.split("_")[0],
-                label: item.country.split("_")[1],
-              }
-            : { key: null, label: null },
-        city: item.city &&
-          typeof item.city === "string" && {
-            key: item.city.split("_")[0],
-            label: item.city.split("_")[1],
+      addresses:
+        address &&
+        address.map((item) => ({
+          address: item.address.address,
+          ...{
+            country: item.address.country && {
+              key: item.address.country.value,
+              label: item.address.country.label,
+            },
           },
-        district: item.district &&
-          typeof item.district === "string" && {
-            key: item.district.split("_")[0],
-            label: item.district.split("_")[1],
+          ...{
+            city: item.address.city && {
+              key: item.address.city.value,
+              label: item.address.city.label,
+            },
           },
-      })),
+          ...{
+            district: item.address.district && {
+              key: item.address.district.value,
+              label: item.address.district.label,
+            },
+          },
+        })),
+
       dob: dob,
       gender: parseInt(values.gender),
       highest_education: {
@@ -242,11 +197,12 @@ export default function Candidates() {
         key: item.split("_")[0],
         label: item.split("_")[1],
       })),
-      phones: values.phones.map((item: any) => ({
-        number: item,
-        current: -1,
-        phone_code: { key: 1280 },
-      })),
+      phones: values.phones,
+      // phones: values.phones.map((item: any) => ({
+      //   number: item,
+      //   current: -1,
+      //   phone_code: { key: 1280 },
+      // })),
 
       prefer_position: {
         positions: values.prefer_position.map((item: any) => ({
@@ -260,10 +216,20 @@ export default function Candidates() {
     };
     updateMutation.mutate(data);
     console.log("Received values of form: ", data);
+    console.log(address);
   };
 
   const [showBtn, setShowBtn] = useState(false);
   const [showOverviewSave, setShowOverviewSave] = useState(false);
+  const [firstRender, setFirstRender] = useState(false);
+
+  useEffect(() => {
+    if (!firstRender)
+      setTimeout(() => {
+        setFirstRender(true);
+      }, 1000);
+    else setShowBtn(true);
+  }, [address]);
 
   const onFinishOverview = (values: any) => {
     updateMutation.mutate(values);
@@ -468,211 +434,11 @@ export default function Candidates() {
                 onFinish={onFinish}
                 onValuesChange={() => setShowBtn(true)}
               >
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="First Name"
-                      placeholder="First Name"
-                      name="first_name"
-                      required={true}
-                      defaultValue={formatName(candidateData.first_name)}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      label="Last Name"
-                      placeholder="Last Name"
-                      name="last_name"
-                      required={true}
-                      defaultValue={formatName(candidateData.last_name)}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="Middle Name"
-                      placeholder="Middle Name"
-                      name="middle_name"
-                      defaultValue={formatName(candidateData.middle_name)}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataSelect
-                      label="Primary status"
-                      placeholder="Primary status"
-                      name="priority_status"
-                      required={true}
-                      defaultValue={candidateData.priority_status.toString()}
-                      data={primaryStatus}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col xs={24} lg={12}>
-                    <Birthday defaultValue={candidateData.dob} />
-                  </Col>
-                  <Col span={12}>
-                    <DataSelect
-                      label="Highest Education"
-                      placeholder="Highest Education"
-                      name="highest_education"
-                      defaultValue={
-                        candidateData?.highest_education?.key &&
-                        candidateData.highest_education.key +
-                          "_" +
-                          candidateData.highest_education.label
-                      }
-                      data={dataDegree ? dataDegree : []}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DataRadio
-                      name="gender"
-                      label="Gender"
-                      defaultValue={candidateData.gender.toString()}
-                      data={createSelectData(gender)}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataRadio
-                      name="martial_status"
-                      label="Marital Status"
-                      defaultValue={candidateData.extra.martial_status}
-                      data={[
-                        { label: "Yes", value: 1 },
-                        { label: "No", value: -1 },
-                      ]}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DataSelect
-                      label="Ready to move"
-                      placeholder="Ready to move"
-                      name="relocating_willingness"
-                      required={true}
-                      defaultValue={candidateData.relocating_willingness.toString()}
-                      data={[
-                        { label: "Yes", value: "1" },
-                        { label: "No", value: "-1" },
-                      ]}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      label="Source"
-                      placeholder="Source"
-                      name="source"
-                      required={true}
-                      defaultValue={candidateData.source}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Input
-                      label="Created by"
-                      placeholder="Created by"
-                      name="user_name"
-                      required={true}
-                      defaultValue={formatName(candidateData.creator.full_name)}
-                      disabled
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataDatePicker
-                      name="createdAt"
-                      defaultValue={candidateData.createdAt}
-                      label="Created on"
-                      disabled
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DynamicFormEmail
-                      defaultValue={candidateData.emails}
-                      name="emails"
-                      required={true}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DynamicFormPhone
-                      defaultValue={candidateData.phones.map(
-                        (item: any) => item.number
-                      )}
-                      name="phones"
-                      required={true}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={24}>
-                    <DynamicFormAddress
-                      defaultValue={candidateData.addresses}
-                      name="addresses"
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <MultiSelect
-                      label="Position Applied"
-                      name="prefer_position"
-                      required={false}
-                      defaultValue={candidateData.prefer_position.positions.map(
-                        (item: any) => item.key + "_" + item.label
-                      )}
-                      value={position}
-                      setValue={setPosition}
-                      options={dataPosition ? dataPosition : []}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <MultiSelect
-                      label="Nationality"
-                      name="nationality"
-                      required={false}
-                      defaultValue={candidateData.nationality.map(
-                        (item: any) => item.key + "_" + item.label
-                      )}
-                      value={nationality}
-                      setValue={setNationality}
-                      options={dataNationality ? dataNationality : []}
-                    />
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <DataInputNumber
-                      label="Industry Year of Services"
-                      defaultValue={candidateData.industry_years}
-                      placeholder={"0"}
-                      name="industry_years"
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DataInputNumber
-                      label="Year of Management"
-                      defaultValue={candidateData.management_years}
-                      placeholder={"0"}
-                      name="management_years"
-                    />
-                  </Col>
-                </Row>
+                <PersonalInformationForm
+                  candidateData={candidateData}
+                  setAddress={setAddress}
+                  address={address}
+                />
 
                 {showBtn && (
                   <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end space-x-2 py-3 px-8">

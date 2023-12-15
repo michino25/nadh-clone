@@ -1,9 +1,10 @@
-import { DataRadio, InputNumber } from "components/DataEntry";
+import { InputNumber } from "components/DataEntry";
 import { Col, Row, Button, Form, Select } from "antd";
 import { YNquestion } from "_constants/index";
 import { useEffect, useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
+import DataRadioNote from "components/DataEntry/RadioNote";
 
 export default function Remuneration({
   data,
@@ -77,16 +78,32 @@ export default function Remuneration({
           laptop: parseInt(values.laptop),
           share_option: parseInt(values.share_option),
           health_cover: parseInt(values.health_cover),
+
+          ...(values.over_thirteen === "1"
+            ? { over_thirteen_text: values.over_thirteen_text }
+            : {}),
+          ...(values.lunch_check === "1"
+            ? { lunch_check_text: values.lunch_check_text }
+            : {}),
+          ...(values.car_parking === "1"
+            ? { car_parking_text: values.car_parking_text }
+            : {}),
+          ...(values.car_allowance === "1"
+            ? { car_allowance_text: values.car_allowance_text }
+            : {}),
+          ...(values.phone === "1" ? { phone_text: values.phone_text } : {}),
+          ...(values.laptop === "1" ? { laptop_text: values.laptop_text } : {}),
+          ...(values.share_option === "1"
+            ? { share_option_text: values.share_option_text }
+            : {}),
+          ...(values.health_cover === "1"
+            ? { health_cover_text: values.health_cover_text }
+            : {}),
+
           pension_scheme: parseInt(values.pension_scheme),
           no_holiday: parseInt(values.no_holiday),
           working_hour: parseInt(values.working_hour),
           overtime_hour: parseInt(values.overtime_hour),
-          lunch_check_text: "",
-          over_thirteen_text: "",
-          car_parking_text: "",
-          car_allowance_text: "",
-          phone_text: "",
-          laptop_text: "",
         },
         currency,
         current_salary: values.current_salary,
@@ -142,17 +159,17 @@ export default function Remuneration({
 
         <Row gutter={16}>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
-              defaultValue={data?.benefit?.over_thirteen.toString()}
+              defaultValue={data?.benefit}
               label="Over x month"
               name="over_thirteen"
             />
           </Col>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
-              defaultValue={data?.benefit?.lunch_check.toString()}
+              defaultValue={data?.benefit}
               label="Lunch check"
               name="lunch_check"
             />
@@ -160,54 +177,54 @@ export default function Remuneration({
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Parking check"
-              defaultValue={data?.benefit?.car_parking.toString()}
+              defaultValue={data?.benefit}
               name="car_parking"
             />
           </Col>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Car allowance"
-              defaultValue={data?.benefit?.car_allowance.toString()}
+              defaultValue={data?.benefit}
               name="car_allowance"
             />
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Phone allowance"
-              defaultValue={data?.benefit?.phone.toString()}
+              defaultValue={data?.benefit}
               name="phone"
             />
           </Col>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Laptop"
-              defaultValue={data?.benefit?.laptop.toString()}
+              defaultValue={data?.benefit}
               name="laptop"
             />
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Share options"
-              defaultValue={data?.benefit?.share_option.toString()}
+              defaultValue={data?.benefit}
               name="share_option"
             />
           </Col>
           <Col span={12}>
-            <DataRadio
+            <DataRadioNote
               data={YNquestion}
               label="Health cover"
-              defaultValue={data?.benefit?.health_cover.toString()}
+              defaultValue={data?.benefit}
               name="health_cover"
             />
           </Col>
