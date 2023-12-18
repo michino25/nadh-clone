@@ -1,9 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
 
-// import Table from "components/DataDisplay/Table";
 import Image from "components/DataDisplay/Image";
-
 import BackToTopButton from "components/BackToTopButton";
 import { clientApi, otherApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
@@ -13,12 +11,12 @@ import EditableSelectForm from "./components/EditableSelectForm";
 import { clientType, cpa, primaryStatus2 } from "_constants/index";
 import { formatDate, formatName } from "utils/format";
 import FormIndustry from "./components/FormIndustry";
-import ContactPerson from "./components/ContactPerson";
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import { getUser } from "utils/getUser";
 import { DataUpload } from "components/DataEntry/index";
 import ActivityLogsTable from "./components/ActivityLogsTable";
 import { v4 as uuidv4 } from "uuid";
+import ContactPersonWrapper from "./components/ContactPersonWrapper";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
 
@@ -247,98 +245,6 @@ export default function Clients() {
     updateMutation.mutate({ business_line: transformedData });
   };
 
-  const createClientContactPersonsApi = async (userData: any) => {
-    try {
-      await clientApi.createContactPersons(userData);
-
-      // success
-      // console.log(res.data);
-      notification.success({
-        message: "Create ContactPersons",
-        description: "Create success.",
-      });
-      refetch();
-    } catch (error: any) {
-      // error
-      // console.error("Create failed", error);
-      notification.error({
-        message: "Create ContactPersons",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
-    }
-  };
-
-  const deleteClientContactPersonsApi = async (userData: any) => {
-    try {
-      await clientApi.deleteContactPersons(userData);
-
-      // success
-      // console.log(res.data);
-      notification.success({
-        message: "Delete ContactPersons",
-        description: "Delete success.",
-      });
-      refetch();
-    } catch (error: any) {
-      // error
-      // console.error("Delete failed", error);
-      notification.error({
-        message: "Delete ContactPersons",
-        description: `Delete failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
-    }
-  };
-
-  const updateClientContactPersonsApi = async (userData: any, id: string) => {
-    try {
-      await clientApi.updateContactPersons(id, userData);
-
-      // success
-      // console.log(res.data);
-      notification.success({
-        message: "Update ContactPersons",
-        description: "Update success.",
-      });
-      refetch();
-    } catch (error: any) {
-      // error
-      // console.error("Update failed", error);
-      notification.error({
-        message: "Update ContactPersons",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
-    }
-  };
-
-  const createClientContactPersonsMutation = useMutation({
-    mutationFn: (formData: any) => createClientContactPersonsApi(formData),
-  });
-
-  const deleteClientContactPersonsMutation = useMutation({
-    mutationFn: (formData: any) => deleteClientContactPersonsApi(formData),
-  });
-
-  const updateClientContactPersonsMutation = useMutation({
-    mutationFn: (formData: any) =>
-      updateClientContactPersonsApi(formData, formData.id),
-  });
-
-  const updateClientContactPersons = (data: any, id: string) => {
-    data.client_id = clientData.id;
-    data.id = id;
-    updateClientContactPersonsMutation.mutate(data);
-  };
-
-  const createClientContactPersons = (data: any) => {
-    data.client_id = clientData.id;
-    createClientContactPersonsMutation.mutate(data);
-  };
   if (isPending || !id) return <Skeleton active />;
 
   return (
@@ -480,13 +386,10 @@ export default function Clients() {
               </div>
               <div className="bg-white rounded-lg p-6">
                 <p className="mb-4 font-bold text-lg">Contact Person</p>{" "}
-                <ContactPerson
+                <ContactPersonWrapper
                   data={clientData?.pic}
-                  addFn={createClientContactPersons}
-                  deleteFn={(id) =>
-                    deleteClientContactPersonsMutation.mutate(id)
-                  }
-                  updateFn={(data, id) => updateClientContactPersons(data, id)}
+                  clientId={clientData.id}
+                  refetch={refetch}
                 />
               </div>
             </div>

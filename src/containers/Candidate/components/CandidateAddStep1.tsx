@@ -2,6 +2,7 @@ import { Modal, Button, Form, notification } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import PersonalInformationForm from "./PersonalInformationForm";
+import { useState } from "react";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -9,6 +10,7 @@ export default function CandidateAddStep1({
   nextStep: () => void;
 }) {
   // const navigate = useNavigate();
+  const [address, setAddress] = useState<any[]>();
 
   const createCandidate = async (userData: any) => {
     try {
@@ -112,7 +114,7 @@ export default function CandidateAddStep1({
 
   return (
     <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
-      <PersonalInformationForm />
+      <PersonalInformationForm address={address} setAddress={setAddress} />
       <Form.Item className="flex justify-end space-x-2">
         <Button type="primary" htmlType="submit">
           Save
