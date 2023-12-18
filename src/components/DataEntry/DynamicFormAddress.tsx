@@ -42,6 +42,13 @@ const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
           },
         }))
       );
+    else
+      setAddress([
+        {
+          id: uuidv4(),
+          address: {},
+        },
+      ]);
   }, []);
 
   const remove = (key: any) => {

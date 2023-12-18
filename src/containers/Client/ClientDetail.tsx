@@ -3,7 +3,7 @@ import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
 
 import Image from "components/DataDisplay/Image";
 import BackToTopButton from "components/BackToTopButton";
-import { clientApi, otherApi } from "apis/index";
+import { clientApi, otherApi, userApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import EditableInputForm from "./components/EditableInputForm";
@@ -61,6 +61,34 @@ export default function Clients() {
             id: uuidv4(),
           })),
         };
+      }),
+  });
+
+  const { data: companyData, isPending: companyIsPending } = useQuery({
+    queryKey: ["company"],
+    queryFn: async () =>
+      await clientApi
+        .getClients({
+          getAll: true,
+        })
+        .then((res) => {
+          return res.data.data.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+  });
+
+  console.log(companyData);
+
+  const { data: consultantData, isPending: consultantIsPending } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () =>
+      await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
+        return res.data.data.map((item: any) => ({
+          label: formatName(item.full_name),
+          value: item.id,
+        }));
       }),
   });
 
@@ -178,12 +206,12 @@ export default function Clients() {
     console.log("Received values of form: ", data);
   };
 
-  const onFinishSelect = (values: any) => {
-    // const keys = Object.keys(values);
-
-    // const data = {
-    //   [keys[0]]: JSON.parse(values[keys[0]]),
-    // };
+  const onFinishSelect = (values: any, option?: string) => {
+    if (option === "lead_consultants") {
+      values = {
+        lead_consultants: [values.lead_consultants],
+      };
+    }
 
     updateMutation.mutate(values);
     console.log("Received values of form: ", values);
@@ -330,7 +358,12 @@ export default function Clients() {
                   />
                 </Descriptions.Item>
                 <Descriptions.Item label="Parent Company">
-                  {clientData.parent_company?.label}
+                  <EditableSelectForm
+                    name="parent_id"
+                    value={clientData.parent_company.key}
+                    data={!companyIsPending ? companyData : []}
+                    onSubmit={(values) => onFinishSelect(values)}
+                  />
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 1">
                   {clientData.factory_site[0]?.district?.label} -{" "}
@@ -358,7 +391,14 @@ export default function Clients() {
                   />
                 </Descriptions.Item>
                 <Descriptions.Item label="Lead Consultant">
-                  {formatName(clientData.lead_consultants[0]?.label)}
+                  <EditableSelectForm
+                    name="lead_consultants"
+                    value={clientData.lead_consultants[0]?.id}
+                    data={!consultantIsPending ? consultantData : []}
+                    onSubmit={(values) =>
+                      onFinishSelect(values, "lead_consultants")
+                    }
+                  />
                 </Descriptions.Item>
                 <Descriptions.Item label="Search Consultant">
                   -

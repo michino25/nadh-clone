@@ -17,7 +17,11 @@ export default function EditableForm({
   onSubmit,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
-  const showData = data.filter((item) => item.value === value)[0];
+  // console.log(data);
+  // console.log(value);
+
+  const showData =
+    data.length > 0 ? data.filter((item) => item.value === value)[0] : null;
   console.log(showData);
 
   // const transData = data.map((item) => ({
@@ -28,8 +32,11 @@ export default function EditableForm({
   return (
     <>
       {!edit ? (
-        <button className="text-black p-0 m-0" onClick={() => setEdit(true)}>
-          {showData.label}
+        <button
+          className="text-black p-0 m-0 w-full text-left"
+          onClick={() => setEdit(true)}
+        >
+          {showData ? showData.label : "-"}
         </button>
       ) : (
         <Form

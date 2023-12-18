@@ -20,8 +20,11 @@ export default function EditableForm({
   return (
     <>
       {!edit ? (
-        <button className="text-black p-0 m-0" onClick={() => setEdit(true)}>
-          {value}
+        <button
+          className="text-black p-0 m-0 w-full text-left"
+          onClick={() => setEdit(true)}
+        >
+          {value || "-"}
         </button>
       ) : (
         <Form
@@ -41,7 +44,7 @@ export default function EditableForm({
                 message: `The input is not valid ${label}!`,
               },
               {
-                required: true,
+                required: false,
                 message: label
                   ? `Please input your ${label}!`
                   : "Missing this field",
