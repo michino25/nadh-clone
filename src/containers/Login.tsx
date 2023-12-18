@@ -14,15 +14,20 @@ import {
 } from "_constants/index";
 import { initFilter } from "utils/filter";
 
-interface LoginData {
-  user_name: string;
-  password: string;
-}
-
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const login = async (loginData: LoginData) => {
+
+  let defaultAccount;
+  if (localStorage.getItem("rememberLogin")) {
+    defaultAccount = JSON.parse(
+      localStorage.getItem("rememberLogin") as string
+    );
+  }
+
+  console.log(defaultAccount);
+
+  const login = async (loginData: any) => {
     try {
       setLoading(true);
       const res = await userApi.login(loginData);
@@ -31,6 +36,9 @@ export default function Login() {
         description: "You have successfully logged in.",
       });
       localStorage.setItem("userData", JSON.stringify(res.data));
+
+      loginData.remember &&
+        localStorage.setItem("rememberLogin", JSON.stringify(loginData));
 
       setTimeout(() => {
         window.location.href = "/dashboard";
@@ -49,7 +57,7 @@ export default function Login() {
   };
 
   const loginMutation = useMutation({
-    mutationFn: (formData: LoginData) => login(formData),
+    mutationFn: (formData: any) => login(formData),
   });
 
   const onFinish = (values: any) => {
@@ -63,6 +71,7 @@ export default function Login() {
     if (loggedInUser?.token) {
       navigate("/");
     }
+
     // init filter
     initFilter(userTable);
     initFilter(clientTable);
@@ -83,6 +92,7 @@ export default function Login() {
         <Form className="w-[400px]" onFinish={onFinish}>
           <Form.Item
             name="user_name"
+            initialValue={defaultAccount?.user_name}
             rules={[
               {
                 required: true,
@@ -99,6 +109,7 @@ export default function Login() {
           </Form.Item>
           <Form.Item
             name="password"
+            initialValue={defaultAccount?.password}
             rules={[
               {
                 required: true,
@@ -115,7 +126,11 @@ export default function Login() {
             />
           </Form.Item>
 
-          <Form.Item valuePropName="checked">
+          <Form.Item
+            name="remember"
+            valuePropName="checked"
+            initialValue={defaultAccount?.remember}
+          >
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 

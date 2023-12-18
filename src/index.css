@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 * {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans", sans-serif !important;
   --tw-ring-color: #ffffff00 !important;
 }
 
@@ -49,4 +49,13 @@ input[type="text"]:focus {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #636363;
+}
+
+img.ant-upload-list-item-image {
+  object-fit: cover !important;
+  border-radius: 5px;
+}
+
+.ant-upload-list-item::before {
+  border-radius: 5px;
 }

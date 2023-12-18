@@ -53,6 +53,11 @@ const _otherApi = {
     });
   },
 
+  deleteFile(id: string) {
+    const url = "file/" + id;
+    return axiosURL("https://lubrytics.com:8443/nadh-mediafile").delete(url);
+  },
+
   getCol(page: string) {
     const url = "api/user_pages?key_page=" + page;
     return axios().get(url);

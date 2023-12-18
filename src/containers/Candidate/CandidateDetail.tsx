@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import IndustryTable from "components/DataDisplay/IndustryTable";
-import Image from "components/DataDisplay/Image";
 
 import { DataUpload, TextArea } from "components/DataEntry/index";
 
@@ -23,6 +22,7 @@ import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
 import Remuneration from "./components/Remuneration";
 import PersonalInformationForm from "./components/PersonalInformationForm";
+import { formatDate } from "utils/format";
 
 export default function Candidates() {
   const { id } = useParams();
@@ -115,16 +115,58 @@ export default function Candidates() {
       }),
   });
 
-  const { data: candidateImage } = useQuery({
+  const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
     queryKey: ["files", candidateData?.id],
     queryFn: () =>
       otherApi.getFile(candidateData?.id, "candidates").then((res) => {
         console.log(res.data.data);
 
-        return res.data.data;
+        return res.data.data.map((item: any) => ({
+          uid: item.id,
+          name: item.name,
+          status: "done",
+          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+        }));
       }),
     enabled: !!candidateData?.id,
   });
+
+  console.log(candidateImage);
+
+  const fileUpload = (id: string) => {
+    if (id) {
+      const data = {
+        mediafiles: {
+          files: [id],
+        },
+      };
+
+      updateMutation.mutate(data, {
+        onSuccess: () => {
+          candidateImageRefetch();
+        },
+      });
+    }
+  };
+
+  const fileDelete = (id: string) => {
+    const data = {
+      mediafiles: {
+        files: [],
+      },
+    };
+
+    deleteFileMutation.mutate(id, {
+      onSuccess: () => {
+        updateMutation.mutate(data, {
+          onSuccess: () => {
+            candidateImageRefetch();
+          },
+        });
+      },
+    });
+  };
 
   const updateCandidate = async (userData: any) => {
     try {
@@ -236,6 +278,31 @@ export default function Candidates() {
     console.log("Received values of form: ", values);
   };
 
+  const deleteFileMutation = useMutation({
+    mutationFn: async (formData: any) => {
+      try {
+        await otherApi.deleteFile(formData);
+
+        // success
+        // console.log(res.data);
+        notification.success({
+          message: "Delete File",
+          description: "Delete success.",
+        });
+        refetch();
+      } catch (error: any) {
+        // error
+        // console.error("Delete failed", error);
+        notification.error({
+          message: "Delete File",
+          description: `Delete failed. ${
+            error.response.data[0].message || "Please try again."
+          }`,
+        });
+      }
+    },
+  });
+
   const createCandidateHistoriesApi = async (userData: any) => {
     try {
       await candidateApi.createCandidateHistories(userData);
@@ -328,8 +395,6 @@ export default function Candidates() {
     data.candidate_id = candidateData.id;
     createCandidateHistoriesMutation.mutate(data);
   };
-
-  console.log(candidateData?.business_line);
 
   if (isPending || !id) return <Skeleton active />;
 
@@ -493,17 +558,19 @@ export default function Candidates() {
             <div id="part-7" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>
               <div className="flex space-x-2">
-                {candidateImage?.length > 0 &&
-                  candidateImage.map((item: any) => (
-                    <Image
-                      src={
-                        "https://lubrytics.com:8443/nadh-mediafile/file/" +
-                        item.id
-                      }
-                      size={100}
-                    />
-                  ))}
-                <DataUpload label="" />
+                {candidateImage?.length > 0 && (
+                  <DataUpload
+                    label=""
+                    imgList={candidateImage}
+                    onChange={fileUpload}
+                    onDelete={fileDelete}
+                    data={{
+                      obj_table: "candidates",
+                      obj_uid: candidateData.id,
+                      uploadedByUserId: getUser().user_sent.user_id,
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

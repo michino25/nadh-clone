@@ -5,7 +5,7 @@ import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
 import Image from "components/DataDisplay/Image";
 
 import BackToTopButton from "components/BackToTopButton";
-import { clientApi } from "apis/index";
+import { clientApi, otherApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import EditableInputForm from "./components/EditableInputForm";
@@ -13,15 +13,41 @@ import EditableSelectForm from "./components/EditableSelectForm";
 import { clientType, cpa, primaryStatus2 } from "_constants/index";
 import { formatDate, formatName } from "utils/format";
 import FormIndustry from "./components/FormIndustry";
-import { useState } from "react";
 import ContactPerson from "./components/ContactPerson";
 import IndustryTable from "components/DataDisplay/IndustryTable";
+import { getUser } from "utils/getUser";
+import { DataUpload } from "components/DataEntry/index";
+import ActivityLogsTable from "./components/ActivityLogsTable";
+import { v4 as uuidv4 } from "uuid";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
 
-export default function Candidates() {
+const anchorItems = [
+  {
+    key: "part-1",
+    href: "#part-1",
+    title: "Information",
+  },
+  {
+    key: "part-2",
+    href: "#part-2",
+    title: "Industry & Contact Person & Account Development",
+  },
+  {
+    key: "part-3",
+    href: "#part-3",
+    title: "Attachments",
+  },
+  {
+    key: "part-4",
+    href: "#part-4",
+    title: "Activity Logs",
+  },
+];
+
+export default function Clients() {
   const { id } = useParams();
-  const [value, setValue] = useState<any[]>();
+
   const {
     data: clientData,
     isPending,
@@ -30,9 +56,12 @@ export default function Candidates() {
     queryKey: ["client", id],
     queryFn: async () =>
       await clientApi.getOneClient(id as string).then((res) => {
-        setValue(res.data.business_line);
         return {
           ...res.data,
+          business_line: res.data.business_line.map((item: any) => ({
+            ...item,
+            id: uuidv4(),
+          })),
         };
       }),
   });
@@ -65,6 +94,84 @@ export default function Candidates() {
     mutationFn: (formData: any) => updateClient(formData),
   });
 
+  const { data: clientImage, refetch: clientImageRefetch } = useQuery({
+    queryKey: ["files", clientData?.id],
+    queryFn: () =>
+      otherApi.getFile(clientData?.id, "client").then((res) => {
+        console.log(res.data.data);
+
+        return res.data.data.map((item: any) => ({
+          uid: item.id,
+          name: item.name,
+          status: "done",
+          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+        }));
+      }),
+    enabled: !!clientData?.id,
+  });
+
+  console.log(clientImage);
+
+  const fileUpload = (id: string) => {
+    if (id) {
+      const data = {
+        mediafiles: {
+          files: [id],
+        },
+      };
+
+      updateMutation.mutate(data, {
+        onSuccess: () => {
+          clientImageRefetch();
+        },
+      });
+    }
+  };
+
+  const fileDelete = (id: string) => {
+    const data = {
+      mediafiles: {
+        files: [],
+      },
+    };
+
+    deleteFileMutation.mutate(id, {
+      onSuccess: () => {
+        updateMutation.mutate(data, {
+          onSuccess: () => {
+            clientImageRefetch();
+          },
+        });
+      },
+    });
+  };
+
+  const deleteFileMutation = useMutation({
+    mutationFn: async (formData: any) => {
+      try {
+        await otherApi.deleteFile(formData);
+
+        // success
+        // console.log(res.data);
+        notification.success({
+          message: "Delete File",
+          description: "Delete success.",
+        });
+        refetch();
+      } catch (error: any) {
+        // error
+        // console.error("Delete failed", error);
+        notification.error({
+          message: "Delete File",
+          description: `Delete failed. ${
+            error.response.data[0].message || "Please try again."
+          }`,
+        });
+      }
+    },
+  });
+
   const onFinish = (values: any) => {
     const data = {
       ...values,
@@ -84,32 +191,160 @@ export default function Candidates() {
     console.log("Received values of form: ", values);
   };
 
-  const deleteItem = (id: string) => {
-    if (value) setValue(value.filter((item: any) => item.id !== id));
+  const addIndustry = (data: any) => {
+    const newData: any = {};
+    if (data.industry) newData.industry_id = data.industry.value;
+    if (data.sector) newData.sector_id = data.sector.value;
+    if (data.category) newData.category_id = data.category.value;
+    newData.primary = -1;
+
+    const transformedData = clientData?.business_line.map((item: any) => {
+      const transformedItem: any = {
+        industry_id: item.industry.id,
+        primary: item.primary,
+      };
+
+      if (item.sector) transformedItem.sector_id = item.sector.id;
+      if (item.category) transformedItem.category_id = item.category.id;
+
+      return transformedItem;
+    });
+
+    updateMutation.mutate({ business_line: [...transformedData, newData] });
   };
 
+  const deleteIndustry = (id: string) => {
+    const transformedData = clientData?.business_line
+      .filter((item: any) => item.id !== id)
+      .map((item: any) => {
+        const transformedItem: any = {
+          industry_id: item.industry.id,
+          primary: item.primary,
+        };
+
+        if (item.sector) transformedItem.sector_id = item.sector.id;
+        if (item.category) transformedItem.category_id = item.category.id;
+
+        return transformedItem;
+      });
+
+    updateMutation.mutate({ business_line: transformedData });
+  };
+
+  const primaryIndustry = (id: string) => {
+    const transformedData = clientData?.business_line.map((item: any) => {
+      const transformedItem: any = {
+        industry_id: item.industry.id,
+        primary: item.id === id ? item.primary * -1 : item.primary,
+      };
+
+      if (item.sector) transformedItem.sector_id = item.sector.id;
+      if (item.category) transformedItem.category_id = item.category.id;
+
+      return transformedItem;
+    });
+
+    updateMutation.mutate({ business_line: transformedData });
+  };
+
+  const createClientContactPersonsApi = async (userData: any) => {
+    try {
+      await clientApi.createContactPersons(userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Create ContactPersons",
+        description: "Create success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Create failed", error);
+      notification.error({
+        message: "Create ContactPersons",
+        description: `Create failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const deleteClientContactPersonsApi = async (userData: any) => {
+    try {
+      await clientApi.deleteContactPersons(userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Delete ContactPersons",
+        description: "Delete success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Delete failed", error);
+      notification.error({
+        message: "Delete ContactPersons",
+        description: `Delete failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const updateClientContactPersonsApi = async (userData: any, id: string) => {
+    try {
+      await clientApi.updateContactPersons(id, userData);
+
+      // success
+      // console.log(res.data);
+      notification.success({
+        message: "Update ContactPersons",
+        description: "Update success.",
+      });
+      refetch();
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update ContactPersons",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    }
+  };
+
+  const createClientContactPersonsMutation = useMutation({
+    mutationFn: (formData: any) => createClientContactPersonsApi(formData),
+  });
+
+  const deleteClientContactPersonsMutation = useMutation({
+    mutationFn: (formData: any) => deleteClientContactPersonsApi(formData),
+  });
+
+  const updateClientContactPersonsMutation = useMutation({
+    mutationFn: (formData: any) =>
+      updateClientContactPersonsApi(formData, formData.id),
+  });
+
+  const updateClientContactPersons = (data: any, id: string) => {
+    data.client_id = clientData.id;
+    data.id = id;
+    updateClientContactPersonsMutation.mutate(data);
+  };
+
+  const createClientContactPersons = (data: any) => {
+    data.client_id = clientData.id;
+    createClientContactPersonsMutation.mutate(data);
+  };
   if (isPending || !id) return <Skeleton active />;
 
   return (
     <>
       <BackToTopButton />
       <div className="fixed z-40 bg-gray-100 top-24 left-0 right-0 px-8 pb-2 pt-4">
-        <Anchor
-          className=""
-          direction="horizontal"
-          items={[
-            {
-              key: "part-1",
-              href: "#part-1",
-              title: "Information",
-            },
-            {
-              key: "part-2",
-              href: "#part-2",
-              title: "Industry & Contact Person & Account Development",
-            },
-          ]}
-        />
         <div className="py-1">
           <Link to={"/candidates"}>Clients List</Link>
           <span>
@@ -117,6 +352,7 @@ export default function Candidates() {
             / {id} | {clientData.name}
           </span>
         </div>
+        <Anchor className="" direction="horizontal" items={anchorItems} />
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
       <div className="px-8 my-5">
@@ -235,18 +471,23 @@ export default function Candidates() {
             <div className="w-2/3">
               <div className="bg-white rounded-lg p-6 mb-5">
                 <p className="mb-4 font-bold text-lg">Industry</p>
-                <FormIndustry
-                  saveData={(data) => setValue([...(value as any[]), data])}
-                />
+                <FormIndustry saveData={addIndustry} />
                 <IndustryTable
-                  data={value}
-                  deleteItem={deleteItem}
-                  primaryItem={() => {}}
+                  data={clientData?.business_line}
+                  deleteItem={deleteIndustry}
+                  primaryItem={primaryIndustry}
                 />
               </div>
               <div className="bg-white rounded-lg p-6">
-                <p className="mb-4 font-bold text-lg">Contact Person</p>
-                <ContactPerson setData={() => {}} data={clientData.pic} />
+                <p className="mb-4 font-bold text-lg">Contact Person</p>{" "}
+                <ContactPerson
+                  data={clientData?.pic}
+                  addFn={createClientContactPersons}
+                  deleteFn={(id) =>
+                    deleteClientContactPersonsMutation.mutate(id)
+                  }
+                  updateFn={(data, id) => updateClientContactPersons(data, id)}
+                />
               </div>
             </div>
             <div className="w-1/3 bg-white rounded-lg ml-5 p-6">
@@ -268,6 +509,32 @@ export default function Candidates() {
                   })
                 )}
               />
+            </div>
+          </div>
+
+          <div id="part-3" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Attachments</p>
+            <div className="flex space-x-2">
+              {clientImage?.length > 0 && (
+                <DataUpload
+                  label=""
+                  imgList={clientImage}
+                  onChange={fileUpload}
+                  onDelete={fileDelete}
+                  data={{
+                    obj_table: "client",
+                    obj_uid: clientData.id,
+                    uploadedByUserId: getUser().user_sent.user_id,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
+          <div id="part-4" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Activity Logs</p>
+            <div className="flex space-x-2">
+              <ActivityLogsTable data={clientData.logs} />
             </div>
           </div>
         </div>
