@@ -158,7 +158,7 @@ const DataTable = ({
   }));
 
   const { isPending: colIsPending, data: colData } = useQuery({
-    queryKey: ["col"],
+    queryKey: ["col", getPathname()],
     queryFn: async () =>
       await otherApi
         .getCol(getPathname().slice(1))
