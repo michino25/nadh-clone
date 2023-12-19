@@ -437,3 +437,6 @@ export const convertKeytoValue = (data: any) => {
 export const convertValuetoKey = (data: any) => {
   return data && { key: data.value, label: data.label };
 };
+
+export const filterOption = (input: string, option?: iOption) =>
+  (option?.label ?? "").toLowerCase().includes(input.toLowerCase());

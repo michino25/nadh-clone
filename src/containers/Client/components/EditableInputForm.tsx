@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Col, Row } from "antd";
 import { useState } from "react";
 
 interface iDataInput {
@@ -8,6 +8,8 @@ interface iDataInput {
   type?: string | undefined;
   value: string;
   onSubmit: (value: any) => void;
+  editing: any;
+  setEditing: (value: any) => void;
 }
 
 export default function EditableForm({
@@ -16,6 +18,8 @@ export default function EditableForm({
   value,
   type,
   onSubmit,
+  editing,
+  setEditing,
   className,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
@@ -24,47 +28,66 @@ export default function EditableForm({
       {!edit ? (
         <button
           className={className + " text-black p-0 m-0 w-full text-left"}
-          onClick={() => setEdit(true)}
+          onClick={() => {
+            if (!editing) {
+              setEdit(true);
+              setEditing(true);
+            }
+          }}
         >
           {value || "-"}
         </button>
       ) : (
         <Form
           name="global_state"
-          layout="inline"
           onFinish={(values: any) => {
             onSubmit(values);
             setEdit(false);
+            setEditing(false);
           }}
+          className="w-full mr-5"
         >
-          <Form.Item
-            name={name}
-            initialValue={value}
-            rules={[
-              {
-                type: type as any,
-                message: `The input is not valid ${label}!`,
-              },
-              {
-                required: false,
-                message: label
-                  ? `Please input your ${label}!`
-                  : "Missing this field",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name={name}
+                initialValue={value}
+                rules={[
+                  {
+                    type: type as any,
+                    message: `The input is not valid ${label}!`,
+                  },
+                  {
+                    required: false,
+                    message: label
+                      ? `Please input your ${label}!`
+                      : "Missing this field",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item>
-            <Button onClick={() => setEdit(false)}>Cancel</Button>
-          </Form.Item>
+          <Row gutter={16} justify={"end"} className="gap-3 pr-2">
+            <Form.Item>
+              <Button
+                onClick={() => {
+                  setEdit(false);
+                  setEditing(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          </Row>
         </Form>
       )}
     </>

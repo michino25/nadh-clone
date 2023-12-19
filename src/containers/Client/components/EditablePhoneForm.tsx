@@ -1,4 +1,4 @@
-import { Button, Col, Form } from "antd";
+import { Button, Col, Row, Form } from "antd";
 import Phone from "components/DataEntry/Phone";
 import { useState } from "react";
 
@@ -6,9 +6,17 @@ interface iDataInput {
   name: string;
   value: any;
   onSubmit: (value: any) => void;
+  editing: any;
+  setEditing: (value: any) => void;
 }
 
-export default function EditableForm({ name, value, onSubmit }: iDataInput) {
+export default function EditableForm({
+  name,
+  value,
+  onSubmit,
+  editing,
+  setEditing,
+}: iDataInput) {
   const [edit, setEdit] = useState(false);
 
   return (
@@ -16,33 +24,49 @@ export default function EditableForm({ name, value, onSubmit }: iDataInput) {
       {!edit ? (
         <button
           className="text-black p-0 m-0 w-full text-left"
-          onClick={() => setEdit(true)}
+          onClick={() => {
+            if (!editing) {
+              setEdit(true);
+              setEditing(true);
+            }
+          }}
         >
           {value.phone_code.extra.dial_code + " " + value.number || "-"}
         </button>
       ) : (
         <Form
           name="global_state"
-          layout="inline"
           onFinish={(values: any) => {
             onSubmit(values);
             setEdit(false);
+            setEditing(false);
           }}
-          className="w-[600px]"
+          className="w-full mr-5"
         >
-          <Col span={12}>
-            <Phone name={name} defaultValue={value} />
-          </Col>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Phone name={name} defaultValue={value} />
+            </Col>
+          </Row>
 
-          <Form.Item className="ml-3">
-            <Button onClick={() => setEdit(false)}>Cancel</Button>
-          </Form.Item>
+          <Row gutter={16} justify={"end"} className="gap-3 pr-2">
+            <Form.Item>
+              <Button
+                onClick={() => {
+                  setEdit(false);
+                  setEditing(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          </Row>
         </Form>
       )}
     </>

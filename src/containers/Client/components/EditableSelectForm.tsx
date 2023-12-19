@@ -1,5 +1,5 @@
 import { iOption } from "_constants/index";
-import { Button, Col, Form } from "antd";
+import { Button, Col, Row, Form } from "antd";
 import { DataSelect } from "components/DataEntry";
 import { useState } from "react";
 
@@ -8,6 +8,9 @@ interface iDataInput {
   value: string;
   data: iOption[];
   onSubmit: (value: any) => void;
+  editing: any;
+  setEditing: (value: any) => void;
+  prevent?: boolean;
 }
 
 export default function EditableForm({
@@ -15,6 +18,9 @@ export default function EditableForm({
   value,
   data,
   onSubmit,
+  editing,
+  setEditing,
+  prevent = false,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
   // console.log(data);
@@ -29,44 +35,66 @@ export default function EditableForm({
   //   value: JSON.stringify(item),
   // }));
 
+  const closeEdit = () => {
+    setEdit(false);
+    if (!(prevent && showData?.value === "12")) setEditing(false);
+  };
+
   return (
     <>
       {!edit ? (
         <button
           className="text-black p-0 m-0 w-full text-left"
-          onClick={() => setEdit(true)}
+          onClick={() => {
+            if (!editing) {
+              setEdit(true);
+              setEditing(true);
+            } else if (prevent && showData?.value === "12") {
+              setEdit(true);
+              setEditing(true);
+            }
+          }}
         >
           {showData ? showData.label : "-"}
         </button>
       ) : (
         <Form
           name="global_state"
-          layout="inline"
           onFinish={(values: any) => {
             onSubmit(values);
-            setEdit(false);
+            closeEdit();
           }}
-          className="w-[500px]"
+          className="w-full mr-5"
         >
-          <Col span={12}>
-            <DataSelect
-              placeholder=""
-              label=""
-              name={name}
-              defaultValue={value}
-              data={data}
-            />
-          </Col>
+          <Row gutter={16}>
+            <Col span={24}>
+              <DataSelect
+                placeholder=""
+                label=""
+                name={name}
+                defaultValue={value}
+                data={data}
+              />
+            </Col>
+          </Row>
 
-          <Form.Item>
-            <Button onClick={() => setEdit(false)}>Cancel</Button>
-          </Form.Item>
+          <Row gutter={16} justify={"end"} className="gap-3 pr-2">
+            <Form.Item>
+              <Button
+                onClick={() => {
+                  closeEdit();
+                }}
+              >
+                Cancel
+              </Button>
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          </Row>
         </Form>
       )}
     </>

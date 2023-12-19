@@ -24,7 +24,7 @@ import { v4 as uuidv4 } from "uuid";
 import ContactPersonWrapper from "./components/ContactPersonWrapper";
 import EditablePhoneForm from "./components/EditablePhoneForm";
 import EditableForm from "./components/EditableAddressForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Notes from "./components/Notes";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
@@ -54,7 +54,6 @@ const anchorItems = [
 
 export default function Clients() {
   const { id } = useParams();
-  const [editable, setEditable] = useState(false);
 
   const {
     data: clientData,
@@ -89,8 +88,6 @@ export default function Clients() {
         }),
   });
 
-  console.log(companyData);
-
   const { data: consultantData, isPending: consultantIsPending } = useQuery({
     queryKey: ["user"],
     queryFn: async () =>
@@ -101,6 +98,13 @@ export default function Clients() {
         }));
       }),
   });
+
+  const [editable, setEditable] = useState(false);
+  useEffect(() => {
+    if (clientData?.status) {
+      setEditable(clientData?.status === 12);
+    }
+  }, [clientData?.status]);
 
   const updateClient = async (data: any) => {
     try {
@@ -348,6 +352,8 @@ export default function Clients() {
         <div className="flex-col space-y-4">
           <div id="part-1" className="p-6 bg-white rounded-lg">
             <EditableInputForm
+              editing={editable}
+              setEditing={setEditable}
               name="name"
               key="name"
               label=""
@@ -360,6 +366,8 @@ export default function Clients() {
               <Descriptions className="w-1/2" column={1}>
                 <Descriptions.Item label="Address">
                   <EditableForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="address"
                     onSubmit={(data) => onFinishAddress(data, "address")}
                     value={clientData.address}
@@ -367,6 +375,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Phone number">
                   <EditablePhoneForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="phone"
                     onSubmit={(data) => onFinishPhone(data, "phone")}
                     value={clientData.phone}
@@ -374,6 +384,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Fax">
                   <EditablePhoneForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="fax"
                     onSubmit={(data) => onFinishPhone(data, "fax")}
                     value={clientData.fax}
@@ -381,6 +393,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Email">
                   <EditableInputForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="email"
                     key={"email"}
                     label="Email"
@@ -390,6 +404,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Tax Code">
                   <EditableInputForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="tax_code"
                     key={"tax_code"}
                     label="Tax Code"
@@ -415,6 +431,9 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Status">
                   <EditableSelectForm
+                    editing={editable}
+                    setEditing={setEditable}
+                    prevent
                     name="status"
                     value={clientData.status.toString()}
                     data={primaryStatus2}
@@ -423,6 +442,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Client's shortened name">
                   <EditableInputForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="code"
                     key={"code"}
                     label="Client's shortened name"
@@ -432,6 +453,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Parent Company">
                   <EditableSelectForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="parent_id"
                     value={clientData.parent_company.key}
                     data={!companyIsPending ? companyData : []}
@@ -440,6 +463,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 1">
                   <EditableForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="factory_site"
                     onSubmit={(data) => onFinishAddress(data, "factory_site1")}
                     value={clientData.factory_site[0]}
@@ -447,6 +472,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 2">
                   <EditableForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="factory_site"
                     onSubmit={(data) => onFinishAddress(data, "factory_site2")}
                     value={clientData.factory_site[1]}
@@ -457,6 +484,8 @@ export default function Clients() {
               <Descriptions className="w-1/2" column={1}>
                 <Descriptions.Item label="Client Type">
                   <EditableSelectForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="type"
                     value={clientData.type.toString()}
                     data={clientType}
@@ -465,6 +494,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="CPA">
                   <EditableSelectForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="cpa"
                     value={clientData.cpa.toString()}
                     data={cpa}
@@ -473,6 +504,8 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Lead Consultant">
                   <EditableSelectForm
+                    editing={editable}
+                    setEditing={setEditable}
                     name="lead_consultants"
                     value={clientData.lead_consultants[0]?.id}
                     data={!consultantIsPending ? consultantData : []}

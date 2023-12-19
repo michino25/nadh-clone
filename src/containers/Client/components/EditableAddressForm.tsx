@@ -7,9 +7,16 @@ interface iDataInput {
   name: string;
   value: any;
   onSubmit: (value: any) => void;
+  editing: any;
+  setEditing: (value: any) => void;
 }
 
-export default function EditableForm({ value, onSubmit }: iDataInput) {
+export default function EditableForm({
+  value,
+  onSubmit,
+  editing,
+  setEditing,
+}: iDataInput) {
   const [edit, setEdit] = useState(false);
   const [data, setdata] = useState();
 
@@ -18,7 +25,12 @@ export default function EditableForm({ value, onSubmit }: iDataInput) {
       {!edit ? (
         <button
           className="text-black p-0 m-0 w-full text-left"
-          onClick={() => setEdit(true)}
+          onClick={() => {
+            if (!editing) {
+              setEdit(true);
+              setEditing(true);
+            }
+          }}
         >
           {(value?.district?.label ? value?.district?.label + " - " : "") +
             (value?.city?.label ? value?.city?.label + " - " : "") +
@@ -30,8 +42,9 @@ export default function EditableForm({ value, onSubmit }: iDataInput) {
           onFinish={() => {
             onSubmit(data);
             setEdit(false);
+            setEditing(false);
           }}
-          className="w-[450px]"
+          className="w-full mr-5"
         >
           <Row gutter={16}>
             <Col span={24}>
@@ -49,7 +62,14 @@ export default function EditableForm({ value, onSubmit }: iDataInput) {
 
           <Row gutter={16} justify={"end"} className="gap-3 pr-2">
             <Form.Item>
-              <Button onClick={() => setEdit(false)}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  setEdit(false);
+                  setEditing(false);
+                }}
+              >
+                Cancel
+              </Button>
             </Form.Item>
 
             <Form.Item>

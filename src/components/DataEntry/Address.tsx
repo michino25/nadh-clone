@@ -121,7 +121,7 @@ export default function Address({
     <div className="flex-col w-full justify-between items-center">
       <div className="flex w-full space-x-3">
         <Form.Item
-          className={"w-full mb-3"}
+          className={"w-1/3 mb-3"}
           rules={[
             {
               required: true,
@@ -142,7 +142,7 @@ export default function Address({
         </Form.Item>
 
         <Form.Item
-          className={"w-full mb-3"}
+          className={"w-1/3 mb-3"}
           initialValue={city ? (city.value as number) : undefined}
         >
           <Select
@@ -158,7 +158,7 @@ export default function Address({
         </Form.Item>
 
         <Form.Item
-          className={"w-full mb-3"}
+          className={"w-1/3 mb-3"}
           initialValue={district ? (district.value as number) : undefined}
         >
           <Select
