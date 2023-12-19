@@ -119,6 +119,10 @@ export default function ModelAcademic({
             initialValue={defaultData?.start_time}
             dependencies={["Graduation_year"]}
             rules={[
+              {
+                required: true,
+                message: `Please input your your start year!`,
+              },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (value && getFieldValue("Graduation_year")) {
@@ -150,9 +154,13 @@ export default function ModelAcademic({
             initialValue={defaultData?.end_time}
             dependencies={["Start_year"]}
             rules={[
+              {
+                required: !checkbox,
+                message: `Please input your your graduation year!`,
+              },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (value && getFieldValue("Start_year")) {
+                  if (!checkbox && value && getFieldValue("Start_year")) {
                     if (value < getFieldValue("Start_year"))
                       return Promise.reject(
                         new Error(

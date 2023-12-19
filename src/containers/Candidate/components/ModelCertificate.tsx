@@ -1,5 +1,5 @@
-import { years } from "_constants/index";
-import { Button, Form, Row, Col } from "antd";
+import { filterOption, years } from "_constants/index";
+import { Button, Form, Row, Col, Select } from "antd";
 import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
@@ -94,23 +94,75 @@ export default function ModelCertificate({
 
       <Row gutter={16}>
         <Col span={12}>
-          <DataSelect
-            data={years}
-            placeholder="Choose year"
-            label="Start year"
+          <Form.Item
             name="Start_year"
-            defaultValue={defaultData?.start_time}
-          />
+            label="Start year"
+            initialValue={defaultData?.start_time}
+            dependencies={["Graduation_year"]}
+            rules={[
+              {
+                required: true,
+                message: `Please input your your start year!`,
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value && getFieldValue("Graduation_year")) {
+                    if (value > getFieldValue("Graduation_year"))
+                      return Promise.reject(
+                        new Error(
+                          "The starting year must be before the graduation year!"
+                        )
+                      );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Select
+              placeholder="Choose year"
+              showSearch
+              filterOption={filterOption}
+              allowClear
+              options={years}
+            />
+          </Form.Item>
         </Col>
         <Col span={12}>
-          <DataSelect
-            data={years}
-            placeholder="Choose year"
+          <Form.Item
             label="Graduation year"
             name="Graduation_year"
-            disable={checkbox}
-            defaultValue={defaultData?.end_time}
-          />
+            initialValue={defaultData?.end_time}
+            dependencies={["Start_year"]}
+            rules={[
+              {
+                required: true,
+                message: `Please input your your graduation year!`,
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value && getFieldValue("Start_year")) {
+                    if (value < getFieldValue("Start_year"))
+                      return Promise.reject(
+                        new Error(
+                          "The starting year must be before the graduation year!"
+                        )
+                      );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Select
+              placeholder="Choose year"
+              showSearch
+              disabled={checkbox}
+              filterOption={filterOption}
+              allowClear
+              options={years}
+            />
+          </Form.Item>
         </Col>
       </Row>
 
