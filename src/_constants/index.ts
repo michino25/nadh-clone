@@ -429,3 +429,11 @@ export const getColByParam = (cols: any[], key: string | number) => {
 export const getSelectByValue = (selectData: any[], value: string | number) => {
   return getObjByKey(selectData, "value", value);
 };
+
+export const convertKeytoValue = (data: any) => {
+  return data && { value: data.key, label: data.label };
+};
+
+export const convertValuetoKey = (data: any) => {
+  return data && { key: data.value, label: data.label };
+};

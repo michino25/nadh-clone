@@ -5,9 +5,11 @@ import { otherApi } from "apis/index";
 export default function Phone({
   disabled,
   name,
+  defaultValue,
 }: {
   disabled?: boolean;
-  name: number;
+  name: string;
+  defaultValue?: any;
 }) {
   const { data: countries } = useQuery({
     queryKey: ["countries", "phone"],
@@ -20,8 +22,12 @@ export default function Phone({
   });
 
   const prefixSelector = (
-    <Form.Item name={[name, "phone_code", "extra", "dial_code"]} noStyle>
-      <Select style={{ width: 120 }} defaultValue={"+84"}>
+    <Form.Item
+      name={[name, "phone_code", "extra", "dial_code"]}
+      initialValue={defaultValue?.phone_code.extra.dial_code}
+      noStyle
+    >
+      <Select style={{ width: 110 }} defaultValue={"+84"}>
         {countries &&
           countries.length > 0 &&
           countries.map((item: any) => (
@@ -46,6 +52,7 @@ export default function Phone({
   return (
     <Form.Item
       name={[name, "number"]}
+      initialValue={defaultValue?.number}
       className="w-full mb-3"
       rules={[
         {

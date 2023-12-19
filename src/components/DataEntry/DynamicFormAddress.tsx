@@ -78,6 +78,8 @@ const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
   return (
     <Form.Item label="Address" className="mb-0">
       {address?.map((item: any) => {
+        console.log(item.address);
+
         return (
           <div className="flex space-x-4" key={item.id}>
             <Address

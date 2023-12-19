@@ -8,7 +8,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import EditableInputForm from "./components/EditableInputForm";
 import EditableSelectForm from "./components/EditableSelectForm";
-import { clientType, cpa, primaryStatus2 } from "_constants/index";
+import {
+  clientType,
+  convertValuetoKey,
+  cpa,
+  primaryStatus2,
+} from "_constants/index";
 import { formatDate, formatName } from "utils/format";
 import FormIndustry from "./components/FormIndustry";
 import IndustryTable from "components/DataDisplay/IndustryTable";
@@ -17,6 +22,10 @@ import { DataUpload } from "components/DataEntry/index";
 import ActivityLogsTable from "./components/ActivityLogsTable";
 import { v4 as uuidv4 } from "uuid";
 import ContactPersonWrapper from "./components/ContactPersonWrapper";
+import EditablePhoneForm from "./components/EditablePhoneForm";
+import EditableForm from "./components/EditableAddressForm";
+import { useState } from "react";
+import Notes from "./components/Notes";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
 
@@ -45,6 +54,7 @@ const anchorItems = [
 
 export default function Clients() {
   const { id } = useParams();
+  const [editable, setEditable] = useState(false);
 
   const {
     data: clientData,
@@ -217,6 +227,51 @@ export default function Clients() {
     console.log("Received values of form: ", values);
   };
 
+  const { data: countries } = useQuery({
+    queryKey: ["countries", "phonekey"],
+    queryFn: async () =>
+      await otherApi.getCountries().then((res) => res.data.data),
+  });
+
+  const onFinishPhone = (values: any, option: string) => {
+    const countryCode = values[option].phone_code.extra.dial_code;
+
+    const countryInfo = countries.find(
+      (country: any) => country.extra.dial_code === countryCode
+    );
+
+    if (countryInfo) {
+      const data = {
+        [option]: {
+          number: parseInt(values[option].number),
+          phone_code: {
+            key: countryInfo.key.toString(),
+          },
+        },
+      };
+      // console.log("Received values of form: ", data);
+      updateMutation.mutate(data);
+    }
+  };
+
+  const onFinishAddress = (values: any, option: string) => {
+    const data = {
+      ...(values.address && { address: values.address }),
+      ...(values.country && { country: convertValuetoKey(values.country) }),
+      ...(values.city && { city: convertValuetoKey(values.city) }),
+      ...(values.district && { district: convertValuetoKey(values.district) }),
+    };
+
+    const transferData =
+      option === "factory_site1"
+        ? { factory_site: [data, clientData.factory_site[1]] }
+        : option === "factory_site2"
+        ? { factory_site: [clientData.factory_site[0], data] }
+        : { address: data };
+    // console.log("Received values of form: ", { [option]: [data] });
+    updateMutation.mutate(transferData);
+  };
+
   const addIndustry = (data: any) => {
     const newData: any = {};
     if (data.industry) newData.industry_id = data.industry.value;
@@ -292,19 +347,37 @@ export default function Clients() {
       <div className="px-8 my-5">
         <div className="flex-col space-y-4">
           <div id="part-1" className="p-6 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">{clientData.name}</p>
+            <EditableInputForm
+              name="name"
+              key="name"
+              label=""
+              value={clientData.name}
+              onSubmit={onFinish}
+              className="mb-4 font-bold text-lg"
+            />
+
             <div className="flex">
               <Descriptions className="w-1/2" column={1}>
                 <Descriptions.Item label="Address">
-                  {clientData.address.country?.label}
+                  <EditableForm
+                    name="address"
+                    onSubmit={(data) => onFinishAddress(data, "address")}
+                    value={clientData.address}
+                  />
                 </Descriptions.Item>
                 <Descriptions.Item label="Phone number">
-                  {clientData.phone.phone_code.extra.dial_code}{" "}
-                  {clientData.phone.number}
+                  <EditablePhoneForm
+                    name="phone"
+                    onSubmit={(data) => onFinishPhone(data, "phone")}
+                    value={clientData.phone}
+                  />
                 </Descriptions.Item>
                 <Descriptions.Item label="Fax">
-                  {clientData.fax.phone_code.extra.dial_code}{" "}
-                  {clientData.fax.number}
+                  <EditablePhoneForm
+                    name="fax"
+                    onSubmit={(data) => onFinishPhone(data, "fax")}
+                    value={clientData.fax}
+                  />
                 </Descriptions.Item>
                 <Descriptions.Item label="Email">
                   <EditableInputForm
@@ -366,11 +439,19 @@ export default function Clients() {
                   />
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 1">
-                  {clientData.factory_site[0]?.district?.label} -{" "}
-                  {clientData.factory_site[0]?.city?.label} -{" "}
-                  {clientData.factory_site[0]?.country?.label}
+                  <EditableForm
+                    name="factory_site"
+                    onSubmit={(data) => onFinishAddress(data, "factory_site1")}
+                    value={clientData.factory_site[0]}
+                  />
                 </Descriptions.Item>
-                <Descriptions.Item label="Factory Site 2">-</Descriptions.Item>
+                <Descriptions.Item label="Factory Site 2">
+                  <EditableForm
+                    name="factory_site"
+                    onSubmit={(data) => onFinishAddress(data, "factory_site2")}
+                    value={clientData.factory_site[1]}
+                  />
+                </Descriptions.Item>
               </Descriptions>
 
               <Descriptions className="w-1/2" column={1}>
@@ -456,25 +537,32 @@ export default function Clients() {
           </div>
 
           <div id="part-3" className="p-4 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Attachments</p>
-            <div className="flex space-x-2">
-              {clientImage?.length > 0 && (
-                <DataUpload
-                  label=""
-                  imgList={clientImage}
-                  onChange={fileUpload}
-                  onDelete={fileDelete}
-                  data={{
-                    obj_table: "client",
-                    obj_uid: clientData.id,
-                    uploadedByUserId: getUser().user_sent.user_id,
-                  }}
-                />
-              )}
-            </div>
+            <p className="mb-4 font-bold text-lg">Notes</p>
+            <Notes
+              data={clientData.detail_comments}
+              clientID={clientData.id}
+              refetch={refetch}
+            />
           </div>
 
           <div id="part-4" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Attachments</p>
+            <div className="flex space-x-2">
+              <DataUpload
+                label=""
+                imgList={clientImage}
+                onChange={fileUpload}
+                onDelete={fileDelete}
+                data={{
+                  obj_table: "client",
+                  obj_uid: clientData.id,
+                  uploadedByUserId: getUser().user_sent.user_id,
+                }}
+              />
+            </div>
+          </div>
+
+          <div id="part-5" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Activity Logs</p>
             <div className="flex space-x-2">
               <ActivityLogsTable data={clientData.logs} />

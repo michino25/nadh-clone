@@ -40,6 +40,16 @@ const _clientApi = {
     const url = "api/contact_persons/" + id + "/remove/";
     return axios().put(url);
   },
+
+  getComments(id: string) {
+    const url = "api/account_developments/" + id;
+    return axios().get(url);
+  },
+
+  createComment(params: any) {
+    const url = "api/comments";
+    return axios().post(url, params);
+  },
 };
 
 export default _clientApi;

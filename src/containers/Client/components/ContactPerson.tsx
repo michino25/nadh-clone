@@ -3,12 +3,14 @@ import ContactPersonModel from "./ContactPersonModel";
 import CandidateTable from "components/DataDisplay/CandidateTable";
 import { useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
+import { formatName } from "utils/format";
 
 const columns = [
   {
     title: "Name",
     dataIndex: "name",
     key: "name",
+    render: (_: any, { name }: any) => formatName(name),
   },
   {
     title: "Title",

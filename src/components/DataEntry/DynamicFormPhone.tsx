@@ -35,7 +35,7 @@ const App = ({ required, defaultValue = [""], disabled, name }: iDataInput) => {
                 key={key}
                 className="flex w-full justify-between items-center space-x-4"
               >
-                <Phone disabled={disabled} name={name} />
+                <Phone disabled={disabled} name={name.toString()} />
 
                 {fields.length > 1 && (
                   <MinusCircleOutlined

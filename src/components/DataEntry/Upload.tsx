@@ -123,6 +123,8 @@ export default function DataUpload({
     </Descriptions>
   );
 
+  console.log(data);
+
   return (
     <>
       <Form.Item

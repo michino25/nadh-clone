@@ -29,11 +29,11 @@ export default function Address({
 
   const initData = async (defaultValue: any) => {
     if (defaultValue.country) {
-      setCityData(await getCity(defaultValue.country.key).then((res) => res));
+      setCityData(await getCity(defaultValue.country.value).then((res) => res));
     }
     if (defaultValue.city) {
       setDistrictData(
-        await getDistrict(defaultValue.city.key).then((res) => res)
+        await getDistrict(defaultValue.city.value).then((res) => res)
       );
     }
   };
@@ -83,8 +83,6 @@ export default function Address({
   };
 
   const handleChangeCountry = async (value: number) => {
-    console.log(value);
-
     setCountry(countryData.filter((item: any) => item.value === value)[0]);
 
     if (value) setCityData(await getCity(value).then((res) => res));

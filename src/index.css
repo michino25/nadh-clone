@@ -9,6 +9,10 @@
   --tw-ring-color: #ffffff00 !important;
 }
 
+:root {
+  --ck-border-radius: 0.5rem;
+}
+
 input[type="text"] {
   padding: 4px 11px;
   font-size: 14px;
@@ -58,4 +62,8 @@ img.ant-upload-list-item-image {
 
 .ant-upload-list-item::before {
   border-radius: 5px;
+}
+
+.ck.ck-balloon-panel.ck-powered-by-balloon {
+  display: none;
 }

@@ -222,7 +222,6 @@ export default function CandidateAddStep1({
             label="Parent Company"
             placeholder="Parent Company"
             name="parent_company"
-            required={true}
             data={clientData}
           />
         </Col>
@@ -231,7 +230,6 @@ export default function CandidateAddStep1({
             label="Status"
             placeholder="Status"
             name="status"
-            required={true}
             data={primaryStatus2}
           />
         </Col>

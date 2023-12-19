@@ -4,6 +4,7 @@ import { useState } from "react";
 interface iDataInput {
   label?: string;
   name: string;
+  className?: string;
   type?: string | undefined;
   value: string;
   onSubmit: (value: any) => void;
@@ -15,13 +16,14 @@ export default function EditableForm({
   value,
   type,
   onSubmit,
+  className,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
   return (
     <>
       {!edit ? (
         <button
-          className="text-black p-0 m-0 w-full text-left"
+          className={className + " text-black p-0 m-0 w-full text-left"}
           onClick={() => setEdit(true)}
         >
           {value || "-"}
