@@ -26,7 +26,7 @@ const step = [
 ];
 
 export default function CadidateAdd() {
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(0);
   // console.log(currentStep);
 
   useEffect(() => {
