@@ -5,6 +5,7 @@ interface iDataInput {
   label: string;
   name: string;
   required?: boolean;
+  allowClear?: boolean;
   defaultValue?: string | number;
   placeholder: string;
   data: iOption[];
@@ -20,6 +21,7 @@ export default function DataSelect({
   label,
   name,
   required,
+  allowClear = true,
   defaultValue,
   placeholder,
   data,
@@ -41,7 +43,7 @@ export default function DataSelect({
     >
       <Select
         filterOption={filterOption}
-        allowClear
+        allowClear={allowClear}
         value={value}
         onChange={(e) => setChange && setChange(e.target.value)}
         disabled={disable}

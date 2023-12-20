@@ -65,7 +65,7 @@ export default function EditableForm({
                   },
                 ]}
               >
-                <Input />
+                <Input placeholder={label} />
               </Form.Item>
             </Col>
           </Row>

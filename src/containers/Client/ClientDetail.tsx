@@ -460,6 +460,7 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Status">
                   <EditableSelectForm
+                    placeholder="Status"
                     editing={editable}
                     setEditing={setEditable}
                     prevent
@@ -482,6 +483,7 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Parent Company">
                   <EditableSelectForm
+                    placeholder="Parent Company"
                     editing={editable}
                     setEditing={setEditable}
                     name="parent_id"
@@ -514,6 +516,7 @@ export default function Clients() {
                 <Descriptions.Item label="Client Type">
                   <EditableSelectForm
                     editing={editable}
+                    placeholder="Client Type"
                     setEditing={setEditable}
                     name="type"
                     value={clientData.type.toString()}
@@ -524,6 +527,7 @@ export default function Clients() {
                 <Descriptions.Item label="CPA">
                   <EditableSelectForm
                     editing={editable}
+                    placeholder="CPA"
                     setEditing={setEditable}
                     name="cpa"
                     value={clientData.cpa.toString()}
@@ -533,6 +537,7 @@ export default function Clients() {
                 </Descriptions.Item>
                 <Descriptions.Item label="Lead Consultant">
                   <EditableSelectForm
+                    placeholder="Lead Consultant"
                     editing={editable}
                     setEditing={setEditable}
                     name="lead_consultants"
