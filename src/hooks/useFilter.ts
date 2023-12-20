@@ -34,17 +34,15 @@ const useFilter = () => {
   };
 
   const removeAllFilter = () => {
-    console.log(getAllParams()["page"]);
-    console.log(getAllParams());
-
-    if (getAllParams()["page"])
-      navigate({
-        pathname: location.pathname,
-        search: new URLSearchParams({
-          page: getAllParams()["page"],
-        }).toString(),
-      });
-    else navigate({ pathname: location.pathname });
+    // if (getAllParams()["page"])
+    //   navigate({
+    //     pathname: location.pathname,
+    //     search: new URLSearchParams({
+    //       page: getAllParams()["page"],
+    //     }).toString(),
+    //   });
+    // else
+    navigate({ pathname: location.pathname });
   };
 
   const changeOneFilter = (params: any, filterName: string, data: string) => {

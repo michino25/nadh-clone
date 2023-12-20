@@ -69,7 +69,7 @@ export default function PersonalInformationForm({
             label="First Name"
             placeholder="First Name"
             name="first_name"
-            required={true}
+            required
             defaultValue={formatName(candidateData?.first_name)}
           />
         </Col>
@@ -78,7 +78,7 @@ export default function PersonalInformationForm({
             label="Last Name"
             placeholder="Last Name"
             name="last_name"
-            required={true}
+            required
             defaultValue={formatName(candidateData?.last_name)}
           />
         </Col>
@@ -98,7 +98,7 @@ export default function PersonalInformationForm({
             label="Primary status"
             placeholder="Primary status"
             name="priority_status"
-            required={true}
+            required
             defaultValue={candidateData?.priority_status.toString()}
             data={primaryStatus}
           />
@@ -153,13 +153,15 @@ export default function PersonalInformationForm({
             label="Ready to move"
             placeholder="Ready to move"
             name="relocating_willingness"
-            required={true}
+            allowClear={false}
+            required
             defaultValue={
               candidateData?.relocating_willingness.toString() || "1"
             }
             data={[
               { label: "Yes", value: "1" },
               { label: "No", value: "-1" },
+              { label: "Available", value: "2" },
             ]}
           />
         </Col>
@@ -168,7 +170,6 @@ export default function PersonalInformationForm({
             label="Source"
             placeholder="Source"
             name="source"
-            required={true}
             defaultValue={candidateData?.source}
           />
         </Col>
@@ -181,7 +182,7 @@ export default function PersonalInformationForm({
               label="Created by"
               placeholder="Created by"
               name="user_name"
-              required={true}
+              required
               defaultValue={formatName(candidateData?.creator.full_name)}
               disabled
             />
@@ -202,14 +203,14 @@ export default function PersonalInformationForm({
           <DynamicFormEmail
             defaultValue={candidateData?.emails}
             name="emails"
-            required={true}
+            required
           />
         </Col>
         <Col span={12}>
           <DynamicFormPhone
             defaultValue={candidateData?.phones}
             name="phones"
-            required={true}
+            required
           />
         </Col>
       </Row>
@@ -233,6 +234,7 @@ export default function PersonalInformationForm({
             defaultValue={candidateData?.prefer_position.positions.map(
               (item: any) => item.key + "_" + item.label
             )}
+            allowClear
             value={position}
             setValue={setPosition}
             options={dataPosition ? dataPosition : []}
@@ -246,6 +248,7 @@ export default function PersonalInformationForm({
             defaultValue={candidateData?.nationality.map(
               (item: any) => item.key + "_" + item.label
             )}
+            allowClear
             value={nationality}
             setValue={setNationality}
             options={dataNationality ? dataNationality : []}
@@ -268,6 +271,17 @@ export default function PersonalInformationForm({
             defaultValue={candidateData?.management_years}
             placeholder={"0"}
             name="management_years"
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={12}>
+          <DataInputNumber
+            label="No. of Direct Reports"
+            defaultValue={candidateData?.direct_reports}
+            placeholder={"0"}
+            name="direct_reports"
           />
         </Col>
       </Row>

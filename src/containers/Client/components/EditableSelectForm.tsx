@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface iDataInput {
   name: string;
+  placeholder: string;
   value: string;
   data: iOption[];
   onSubmit: (value: any) => void;
@@ -15,6 +16,7 @@ interface iDataInput {
 
 export default function EditableForm({
   name,
+  placeholder,
   value,
   data,
   onSubmit,
@@ -69,7 +71,7 @@ export default function EditableForm({
           <Row gutter={16}>
             <Col span={24}>
               <DataSelect
-                placeholder=""
+                placeholder={placeholder}
                 label=""
                 name={name}
                 defaultValue={value}
