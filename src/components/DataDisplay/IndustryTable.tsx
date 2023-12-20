@@ -19,8 +19,6 @@ export default function IndustryTable({
   deleteItem: (id: string) => void;
   primaryItem: (id: string) => void;
 }) {
-  console.log(data);
-
   const columns: ColumnsType<DataType> = [
     {
       title: "Primary",

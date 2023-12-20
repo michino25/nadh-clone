@@ -4,10 +4,14 @@ import { otherApi } from "apis/index";
 
 export default function Phone({
   disabled,
+  required,
+  label,
   name,
   defaultValue,
 }: {
   disabled?: boolean;
+  required?: boolean;
+  label?: string;
   name: string;
   defaultValue?: any;
 }) {
@@ -24,10 +28,10 @@ export default function Phone({
   const prefixSelector = (
     <Form.Item
       name={[name, "phone_code", "extra", "dial_code"]}
-      initialValue={defaultValue?.phone_code.extra.dial_code}
+      initialValue={defaultValue?.phone_code.extra.dial_code || "+84"}
       noStyle
     >
-      <Select style={{ width: 110 }} defaultValue={"+84"}>
+      <Select style={{ width: 110 }}>
         {countries &&
           countries.length > 0 &&
           countries.map((item: any) => (
@@ -51,6 +55,7 @@ export default function Phone({
 
   return (
     <Form.Item
+      label={label}
       name={[name, "number"]}
       initialValue={defaultValue?.number}
       className="w-full mb-3"
@@ -60,7 +65,7 @@ export default function Phone({
           message: `The input is not valid phone!`,
         },
         {
-          required: true,
+          required: required,
           message: "Please input your phone number!",
         },
       ]}

@@ -92,17 +92,19 @@ export default function ModelWorking({
         <Col span={6}>
           <DataSelect
             data={months}
-            placeholder="Choose month"
+            placeholder="Start month"
             label="Start year"
             name="Start_month"
+            required
             defaultValue={defaultData?.start_time?.split("-")[1]}
           />
         </Col>
         <Col span={6}>
           <DataSelect
             data={years}
-            placeholder="Choose year"
+            placeholder="Start year"
             label=""
+            required
             name="Start_year"
             defaultValue={defaultData?.start_time?.split("-")[0]}
           />
@@ -110,9 +112,10 @@ export default function ModelWorking({
         <Col span={6}>
           <DataSelect
             data={months}
-            placeholder="Choose month"
+            placeholder="End month"
             label="End year"
             name="End_month"
+            required
             disable={checkbox}
             defaultValue={defaultData?.end_time?.split("-")[1]}
           />
@@ -120,9 +123,10 @@ export default function ModelWorking({
         <Col span={6}>
           <DataSelect
             data={years}
-            placeholder="Choose year"
+            placeholder="End year"
             label=""
             name="End_year"
+            required
             disable={checkbox}
             defaultValue={defaultData?.end_time?.split("-")[0]}
           />

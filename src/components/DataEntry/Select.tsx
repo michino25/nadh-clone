@@ -35,7 +35,7 @@ export default function DataSelect({
       rules={[
         {
           required: required,
-          message: `Please input your your ${label}!`,
+          message: `Please input ${placeholder || label}!`,
         },
       ]}
     >

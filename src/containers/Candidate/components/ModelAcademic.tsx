@@ -160,7 +160,7 @@ export default function ModelAcademic({
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!checkbox && value && getFieldValue("Start_year")) {
+                  if (value && getFieldValue("Start_year")) {
                     if (value < getFieldValue("Start_year"))
                       return Promise.reject(
                         new Error(

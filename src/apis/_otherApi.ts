@@ -77,6 +77,11 @@ const _otherApi = {
     const url = "api/exchange_currencies";
     return axios().get(url);
   },
+
+  getConflictTax(content: string) {
+    const url = "api/clients-conflict?tax_code=" + content;
+    return axios().get(url);
+  },
 };
 
 export default _otherApi;

@@ -1,16 +1,22 @@
-import { Col, Row, Button, Form, notification } from "antd";
+import { Col, Row, Button, Form, notification, Input as InputAntd } from "antd";
 
 import Input from "components/DataEntry/Input";
 import DataSelect from "components/DataEntry/Select";
-import { clientType, cpa, primaryStatus2 } from "_constants/index";
+import {
+  clientType,
+  convertValuetoKey,
+  cpa,
+  primaryStatus2,
+} from "_constants/index";
 import FormIndustry from "./FormIndustry";
-import { clientApi, userApi } from "apis/index";
+import { clientApi, otherApi, userApi } from "apis/index";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import Address from "components/DataEntry/Address";
+import Phone from "components/DataEntry/Phone";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -20,9 +26,29 @@ export default function CandidateAddStep1({
   setData: (value: any) => void;
 }) {
   const [industry, setIndustry] = useState<any[]>([]);
+  const [address, setAddress] = useState<any>();
+  const [taxCheckContent, setTaxCheckContent] = useState("");
+  // const taxCheck = useRef(false);
 
   const deleteItem = (id: string) => {
     if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
+  };
+
+  const primaryItem = (id: string) => {
+    console.log(id);
+    console.log(industry);
+
+    if (industry)
+      setIndustry(
+        industry.map((item: any) =>
+          item.id === id
+            ? {
+                ...item,
+                primary: item.primary ? item.primary * -1 : 1,
+              }
+            : item
+        )
+      );
   };
 
   const { data: userData } = useQuery({
@@ -46,6 +72,27 @@ export default function CandidateAddStep1({
         }))
       ),
   });
+
+  const { data: countries } = useQuery({
+    queryKey: ["countries", "phonekey"],
+    queryFn: async () =>
+      await otherApi.getCountries().then((res) => res.data.data),
+  });
+
+  const { data: taxCheck } = useQuery({
+    queryKey: ["conflictTax", taxCheckContent],
+    queryFn: async () => {
+      try {
+        await otherApi.getConflictTax(taxCheckContent);
+        return false;
+      } catch (error) {
+        return true;
+      }
+    },
+    enabled: taxCheckContent !== "",
+  });
+
+  console.log(taxCheck);
 
   const createClient = async (userData: any) => {
     try {
@@ -79,6 +126,24 @@ export default function CandidateAddStep1({
     mutationFn: (formData: any) => createClient(formData),
   });
 
+  const phoneData = (input: any, countryData: any[]) => {
+    const countryCode = input.phone_code.extra.dial_code;
+
+    const countryInfo = countryData.find(
+      (country: any) => country.extra.dial_code === countryCode
+    );
+
+    if (countryInfo) {
+      const data = {
+        number: parseInt(input.number),
+        phone_code: {
+          key: countryInfo.key.toString(),
+        },
+      };
+      return data;
+    }
+  };
+
   const onFinish = (values: any) => {
     const {
       name,
@@ -88,7 +153,6 @@ export default function CandidateAddStep1({
       lead_consultants,
       tax_code,
       email,
-      address,
       parent_company,
       status,
       cpa,
@@ -101,29 +165,30 @@ export default function CandidateAddStep1({
       tax_code,
       email,
       parent_id: parent_company,
-      status,
-      cpa,
-      type,
-      address: { address },
-      phone: { number: phone, phone_code: { key: "1280" } },
-      fax: { number: fax, phone_code: { key: "1280" } },
-      business_line:
-        industry.length > 0 &&
-        industry.map((item: any) => ({
-          industry: { key: item.industry.key, label: item.industry.label },
-          sector: { key: item.sector.key, label: item.sector.label },
-        })),
-      business_line_send: industry.map((item: any) => ({
-        industry_id: item.industry.key,
-        sector_id: item.sector.key,
-      })),
+      status: parseInt(status),
+      cpa: parseInt(cpa),
+      type: parseInt(type),
       lead_consultants: [lead_consultants],
+      address: {
+        ...(address.address && { address: address.address }),
+        ...(address.country && { country: convertValuetoKey(address.country) }),
+        ...(address.city && { city: convertValuetoKey(address.city) }),
+        ...(address.district && {
+          district: convertValuetoKey(address.district),
+        }),
+      },
+      business_line: industry.map((item) => ({
+        ...(item.industry && { industry_id: item.industry.value }),
+        ...(item.sector && { sector_id: item.sector.value }),
+        ...(item.category && { category_id: item.category.value }),
+      })),
+
+      phone: phoneData(phone, countries),
+      fax: phoneData(fax, countries),
     };
 
-    createMutation.mutate(transformedData);
     console.log("Received values of form: ", transformedData);
-    // setData(data);
-    // nextStep();
+    createMutation.mutate(transformedData);
   };
 
   return (
@@ -150,22 +215,10 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input
-            label="Phone Number"
-            placeholder="Phone Number"
-            name="phone"
-            required
-            defaultValue={""}
-          />
+          <Phone name="phone" label="Phone Number" required />
         </Col>
         <Col span={12}>
-          <Input
-            label="Fax"
-            placeholder="Fax"
-            name="fax"
-            required={false}
-            defaultValue={""}
-          />
+          <Phone name="fax" label="Fax" required />
         </Col>
       </Row>
 
@@ -180,39 +233,41 @@ export default function CandidateAddStep1({
           />
         </Col>
         <Col span={12}>
-          <Input
+          <Form.Item
             label="Tax code"
-            placeholder="Tax code"
             name="tax_code"
-            required
-            defaultValue={""}
-          />
+            validateDebounce={100}
+            rules={[
+              {
+                required: true,
+                message: `Please input your Tax code!`,
+              },
+              () => ({
+                validator() {
+                  if (taxCheck === true) {
+                    return Promise.reject(new Error("Duplicated!"));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <InputAntd
+              placeholder="Tax code"
+              onChange={(data) => setTaxCheckContent(data.target.value)}
+            />
+          </Form.Item>
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Input label="Email" placeholder="Email" name="email" />
+          <Input label="Email" placeholder="Email" name="email" type="email" />
         </Col>
         <Col span={12}>
-          <Address
-            defaultValue={{
-              address: null,
-              country: {
-                key: 1280,
-                label: "Viet Nam",
-              },
-              city: {
-                key: 2,
-                label: "Ba Ria - Vung Tau",
-              },
-              district: {
-                key: 78,
-                label: "Tan Thanh",
-              },
-            }}
-            onChange={(data) => console.log(data)}
-          />
+          <Form.Item label="Address" name="address">
+            <Address onChange={(data) => setAddress(data)} />
+          </Form.Item>
         </Col>
       </Row>
 
@@ -257,14 +312,14 @@ export default function CandidateAddStep1({
           <IndustryTable
             data={industry}
             deleteItem={deleteItem}
-            primaryItem={() => {}}
+            primaryItem={primaryItem}
           />
         </Col>
       </Row>
 
       <Form.Item className="flex justify-end space-x-2 mt-5">
         <Button type="primary" htmlType="submit">
-          Next
+          Save
         </Button>
       </Form.Item>
     </Form>

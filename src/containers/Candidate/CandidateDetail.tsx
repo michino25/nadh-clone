@@ -26,7 +26,62 @@ import { formatDate } from "utils/format";
 
 export default function Candidates() {
   const { id } = useParams();
+
+  const {
+    data: candidateData,
+    isPending,
+    refetch,
+  } = useQuery({
+    queryKey: ["candidate", id],
+    queryFn: async () =>
+      await candidateApi.getOneCandidate(id as string).then((res) => {
+        // console.log(!res.data.addresses[0].city);
+        return {
+          ...res.data,
+          // addresses: res.data.addresses.map((addressItem: any) => ({
+          //   address: addressItem.address,
+          //   country: addressItem.country
+          //     ? addressItem.country.key + "_" + addressItem.country.label
+          //     : null,
+          //   city: addressItem.city
+          //     ? addressItem.city.key + "_" + addressItem.city.label
+          //     : null,
+          //   district: addressItem.district
+          //     ? addressItem.district.key + "_" + addressItem.district.label
+          //     : null,
+          // })),
+          business_line: res.data.business_line.map((item: any) => ({
+            ...item,
+            id: uuidv4(),
+          })),
+        };
+      }),
+  });
+
+  const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
+    queryKey: ["files", candidateData?.id],
+    queryFn: () =>
+      otherApi.getFile(candidateData?.id, "candidates").then((res) => {
+        console.log(res.data.data);
+
+        return res.data.data.map((item: any) => ({
+          uid: item.id,
+          name: item.name,
+          status: "done",
+          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+        }));
+      }),
+    enabled: !!candidateData?.id,
+  });
+
+  console.log(candidateImage);
+
   const [address, setAddress] = useState<any[]>();
+  const [form] = Form.useForm();
+  const [currency, setCurrency] = useState<number>(
+    candidateData?.remuneration?.currency?.id || 2
+  );
 
   const addIndustry = (data: any) => {
     const newData: any = {};
@@ -83,56 +138,6 @@ export default function Candidates() {
 
     updateMutation.mutate({ business_line: transformedData });
   };
-
-  const {
-    data: candidateData,
-    isPending,
-    refetch,
-  } = useQuery({
-    queryKey: ["candidate", id],
-    queryFn: async () =>
-      await candidateApi.getOneCandidate(id as string).then((res) => {
-        // console.log(!res.data.addresses[0].city);
-        return {
-          ...res.data,
-          // addresses: res.data.addresses.map((addressItem: any) => ({
-          //   address: addressItem.address,
-          //   country: addressItem.country
-          //     ? addressItem.country.key + "_" + addressItem.country.label
-          //     : null,
-          //   city: addressItem.city
-          //     ? addressItem.city.key + "_" + addressItem.city.label
-          //     : null,
-          //   district: addressItem.district
-          //     ? addressItem.district.key + "_" + addressItem.district.label
-          //     : null,
-          // })),
-          business_line: res.data.business_line.map((item: any) => ({
-            ...item,
-            id: uuidv4(),
-          })),
-        };
-      }),
-  });
-
-  const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
-    queryKey: ["files", candidateData?.id],
-    queryFn: () =>
-      otherApi.getFile(candidateData?.id, "candidates").then((res) => {
-        console.log(res.data.data);
-
-        return res.data.data.map((item: any) => ({
-          uid: item.id,
-          name: item.name,
-          status: "done",
-          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
-          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
-        }));
-      }),
-    enabled: !!candidateData?.id,
-  });
-
-  console.log(candidateImage);
 
   const fileUpload = (id: string) => {
     if (id) {
@@ -196,6 +201,57 @@ export default function Candidates() {
   });
 
   const onFinish = (values: any) => {
+    const remunerationObject = {
+      notice_days: parseInt(values.notice_days),
+      remuneration: {
+        benefit: {
+          over_thirteen: parseInt(values.over_thirteen),
+          lunch_check: parseInt(values.lunch_check),
+          car_parking: parseInt(values.car_parking),
+          car_allowance: parseInt(values.car_allowance),
+          phone: parseInt(values.phone),
+          laptop: parseInt(values.laptop),
+          share_option: parseInt(values.share_option),
+          health_cover: parseInt(values.health_cover),
+
+          ...(values.over_thirteen === "1"
+            ? { over_thirteen_text: values.over_thirteen_text }
+            : {}),
+          ...(values.lunch_check === "1"
+            ? { lunch_check_text: values.lunch_check_text }
+            : {}),
+          ...(values.car_parking === "1"
+            ? { car_parking_text: values.car_parking_text }
+            : {}),
+          ...(values.car_allowance === "1"
+            ? { car_allowance_text: values.car_allowance_text }
+            : {}),
+          ...(values.phone === "1" ? { phone_text: values.phone_text } : {}),
+          ...(values.laptop === "1" ? { laptop_text: values.laptop_text } : {}),
+          ...(values.share_option === "1"
+            ? { share_option_text: values.share_option_text }
+            : {}),
+          ...(values.health_cover === "1"
+            ? { health_cover_text: values.health_cover_text }
+            : {}),
+
+          pension_scheme: parseInt(values.pension_scheme),
+          no_holiday: parseInt(values.no_holiday),
+          working_hour: parseInt(values.working_hour),
+          overtime_hour: parseInt(values.overtime_hour),
+        },
+        currency,
+        current_salary: values.current_salary,
+        salary: {
+          from: values.salary_from,
+          to: values.salary_to,
+        },
+        expectations: null,
+        future_prospects: null,
+        notice_days: parseInt(values.notice_days),
+      },
+    };
+
     const dob =
       values.birthday.year && values.birthday.month && values.birthday.day
         ? `${values.birthday.year}-${values.birthday.month}-${values.birthday.day}`
@@ -231,10 +287,12 @@ export default function Candidates() {
 
       dob: dob,
       gender: parseInt(values.gender),
-      highest_education: {
-        key: values.highest_education.split("_")[0],
-        label: values.highest_education.split("_")[1],
-      },
+      ...(values.highest_education && {
+        highest_education: {
+          key: values.highest_education.split("_")[0],
+          label: values.highest_education.split("_")[1],
+        },
+      }),
       nationality: values.nationality.map((item: any) => ({
         key: item.split("_")[0],
         label: item.split("_")[1],
@@ -255,6 +313,7 @@ export default function Candidates() {
 
       priority_status: parseInt(values.priority_status),
       relocating_willingness: parseInt(values.relocating_willingness),
+      ...remunerationObject,
     };
     updateMutation.mutate(data);
     console.log("Received values of form: ", data);
@@ -262,7 +321,6 @@ export default function Candidates() {
   };
 
   const [showBtn, setShowBtn] = useState(false);
-  const [showOverviewSave, setShowOverviewSave] = useState(false);
   const [firstRender, setFirstRender] = useState(false);
 
   useEffect(() => {
@@ -272,11 +330,6 @@ export default function Candidates() {
       }, 1000);
     else setShowBtn(true);
   }, [address]);
-
-  const onFinishOverview = (values: any) => {
-    updateMutation.mutate(values);
-    console.log("Received values of form: ", values);
-  };
 
   const deleteFileMutation = useMutation({
     mutationFn: async (formData: any) => {
@@ -465,54 +518,35 @@ export default function Candidates() {
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
       <div className="px-8 my-5">
-        <div className="flex">
+        <Form
+          layout="vertical"
+          className="w-full flex"
+          onFinish={onFinish}
+          onReset={() => {
+            form.resetFields();
+            setShowBtn(false);
+          }}
+          form={form}
+          onValuesChange={() => setShowBtn(true)}
+        >
           <div className="flex-col w-2/3 space-y-4">
             <div id="part-1" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Overview</p>
-              <Form
-                layout="vertical"
-                className="w-full"
-                onFinish={onFinishOverview}
-                onValuesChange={() => setShowOverviewSave(true)}
-              >
-                <TextArea
-                  name="overview_text_new"
-                  label=""
-                  placeholder="Overview"
-                  defaultValue={candidateData.overview_text_new}
-                />
-                {showOverviewSave && (
-                  <Form.Item className="flex justify-end space-x-2">
-                    <Button type="primary" htmlType="submit">
-                      Save
-                    </Button>
-                  </Form.Item>
-                )}
-              </Form>
+              <TextArea
+                name="overview_text_new"
+                label=""
+                placeholder="Overview"
+                defaultValue={candidateData.overview_text_new}
+              />
             </div>
             <div id="part-2" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
 
-              <Form
-                layout="vertical"
-                className="w-full"
-                onFinish={onFinish}
-                onValuesChange={() => setShowBtn(true)}
-              >
-                <PersonalInformationForm
-                  candidateData={candidateData}
-                  setAddress={setAddress}
-                  address={address}
-                />
-
-                {showBtn && (
-                  <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end space-x-2 py-3 px-8">
-                    <Button type="primary" htmlType="submit">
-                      Save
-                    </Button>
-                  </Form.Item>
-                )}
-              </Form>
+              <PersonalInformationForm
+                candidateData={candidateData}
+                setAddress={setAddress}
+                address={address}
+              />
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
@@ -548,11 +582,14 @@ export default function Candidates() {
                 updateFn={(data, id) => updateCandidateHistories(data, id)}
               />
             </div>
+
             <div id="part-6" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>
+
               <Remuneration
                 data={candidateData?.remuneration}
-                onSave={(data) => updateMutation.mutate(data)}
+                currency={currency}
+                setCurrency={setCurrency}
               />
             </div>
             <div id="part-7" className="p-4 bg-white rounded-lg">
@@ -574,13 +611,23 @@ export default function Candidates() {
               </div>
             </div>
           </div>
+          {showBtn && (
+            <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end py-3 px-8">
+              <Button type="default" className="mr-3" htmlType="reset">
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          )}
           <div className="w-1/3 pl-5">
             <div className="bg-white flex-col p-4 rounded-lg">
               <p className="mb-4 font-bold text-lg">Interview Loop</p>
               <InterviewLoop data={candidateData?.flows} />
             </div>
           </div>
-        </div>
+        </Form>
       </div>
     </>
   );

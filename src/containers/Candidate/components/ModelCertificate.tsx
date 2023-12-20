@@ -136,7 +136,7 @@ export default function ModelCertificate({
             dependencies={["Start_year"]}
             rules={[
               {
-                required: true,
+                required: !checkbox,
                 message: `Please input your your graduation year!`,
               },
               ({ getFieldValue }) => ({

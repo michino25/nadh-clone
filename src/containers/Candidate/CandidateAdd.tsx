@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CandidateAddStep1 from "./components/CandidateAddStep1";
 import CandidateAddFinish from "./components/CandidateAddFinish";
-import { Button, notification } from "antd";
+import { Button, notification, Form } from "antd";
 import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
 import WorkingHistory from "./components/WorkingHistory";
@@ -26,7 +26,7 @@ const step = [
 ];
 
 export default function CadidateAdd() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(3);
   // console.log(currentStep);
 
   useEffect(() => {
@@ -70,6 +70,10 @@ export default function CadidateAdd() {
         };
       }),
   });
+
+  const [currency, setCurrency] = useState<number>(
+    candidateData?.remuneration?.currency?.id || 2
+  );
 
   console.log(candidateData);
 
@@ -253,6 +257,64 @@ export default function CadidateAdd() {
     createCandidateHistoriesMutation.mutate(data);
   };
 
+  const onFinish = (values: any) => {
+    const remunerationObject = {
+      notice_days: parseInt(values.notice_days),
+      remuneration: {
+        benefit: {
+          over_thirteen: parseInt(values.over_thirteen),
+          lunch_check: parseInt(values.lunch_check),
+          car_parking: parseInt(values.car_parking),
+          car_allowance: parseInt(values.car_allowance),
+          phone: parseInt(values.phone),
+          laptop: parseInt(values.laptop),
+          share_option: parseInt(values.share_option),
+          health_cover: parseInt(values.health_cover),
+
+          ...(values.over_thirteen === "1"
+            ? { over_thirteen_text: values.over_thirteen_text }
+            : {}),
+          ...(values.lunch_check === "1"
+            ? { lunch_check_text: values.lunch_check_text }
+            : {}),
+          ...(values.car_parking === "1"
+            ? { car_parking_text: values.car_parking_text }
+            : {}),
+          ...(values.car_allowance === "1"
+            ? { car_allowance_text: values.car_allowance_text }
+            : {}),
+          ...(values.phone === "1" ? { phone_text: values.phone_text } : {}),
+          ...(values.laptop === "1" ? { laptop_text: values.laptop_text } : {}),
+          ...(values.share_option === "1"
+            ? { share_option_text: values.share_option_text }
+            : {}),
+          ...(values.health_cover === "1"
+            ? { health_cover_text: values.health_cover_text }
+            : {}),
+
+          pension_scheme: parseInt(values.pension_scheme),
+          no_holiday: parseInt(values.no_holiday),
+          working_hour: parseInt(values.working_hour),
+          overtime_hour: parseInt(values.overtime_hour),
+        },
+        currency,
+        current_salary: values.current_salary,
+        salary: {
+          from: values.salary_from,
+          to: values.salary_to,
+        },
+        expectations: null,
+        future_prospects: null,
+        notice_days: parseInt(values.notice_days),
+      },
+    };
+
+    updateMutation.mutate(remunerationObject, {
+      onSuccess: () => {
+        setCurrentStep(currentStep + 1);
+      },
+    });
+  };
   return (
     <div className="px-12 pb-2">
       <div className="">
@@ -312,10 +374,24 @@ export default function CadidateAdd() {
 
         {currentStep === 4 && (
           <>
-            <Remuneration
-              onSave={(data) => updateMutation.mutate(data)}
-              data={candidateData?.remuneration}
-            />
+            <Form layout="vertical" className="w-full" onFinish={onFinish}>
+              <Remuneration
+                data={candidateData?.remuneration}
+                currency={currency}
+                setCurrency={setCurrency}
+              />
+              <Form.Item className="flex justify-end w-full gap-3 mt-5">
+                <Button
+                  className="mr-3"
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                >
+                  Previous
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Finish
+                </Button>
+              </Form.Item>
+            </Form>
           </>
         )}
 
@@ -324,12 +400,12 @@ export default function CadidateAdd() {
         )}
 
         <div className="flex justify-end w-full gap-3 mt-5">
-          {currentStep > 1 && currentStep < 5 && (
+          {currentStep > 1 && currentStep < 4 && (
             <Button onClick={() => setCurrentStep(currentStep - 1)}>
               Previous
             </Button>
           )}
-          {currentStep > 0 && currentStep < 5 && (
+          {currentStep > 0 && currentStep < 4 && (
             <Button
               type="primary"
               onClick={() => setCurrentStep(currentStep + 1)}

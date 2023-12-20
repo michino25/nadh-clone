@@ -434,8 +434,13 @@ export const convertKeytoValue = (data: any) => {
   return data && { value: data.key, label: data.label };
 };
 
-export const convertValuetoKey = (data: any) => {
-  return data && { key: data.value, label: data.label };
+export const convertValuetoKey = (data: any, toString?: boolean) => {
+  return (
+    data && {
+      key: toString ? data.value.toString() : data.value,
+      label: data.label,
+    }
+  );
 };
 
 export const filterOption = (input: string, option?: iOption) =>

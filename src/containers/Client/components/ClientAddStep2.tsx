@@ -1,4 +1,4 @@
-import { Modal, Button } from "antd";
+import { Modal, Button, Skeleton } from "antd";
 
 import { useQuery } from "@tanstack/react-query";
 import { clientApi } from "apis/index";
@@ -6,7 +6,7 @@ import ContactPersonWrapper from "./ContactPersonWrapper";
 
 export default function CandidateAddStep1({
   nextStep,
-  prevStep,
+  // prevStep,
   step1Data,
 }: {
   step1Data: any;
@@ -14,8 +14,13 @@ export default function CandidateAddStep1({
   prevStep: () => void;
 }) {
   // client_id: step1Data.data.id,
+  console.log(step1Data.data.id);
 
-  const { data: clientData, refetch } = useQuery({
+  const {
+    data: clientData,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["client", step1Data.data.id],
     queryFn: async () =>
       await clientApi.getOneClient(step1Data.data.id as string).then((res) => {
@@ -33,6 +38,8 @@ export default function CandidateAddStep1({
     });
   };
 
+  if (isPending) return <Skeleton active />;
+
   return (
     <>
       <ContactPersonWrapper
@@ -42,11 +49,8 @@ export default function CandidateAddStep1({
       />
 
       <div className="w-full flex justify-end mt-5">
-        <Button onClick={prevStep} className="mr-2">
-          Previous
-        </Button>
         <Button onClick={showConfirmSubmit} type="primary" htmlType="submit">
-          Save
+          Finish
         </Button>
       </div>
     </>

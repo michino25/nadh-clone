@@ -23,7 +23,6 @@ export default function DataUpload({
   onChange,
   onDelete,
   data,
-  // accept,
   imgList,
 }: any) {
   const [previewOpen, setPreviewOpen] = useState(false);

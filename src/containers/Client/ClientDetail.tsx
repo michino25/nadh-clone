@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
 
-import Image from "components/DataDisplay/Image";
 import BackToTopButton from "components/BackToTopButton";
 import { clientApi, otherApi, userApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
@@ -26,6 +25,7 @@ import EditablePhoneForm from "./components/EditablePhoneForm";
 import EditableForm from "./components/EditableAddressForm";
 import { useEffect, useState } from "react";
 import Notes from "./components/Notes";
+import { MyAvatar } from "components/DataEntry/MyAvatar";
 
 const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
 
@@ -43,11 +43,16 @@ const anchorItems = [
   {
     key: "part-3",
     href: "#part-3",
-    title: "Attachments",
+    title: "Notes",
   },
   {
     key: "part-4",
     href: "#part-4",
+    title: "Attachments",
+  },
+  {
+    key: "part-5",
+    href: "#part-5",
     title: "Activity Logs",
   },
 ];
@@ -158,6 +163,22 @@ export default function Clients() {
       const data = {
         mediafiles: {
           files: [id],
+        },
+      };
+
+      updateMutation.mutate(data, {
+        onSuccess: () => {
+          clientImageRefetch();
+        },
+      });
+    }
+  };
+
+  const avtUpload = (id: string) => {
+    if (id) {
+      const data = {
+        mediafiles: {
+          logo: id,
         },
       };
 
@@ -415,13 +436,21 @@ export default function Clients() {
                 </Descriptions.Item>
               </Descriptions>
 
-              <Image
-                src={
-                  "https://lubrytics.com:8443/nadh-mediafile/file/" +
-                  clientData.mediafiles.logo
-                }
-                size={200}
-              />
+              <div className="w-1/2">
+                <MyAvatar
+                  img={
+                    clientData.mediafiles.logo
+                      ? "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                        clientData.mediafiles.logo
+                      : ""
+                  }
+                  data={{
+                    type: "avatar",
+                    uploadedByUserId: getUser().user_sent.user_id,
+                  }}
+                  onChange={avtUpload}
+                />
+              </div>
             </div>
             <div className="my-5 font-medium text-lg">Client Information</div>
             <div className="flex">
@@ -456,7 +485,7 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="parent_id"
-                    value={clientData.parent_company.key}
+                    value={clientData?.parent_company?.key}
                     data={!companyIsPending ? companyData : []}
                     onSubmit={(values) => onFinishSelect(values)}
                   />
