@@ -1,6 +1,14 @@
 export interface StatusData {
   [key: number]: string;
 }
+export const experiences = [
+  { label: "Internship Level", value: "1" },
+  { label: "Entry Level", value: "2" },
+  { label: "Associate Level", value: "3" },
+  { label: "Mid-senior Level", value: "4" },
+  { label: "Director", value: "5" },
+  { label: "Executive", value: "6" },
+];
 
 export const statusData: StatusData[] = [
   { 1: "Raw" },
@@ -34,6 +42,17 @@ export const statusData2 = [
   { label: "Follow-up", value: "11" },
   { label: "Rejected by NADH", value: "-2" },
   { label: "Candidate Declined", value: "-1" },
+];
+
+export const statusData3 = [
+  { label: "Lost", value: "-3" },
+  { label: "Cancel", value: "-2" },
+  { label: "Closed", value: "-1" },
+  { label: "Opening", value: "1" },
+  { label: "Done", value: "2" },
+  { label: "Processing", value: "3" },
+  { label: "Pending", value: "4" },
+  { label: "Reopening", value: "6" },
 ];
 
 export const highest_education = [
@@ -95,18 +114,18 @@ for (let year = 1960; year <= 2023; year++) {
 }
 
 export const months = [
-  { label: "January", value: "01" },
-  { label: "February", value: "02" },
-  { label: "March", value: "03" },
-  { label: "April", value: "04" },
+  { label: "Jan", value: "01" },
+  { label: "Feb", value: "02" },
+  { label: "Mar", value: "03" },
+  { label: "Apr", value: "04" },
   { label: "May", value: "05" },
-  { label: "June", value: "06" },
+  { label: "Jun", value: "06" },
   { label: "Jul", value: "07" },
-  { label: "Augus", value: "08" },
-  { label: "September", value: "09" },
-  { label: "October", value: "10" },
-  { label: "November", value: "11" },
-  { label: "December", value: "12" },
+  { label: "Aug", value: "08" },
+  { label: "Sep", value: "09" },
+  { label: "Oct", value: "10" },
+  { label: "Nov", value: "11" },
+  { label: "Dec", value: "12" },
 ];
 
 export const clientType = [
@@ -363,9 +382,62 @@ export const jobColumns = [
     search: "job_id",
   },
   {
+    title: "Title",
+    key: "title",
+    search: "title",
+  },
+  {
+    title: "Quantity",
+    key: "quantity",
+    search: "quantity",
+    type: "number",
+  },
+  {
+    title: "Open Date",
+    key: "target_date",
+    search: "target_date",
+    type: "date",
+  },
+  {
     title: "Expire Date",
     key: "end_date",
     search: "end_date",
+    type: "date",
+  },
+  {
+    title: "Status",
+    key: "status",
+    search: "status",
+  },
+  {
+    title: "Client",
+    key: "client",
+    search: "client",
+  },
+  {
+    title: "Search Consultant",
+    key: "search_consultants",
+    search: "search_consultants",
+  },
+  {
+    title: "Activity",
+    key: "candidate_flows_status",
+    search: "candidate_flows_status",
+  },
+  {
+    title: "Experience level",
+    key: "experience_level",
+    search: "experience_level",
+  },
+  {
+    title: "Mapping by",
+    key: "mapping_by",
+    search: "mapping_by",
+  },
+  {
+    title: "City",
+    key: "location",
+    search: "location",
   },
   {
     title: "Industry",
@@ -374,8 +446,9 @@ export const jobColumns = [
   },
   {
     title: "Year of services",
-    key: "year",
-    search: "year",
+    key: "industry_year",
+    search: "industry_year",
+    type: "number",
   },
   {
     title: "Salary Range",
@@ -424,6 +497,10 @@ export const getColByKey = (cols: any[], key: string | number) => {
 
 export const getColByParam = (cols: any[], key: string | number) => {
   return getObjByKey(cols, "search", key);
+};
+
+export const getLabelByValue = (data: any[], value: string | number) => {
+  return getObjByKey(data, "value", value)?.label;
 };
 
 export const getSelectByValue = (selectData: any[], value: string | number) => {

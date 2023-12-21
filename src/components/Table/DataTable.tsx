@@ -163,11 +163,18 @@ const DataTable = ({
       await otherApi
         .getCol(getPathname().slice(1))
         .then((res: any) => res.data.data),
-    enabled: getPathname() === "/candidates" || getPathname() === "/clients",
+    enabled:
+      getPathname() === "/candidates" ||
+      getPathname() === "/clients" ||
+      getPathname() === "/jobs",
   });
 
   useEffect(() => {
-    if (getPathname() === "/candidates" || getPathname() === "/clients") {
+    if (
+      getPathname() === "/candidates" ||
+      getPathname() === "/clients" ||
+      getPathname() === "/jobs"
+    ) {
       setFilterCol(colData);
     }
   }, [colIsPending]);
@@ -182,28 +189,30 @@ const DataTable = ({
         ...column,
         dataIndex: column.key,
         ...getColumnSearchProps(column.key),
-        render: (data: any, { id }) => (
-          <>
-            {Array.isArray(data) ? (
-              data.map((item, index) => (
-                <p className="mb-1" key={index}>
-                  {item}
-                </p>
-              ))
-            ) : index === 0 || index === 1 ? (
-              <Button
-                type="link"
-                onClick={() => {
-                  showDetail(id);
-                }}
-              >
-                {data}
-              </Button>
-            ) : (
-              <>{data}</>
-            )}
-          </>
-        ),
+        render: column.render
+          ? column.render
+          : (data: any, { id }) => (
+              <>
+                {Array.isArray(data) ? (
+                  data.map((item, index) => (
+                    <p className="mb-1" key={index}>
+                      {item}
+                    </p>
+                  ))
+                ) : index === 0 || index === 1 ? (
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      showDetail(id);
+                    }}
+                  >
+                    {data}
+                  </Button>
+                ) : (
+                  <>{data}</>
+                )}
+              </>
+            ),
       }));
 
     columns.push({

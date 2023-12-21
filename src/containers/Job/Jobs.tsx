@@ -1,4 +1,4 @@
-import JobsList from "./JobsList";
+import JobsList from "./components/JobsList";
 
 export default function Jobs() {
   return (

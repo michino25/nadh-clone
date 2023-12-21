@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   SolutionOutlined,
   TeamOutlined,
+  ScheduleOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
@@ -24,6 +25,11 @@ const items: MenuProps["items"] = [
     label: <Link to={"/clients"}>Clients</Link>,
     key: "/clients",
     icon: <TeamOutlined />,
+  },
+  {
+    label: <Link to={"/jobs"}>Jobs</Link>,
+    key: "/jobs",
+    icon: <ScheduleOutlined />,
   },
 ];
 

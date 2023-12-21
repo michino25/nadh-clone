@@ -50,6 +50,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     : getAllParams();
 
   const [data, setData] = useState<any[]>([]);
+
   useQuery({
     queryKey: ["Clients", window.location.href],
     queryFn: async () =>

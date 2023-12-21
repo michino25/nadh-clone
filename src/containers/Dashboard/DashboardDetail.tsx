@@ -4,7 +4,7 @@ import { formatName } from "utils/format";
 import ClientsList from "containers/Client/components/ClientsList";
 import CandidatesList from "containers/Candidate/components/CandidatesList";
 import { iUser } from "utils/models";
-import JobsList from "containers/Job/JobsList";
+import JobsList from "containers/Job/components/JobsList";
 
 export default function DashboardDetail({
   open,

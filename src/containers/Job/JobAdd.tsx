@@ -204,7 +204,7 @@ const createSelectData = (data: string[]) => {
   return selectData;
 };
 
-export default function ClientAdd() {
+export default function JobAdd() {
   // const [value, setValue] = useState<string[]>([]);
 
   return (

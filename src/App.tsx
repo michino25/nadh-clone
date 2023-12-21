@@ -12,6 +12,9 @@ import ClientAdd from "containers/Client/ClientAdd";
 import ClientDetail from "containers/Client/ClientDetail";
 import Page404 from "containers/Page404";
 import Page500 from "containers/Page500";
+import Jobs from "containers/Job/Jobs";
+import JobAdd from "containers/Job/JobAdd";
+import JobDetail from "containers/Job/JobDetail";
 
 const routesConfig = [
   { path: "/dashboard", element: <Dashboard /> },
@@ -23,6 +26,10 @@ const routesConfig = [
   { path: "/clients", element: <Clients /> },
   { path: "/client-add", element: <ClientAdd /> },
   { path: "/client-detail/:id", element: <ClientDetail /> },
+
+  { path: "/jobs", element: <Jobs /> },
+  { path: "/job-add", element: <JobAdd /> },
+  { path: "/job-detail/:id", element: <JobDetail /> },
 ];
 
 export default function App() {

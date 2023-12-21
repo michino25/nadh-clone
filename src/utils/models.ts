@@ -350,6 +350,16 @@ export interface iJob {
       };
     }[];
   };
+  location: {
+    country: {
+      key: number;
+      label: string;
+    };
+    city: {
+      key: number;
+      label: string;
+    };
+  };
   recruiters: {
     id: string;
     full_name: string;
