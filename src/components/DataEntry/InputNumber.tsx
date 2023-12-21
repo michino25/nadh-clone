@@ -7,12 +7,14 @@ interface iDataInput {
   defaultValue?: string | number;
   placeholder: string;
   disabled?: boolean;
+  formatter?: any;
 }
 
 export default function DataInputNumber({
   label,
   name,
   required,
+  formatter,
   defaultValue,
   placeholder,
   disabled,
@@ -32,6 +34,7 @@ export default function DataInputNumber({
       <InputNumber
         style={{ width: "100%" }}
         min={0}
+        formatter={formatter}
         placeholder={placeholder}
         disabled={disabled}
       />

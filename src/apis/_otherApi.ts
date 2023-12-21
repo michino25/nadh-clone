@@ -27,11 +27,12 @@ const _otherApi = {
     });
   },
 
-  getProperty(property_name: string) {
+  getProperty(property_name: string, value?: string) {
     const url = "api/property_values";
     return axios().get(url, {
       params: {
         property_name,
+        ...(value && { value }),
       },
     });
   },

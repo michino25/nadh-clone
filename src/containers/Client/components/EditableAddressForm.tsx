@@ -24,12 +24,14 @@ export default function EditableForm({
     <>
       {!edit ? (
         <button
-          className="text-black p-0 m-0 w-full text-left"
+          className={
+            "text-black p-0 m-0 w-full text-left " +
+            (editing && "cursor-not-allowed")
+          }
+          disabled={editing}
           onClick={() => {
-            if (!editing) {
-              setEdit(true);
-              setEditing(true);
-            }
+            setEdit(true);
+            setEditing(true);
           }}
         >
           {(value?.district?.label ? value?.district?.label + " - " : "") +

@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { userApi } from "apis/index";
 import { getUser } from "utils/getUser";
 import { useNavigate } from "react-router-dom";
-import {
-  candidateTable,
-  clientTable,
-  jobTable,
-  userTable,
-} from "_constants/index";
+import { userTable } from "_constants/index";
 import { initFilter } from "utils/filter";
 
 export default function Login() {
@@ -37,8 +32,9 @@ export default function Login() {
       });
       localStorage.setItem("userData", JSON.stringify(res.data));
 
-      loginData.remember &&
-        localStorage.setItem("rememberLogin", JSON.stringify(loginData));
+      loginData.remember
+        ? localStorage.setItem("rememberLogin", JSON.stringify(loginData))
+        : localStorage.setItem("rememberLogin", "");
 
       setTimeout(() => {
         window.location.href = "/dashboard";
@@ -74,9 +70,6 @@ export default function Login() {
 
     // init filter
     initFilter(userTable);
-    initFilter(clientTable);
-    initFilter(candidateTable);
-    initFilter(jobTable);
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import { iOption } from "_constants/index";
-import { Button, Col, Row, Form } from "antd";
+import { Button, Col, Row, Form, Tag } from "antd";
 import { DataSelect } from "components/DataEntry";
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ interface iDataInput {
   editing: any;
   setEditing: (value: any) => void;
   prevent?: boolean;
+  option?: "tag";
 }
 
 export default function EditableForm({
@@ -22,6 +23,7 @@ export default function EditableForm({
   onSubmit,
   editing,
   setEditing,
+  option,
   prevent = false,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
@@ -32,11 +34,6 @@ export default function EditableForm({
     data.length > 0 ? data.filter((item) => item.value === value)[0] : null;
   console.log(showData);
 
-  // const transData = data.map((item) => ({
-  //   ...item,
-  //   value: JSON.stringify(item),
-  // }));
-
   const closeEdit = () => {
     setEdit(false);
     if (!(prevent && showData?.value === "12")) setEditing(false);
@@ -46,18 +43,39 @@ export default function EditableForm({
     <>
       {!edit ? (
         <button
-          className="text-black p-0 m-0 w-full text-left"
           onClick={() => {
-            if (!editing) {
-              setEdit(true);
-              setEditing(true);
-            } else if (prevent && showData?.value === "12") {
-              setEdit(true);
-              setEditing(true);
-            }
+            setEdit(true);
+            setEditing(true);
           }}
+          className={
+            "text-black p-0 m-0 w-full text-left " +
+            (editing &&
+              !(prevent && showData?.value === "12") &&
+              "cursor-not-allowed")
+          }
+          disabled={editing && !(prevent && showData?.value === "12")}
         >
-          {showData ? showData.label : "-"}
+          {showData ? (
+            option === "tag" ? (
+              <Tag
+                color={
+                  showData.label === "Active"
+                    ? "success"
+                    : showData.label === "Off - limit"
+                    ? "processing"
+                    : showData.label === "Inactive"
+                    ? "error"
+                    : "default"
+                }
+              >
+                {showData.label}
+              </Tag>
+            ) : (
+              showData.label
+            )
+          ) : (
+            "-"
+          )}
         </button>
       ) : (
         <Form

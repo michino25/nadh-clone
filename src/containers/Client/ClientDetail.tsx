@@ -59,6 +59,7 @@ const anchorItems = [
 
 export default function Clients() {
   const { id } = useParams();
+  const [loading, setLoading] = useState(false);
 
   const {
     data: clientData,
@@ -112,6 +113,7 @@ export default function Clients() {
   }, [clientData?.status]);
 
   const updateClient = async (data: any) => {
+    setLoading(true);
     try {
       await clientApi.updateClient(clientData.id, data);
 
@@ -132,6 +134,8 @@ export default function Clients() {
           error.response.data[0].message || "Please try again."
         }`,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -419,13 +423,14 @@ export default function Clients() {
                     name="email"
                     key={"email"}
                     label="Email"
+                    type="email"
                     value={clientData.email}
                     onSubmit={onFinish}
                   />
                 </Descriptions.Item>
                 <Descriptions.Item label="Tax Code">
                   <EditableInputForm
-                    editing={editable}
+                    editing={true}
                     setEditing={setEditable}
                     name="tax_code"
                     key={"tax_code"}
@@ -438,6 +443,7 @@ export default function Clients() {
 
               <div className="w-1/2">
                 <MyAvatar
+                  editing={editable}
                   img={
                     clientData.mediafiles.logo
                       ? "https://lubrytics.com:8443/nadh-mediafile/file/" +
@@ -465,6 +471,7 @@ export default function Clients() {
                     setEditing={setEditable}
                     prevent
                     name="status"
+                    option="tag"
                     value={clientData.status.toString()}
                     data={primaryStatus2}
                     onSubmit={onFinishSelect}
@@ -568,6 +575,7 @@ export default function Clients() {
                 <FormIndustry saveData={addIndustry} />
                 <IndustryTable
                   data={clientData?.business_line}
+                  loading={loading}
                   deleteItem={deleteIndustry}
                   primaryItem={primaryIndustry}
                 />

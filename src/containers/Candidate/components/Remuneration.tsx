@@ -1,94 +1,103 @@
 import { InputNumber } from "components/DataEntry";
-import { Col, Row, Form, Select } from "antd";
+import { Col, Row, Select } from "antd";
 import { YNquestion } from "_constants/index";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import DataRadioNote from "components/DataEntry/RadioNote";
 
 export default function Remuneration({
   data,
-  currency,
-  setCurrency,
+  currency: currencySelect,
+  setCurrency: setCurrencySelect,
+  form,
 }: {
   data: any;
-  currency: number;
+  currency: number | undefined;
   setCurrency: (value: number) => void;
+  form: any;
 }) {
-  const currencyData =
-    data?.converted_salary &&
-    Object.keys(data.converted_salary).map((item) => ({
-      value: data.converted_salary[item].id,
-      label: data.converted_salary[item].name,
-      current_salary: data.converted_salary[item].current_salary || 0,
-      salary_from: data.converted_salary[item].salary.from || 0,
-      salary_to: data.converted_salary[item].salary.to || 0,
-    }));
-  console.log(currencyData);
+  const [currencyData, setCurrencyData] = useState<any[]>();
+  const [salary, setSalary] = useState(
+    data.converted_salary[data.currency.name]
+  );
 
   const { data: dataExchangeCurrencies } = useQuery({
     queryKey: ["exchange_currencies"],
     queryFn: async () =>
-      await otherApi.getExchangeCurrencies().then((res) => res.data),
+      await otherApi.getExchangeCurrencies().then((res) => {
+        setCurrencyData(
+          res.data.map((item: any) => ({
+            value: item.key,
+            label: item.label,
+          }))
+        );
+
+        const result: any[] = [];
+
+        res.data.forEach((fromCurrency: any) => {
+          fromCurrency.rate.forEach((toCurrency: any) => {
+            result.push({
+              from: fromCurrency.key,
+              to: toCurrency.key,
+              rate: toCurrency.value,
+            });
+          });
+        });
+
+        return result;
+      }),
   });
 
-  // console.log(dataExchangeCurrencies);
+  console.log(dataExchangeCurrencies);
 
-  const [form] = Form.useForm();
-  const [currencyOld, setCurrencyOld] = useState<number>();
-  const [currencyChooose, setCurrencyChooose] = useState<any>();
+  const onCurrrencyChange = (value: any) => {
+    const rate = dataExchangeCurrencies?.find(
+      (item) => item.from === (currencySelect || salary.id) && item.to === value
+    ).rate;
 
-  useEffect(() => {
-    const temp = currencyData?.filter(
-      (item: any) => item.value === currency
-    )[0];
-    setCurrencyChooose(temp);
+    setCurrencySelect(value);
+    const newSalary = {
+      id: value,
+      name:
+        currencyData && currencyData?.length > 0
+          ? currencyData.find((item) => item.value === value).label
+          : "",
+      salary: {
+        to: (form.getFieldValue("salary_to") * rate).toFixed(0),
+        from: (form.getFieldValue("salary_from") * rate).toFixed(0),
+      },
+      current_salary: (form.getFieldValue("current_salary") * rate).toFixed(0),
+    };
 
-    if (temp) {
-      const changeRate =
-        currencyChooose &&
-        form.getFieldValue("current_salary") !== currencyChooose.current_salary
-          ? dataExchangeCurrencies
-              ?.filter((item: any) => item.key === currencyOld)[0]
-              .rate.filter((item: any) => item.key === currency)[0].value
-          : 1;
+    setSalary(newSalary);
 
-      // console.log(changeRate);
-
-      form.setFieldsValue({
-        current_salary: Math.round(
-          form.getFieldValue("current_salary") * changeRate
-        ),
-        salary_from: Math.round(form.getFieldValue("salary_from") * changeRate),
-        salary_to: Math.round(form.getFieldValue("salary_to") * changeRate),
-      });
-    }
-  }, [currency]);
+    form.setFieldValue("current_salary", newSalary.current_salary);
+    form.setFieldValue("salary_to", newSalary.salary.to);
+    form.setFieldValue("salary_from", newSalary.salary.from);
+  };
 
   return (
     <>
       <Row gutter={16} align={"middle"}>
         <Col span={12}>
           <InputNumber
-            label={`Based salary (${currencyChooose?.label})`}
+            label={`Based salary (${salary.name})`}
             placeholder="Based salary"
             name="current_salary"
-            defaultValue={
-              currencyData?.filter((item: any) => item.value === currency)[0]
-                ?.current_salary
+            formatter={(value: any) =>
+              value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
+            defaultValue={salary.current_salary}
           />
         </Col>
         <Col span={12} className="flex justify-end mt-1">
           <Select
             style={{ width: 100 }}
-            onChange={(value) => {
-              console.log(value);
-              setCurrencyOld(currency);
-              setCurrency(value);
-            }}
+            onChange={onCurrrencyChange}
             options={currencyData}
-            value={currency}
+            defaultValue={salary.id}
+            value={currencySelect}
             placeholder=""
           />
         </Col>
@@ -177,15 +186,14 @@ export default function Remuneration({
                 label="From"
                 placeholder="Salary From"
                 name="salary_from"
-                defaultValue={
-                  currencyData?.filter(
-                    (item: any) => item.value === currency
-                  )[0]?.salary_from
+                formatter={(value: any) =>
+                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
+                defaultValue={salary.salary.from}
               />
             </Col>
             <Col span={8}>
-              <span>({currencyChooose?.label})</span>
+              <span>({salary.name})</span>
             </Col>
           </Row>
         </Col>
@@ -196,15 +204,14 @@ export default function Remuneration({
                 label="To"
                 placeholder="Salary To"
                 name="salary_to"
-                defaultValue={
-                  currencyData?.filter(
-                    (item: any) => item.value === currency
-                  )[0]?.salary_to
+                formatter={(value: any) =>
+                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
+                defaultValue={salary.salary.to}
               />
             </Col>
             <Col span={8}>
-              <span>({currencyChooose?.label})</span>
+              <span>({salary.name})</span>
             </Col>
           </Row>
         </Col>

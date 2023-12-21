@@ -204,64 +204,6 @@ const createSelectData = (data: string[]) => {
   return selectData;
 };
 
-const industryData: string[] = [
-  "Corporate Strategy",
-  "Legal",
-  "Risk Management",
-  "Corporate Communications",
-];
-
-const sectorData = {
-  "Corporate Strategy": ["Investment Management", "Accounting"],
-  Legal: ["Banking", "Insurance"],
-  "Risk Management": ["Consulting", "Legal Services"],
-  "Corporate Communications": ["Business Advisory", "Human Resources"],
-};
-
-const subsectorData = {
-  "Investment Management": [
-    "Asset Management",
-    "Portfolio Management",
-    "Wealth Management",
-  ],
-  Accounting: ["Audit Services", "Tax Advisory", "Financial Reporting"],
-  Banking: ["Retail Banking", "Corporate Banking", "Investment Banking"],
-  Insurance: [
-    "Life Insurance",
-    "Property and Casualty Insurance",
-    "Reinsurance",
-  ],
-  Consulting: ["Management Consulting", "IT Consulting", "Strategy Consulting"],
-  "Legal Services": ["Corporate Law", "Litigation", "Intellectual Property"],
-  "Business Advisory": [
-    "Business Planning",
-    "Market Research",
-    "Risk Assessment",
-  ],
-  "Human Resources": [
-    "Talent Acquisition",
-    "Employee Relations",
-    "Training and Development",
-  ],
-  "Supply Chain Strategy": [
-    "Network Design",
-    "Risk Assessment",
-    "Sustainability Planning",
-  ],
-  Logistics: ["Transportation", "Distribution", "Warehouse Management"],
-  Procurement: ["Supplier Management", "Contract Negotiation", "Sourcing"],
-  "Inventory Management": [
-    "Stock Control",
-    "Demand Forecasting",
-    "Order Fulfillment",
-  ],
-  "Demand Planning": [
-    "Forecast Accuracy Analysis",
-    "Demand Sensing",
-    "Collaborative Planning",
-  ],
-};
-
 export default function ClientAdd() {
   // const [value, setValue] = useState<string[]>([]);
 
@@ -280,6 +222,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Title"
+                placeholder="Title"
                 name="status"
                 required
                 defaultValue="1"
@@ -289,6 +232,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Department"
+                placeholder="Department"
                 name="status"
                 required
                 defaultValue="1"
@@ -301,6 +245,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <InputNumber
                 label="Quantity"
+                placeholder="Quantity"
                 name="user_name"
                 required={true}
                 defaultValue={""}
@@ -309,6 +254,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Type"
+                placeholder="Type"
                 name="status"
                 required
                 defaultValue="1"
@@ -321,6 +267,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Experience Level"
+                placeholder="Experience Level"
                 name="status"
                 required
                 defaultValue="1"
@@ -330,6 +277,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Client's Name"
+                placeholder="Client's Name"
                 name="status"
                 required
                 defaultValue="1"
@@ -343,7 +291,11 @@ export default function ClientAdd() {
               <Birthday label="Opening Date" defaultValue="2023-01-01" />
             </Col>
             <Col span={12}>
-              <DataInput label="Location" name="location" />
+              <DataInput
+                label="Location"
+                placeholder="Location"
+                name="location"
+              />
             </Col>
           </Row>
 
@@ -351,6 +303,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Search Consultant"
+                placeholder="Search Consultant"
                 name="status"
                 required
                 defaultValue="1"
@@ -360,6 +313,7 @@ export default function ClientAdd() {
             <Col span={12}>
               <DataSelect
                 label="Mapping by"
+                placeholder="Mapping by"
                 name="status"
                 defaultValue="1"
                 data={createSelectData(users)}

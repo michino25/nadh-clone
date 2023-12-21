@@ -26,6 +26,7 @@ import { formatDate } from "utils/format";
 
 export default function Candidates() {
   const { id } = useParams();
+  const [loading, setLoading] = useState(false);
 
   const {
     data: candidateData,
@@ -79,9 +80,7 @@ export default function Candidates() {
 
   const [address, setAddress] = useState<any[]>();
   const [form] = Form.useForm();
-  const [currency, setCurrency] = useState<number>(
-    candidateData?.remuneration?.currency?.id || 2
-  );
+  const [currency, setCurrency] = useState<number>();
 
   const addIndustry = (data: any) => {
     const newData: any = {};
@@ -174,6 +173,8 @@ export default function Candidates() {
   };
 
   const updateCandidate = async (userData: any) => {
+    setLoading(true);
+
     try {
       await candidateApi.updateCandidate(candidateData.id, userData);
 
@@ -193,6 +194,8 @@ export default function Candidates() {
           error.response.data[0].message || "Please try again."
         }`,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -315,7 +318,7 @@ export default function Candidates() {
       relocating_willingness: parseInt(values.relocating_willingness),
       ...remunerationObject,
     };
-    updateMutation.mutate(data);
+    updateMutation.mutate(data, { onSuccess: () => setShowBtn(false) });
     console.log("Received values of form: ", data);
     console.log(address);
   };
@@ -324,11 +327,12 @@ export default function Candidates() {
   const [firstRender, setFirstRender] = useState(false);
 
   useEffect(() => {
-    if (!firstRender)
-      setTimeout(() => {
-        setFirstRender(true);
-      }, 1000);
-    else setShowBtn(true);
+    if (!firstRender) {
+      if (!(isPending || !id))
+        setTimeout(() => {
+          setFirstRender(true);
+        }, 500);
+    } else setShowBtn(true);
   }, [address]);
 
   const deleteFileMutation = useMutation({
@@ -552,6 +556,7 @@ export default function Candidates() {
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
               <FormIndustry saveData={addIndustry} />
               <IndustryTable
+                loading={loading}
                 deleteItem={deleteIndustry}
                 primaryItem={primaryIndustry}
                 data={candidateData?.business_line}
@@ -590,6 +595,7 @@ export default function Candidates() {
                 data={candidateData?.remuneration}
                 currency={currency}
                 setCurrency={setCurrency}
+                form={form}
               />
             </div>
             <div id="part-7" className="p-4 bg-white rounded-lg">

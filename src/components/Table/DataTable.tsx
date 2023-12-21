@@ -178,11 +178,11 @@ const DataTable = ({
   if (Array.isArray(rawColumns)) {
     columns = rawColumns
       .filter((column) => filterCol && filterCol.includes(column.key))
-      .map((column) => ({
+      .map((column, index) => ({
         ...column,
         dataIndex: column.key,
         ...getColumnSearchProps(column.key),
-        render: (data: any) => (
+        render: (data: any, { id }) => (
           <>
             {Array.isArray(data) ? (
               data.map((item, index) => (
@@ -190,6 +190,15 @@ const DataTable = ({
                   {item}
                 </p>
               ))
+            ) : index === 0 || index === 1 ? (
+              <Button
+                type="link"
+                onClick={() => {
+                  showDetail(id);
+                }}
+              >
+                {data}
+              </Button>
             ) : (
               <>{data}</>
             )}

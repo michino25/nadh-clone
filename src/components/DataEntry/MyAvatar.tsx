@@ -21,7 +21,7 @@ const beforeUpload = (file: RcFile) => {
   return isJpgOrPng && isLt2M;
 };
 
-export const MyAvatar = ({ data, onChange, img }: any) => {
+export const MyAvatar = ({ data, onChange, img, editing }: any) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>(img);
 
@@ -58,6 +58,7 @@ export const MyAvatar = ({ data, onChange, img }: any) => {
     <Upload
       data={data}
       name="avatar"
+      disabled={editing}
       listType="picture-card"
       showUploadList={false}
       action="https://lubrytics.com:8443/nadh-mediafile/file"

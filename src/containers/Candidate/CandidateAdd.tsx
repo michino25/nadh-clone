@@ -27,7 +27,7 @@ const step = [
 
 export default function CadidateAdd() {
   const [currentStep, setCurrentStep] = useState(0);
-  // console.log(currentStep);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     refetch();
@@ -379,6 +379,7 @@ export default function CadidateAdd() {
                 data={candidateData?.remuneration}
                 currency={currency}
                 setCurrency={setCurrency}
+                form={form}
               />
               <Form.Item className="flex justify-end w-full gap-3 mt-5">
                 <Button

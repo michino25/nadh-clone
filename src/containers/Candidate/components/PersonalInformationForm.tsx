@@ -4,7 +4,6 @@ import Input from "components/DataEntry/Input";
 import DataSelect from "components/DataEntry/Select";
 import Birthday from "components/DataEntry/Birthday";
 import DataRadio from "components/DataEntry/Radio";
-import MultiSelect from "components/DataEntry/MultiSelect";
 import DynamicFormEmail from "components/DataEntry/DynamicFormEmail";
 import DynamicFormPhone from "components/DataEntry/DynamicFormPhone";
 import DynamicFormAddress from "components/DataEntry/DynamicFormAddress";
@@ -15,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { formatName } from "utils/format";
 import { DataDatePicker } from "components/DataEntry";
+import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 
 export default function PersonalInformationForm({
   candidateData,
@@ -32,28 +32,6 @@ export default function PersonalInformationForm({
     queryKey: ["degree"],
     queryFn: async () =>
       await otherApi.getProperty("degree").then((res) => {
-        return res.data.data.map((item: any) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
-  });
-
-  const { data: dataPosition } = useQuery({
-    queryKey: ["position"],
-    queryFn: async () =>
-      await otherApi.getProperty("position").then((res) => {
-        return res.data.data.map((item: any) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
-  });
-
-  const { data: dataNationality } = useQuery({
-    queryKey: ["nationality"],
-    queryFn: async () =>
-      await otherApi.getProperty("nationality").then((res) => {
         return res.data.data.map((item: any) => ({
           label: item.label,
           value: item.key + "_" + item.label,
@@ -227,7 +205,7 @@ export default function PersonalInformationForm({
 
       <Row gutter={16}>
         <Col span={12}>
-          <MultiSelect
+          <MultiSelectWithSearchAPI
             label="Position Applied"
             name="prefer_position"
             required={false}
@@ -237,11 +215,11 @@ export default function PersonalInformationForm({
             allowClear
             value={position}
             setValue={setPosition}
-            options={dataPosition ? dataPosition : []}
+            propertyName="position"
           />
         </Col>
         <Col span={12}>
-          <MultiSelect
+          <MultiSelectWithSearchAPI
             label="Nationality"
             name="nationality"
             required={false}
@@ -251,7 +229,7 @@ export default function PersonalInformationForm({
             allowClear
             value={nationality}
             setValue={setNationality}
-            options={dataNationality ? dataNationality : []}
+            propertyName="nationality"
           />
         </Col>
       </Row>

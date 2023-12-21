@@ -14,10 +14,12 @@ export default function IndustryTable({
   data,
   deleteItem,
   primaryItem,
+  loading = false,
 }: {
   data: any;
   deleteItem: (id: string) => void;
   primaryItem: (id: string) => void;
+  loading?: boolean;
 }) {
   const columns: ColumnsType<DataType> = [
     {
@@ -89,6 +91,7 @@ export default function IndustryTable({
         }}
         scroll={{ x: true }}
         columns={tableColumns}
+        loading={loading}
         dataSource={dataShow}
       />
     </>
