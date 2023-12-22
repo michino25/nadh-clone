@@ -9,9 +9,10 @@ interface iData {
   name: string;
   required: boolean;
   allowClear?: boolean;
+  placeholder?: string;
   defaultValue?: string | number;
-  value: string[];
-  setValue: (data: string[]) => void;
+  value?: string[];
+  setValue?: (data: string[]) => void;
   propertyName: string;
 }
 
@@ -20,6 +21,7 @@ export default function MultiSelectWithSearchAPI({
   name,
   required,
   defaultValue,
+  placeholder,
   allowClear = false,
   value,
   setValue,
@@ -47,9 +49,9 @@ export default function MultiSelectWithSearchAPI({
     value: value,
     options: searchData,
     onChange: (newValue: string[]) => {
-      setValue(newValue);
+      setValue && setValue(newValue);
     },
-    placeholder: "Select Item...",
+    placeholder: placeholder || "Select Item...",
     maxTagCount: "responsive",
     onBlur: () => setSearchValue(""),
     onSearch: setSearchValue,

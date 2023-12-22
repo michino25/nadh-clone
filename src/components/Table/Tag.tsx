@@ -1,4 +1,5 @@
 import {
+  currencyData,
   getColByParam,
   getSelectByValue,
   rawColumnsByTable,
@@ -172,6 +173,14 @@ const App = ({
     return "";
   };
 
+  const currencyHandler = (paramItem: string) => {
+    const data = paramItem.split(",");
+    const currency = " " + getSelectByValue(currencyData, data[2]).label;
+    const from = data[0] !== "-" ? "from " + data[0] + currency : "";
+    const to = data[1] !== "-" ? "to " + data[1] + currency : "";
+    return from + " " + to;
+  };
+
   return (
     <>
       {orderTag.map((tag: string, index: number, array: any[]) => {
@@ -239,6 +248,9 @@ const App = ({
               ) : (
                 <Skeleton active />
               ))}
+            {/* currency */}
+            {col.type === "currency" &&
+              tagName(col.title, currencyHandler(getAllParams()[tag]), tag)}
           </span>
         );
       })}

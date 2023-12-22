@@ -1,38 +1,17 @@
 import { Select, Col, Form, Row } from "antd";
-import type { iOption } from "_constants/index";
+import { days, months, type iOption, years } from "_constants/index";
 
 interface iDataInput {
-  defaultValue: string | undefined;
+  defaultValue?: string | undefined;
   label?: string;
+  name?: string;
 }
 
-const createDaysArray = (): iOption[] => {
-  const daysArray: iOption[] = [];
-  for (let i = 1; i <= 31; i++) {
-    const value = i.toString().padStart(2, "0");
-    daysArray.push({ value, label: value });
-  }
-  return daysArray;
-};
-
-const createMonthsArray = (): iOption[] => {
-  const monthsArray: iOption[] = [];
-  for (let i = 1; i <= 12; i++) {
-    const value = i.toString().padStart(2, "0");
-    monthsArray.push({ value, label: value });
-  }
-  return monthsArray;
-};
-
-const createYearsArray = (): iOption[] => {
-  const yearsArray: iOption[] = [];
-  for (let year = 1970; year <= 2023; year++) {
-    yearsArray.push({ value: year.toString(), label: year.toString() });
-  }
-  return yearsArray;
-};
-
-export default function Birthday({ defaultValue, label }: iDataInput) {
+export default function Birthday({
+  defaultValue,
+  label,
+  name = "birthday",
+}: iDataInput) {
   const [year, month, day] = defaultValue
     ? defaultValue.split("-")
     : [null, null, null];
@@ -45,22 +24,22 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item
-            name={["birthday", "day"]}
+            name={[name, "day"]}
             initialValue={day}
             dependencies={[
-              ["birthday", "month"],
-              ["birthday", "year"],
+              [name, "month"],
+              [name, "year"],
             ]}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (
                     value ||
-                    getFieldValue(["birthday", "month"]) ||
-                    getFieldValue(["birthday", "year"])
+                    getFieldValue([name, "month"]) ||
+                    getFieldValue([name, "year"])
                   ) {
                     if (!value)
-                      return Promise.reject(new Error("Phải nhập đủ các mục!"));
+                      return Promise.reject(new Error("Please select date!"));
                   }
                   return Promise.resolve();
                 },
@@ -72,28 +51,28 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
               showSearch
               filterOption={filterOption}
               allowClear
-              options={createDaysArray()}
+              options={days}
             />
           </Form.Item>
         </Col>
         <Col span={8}>
           <Form.Item
-            name={["birthday", "month"]}
+            name={[name, "month"]}
             initialValue={month}
             dependencies={[
-              ["birthday", "day"],
-              ["birthday", "year"],
+              [name, "day"],
+              [name, "year"],
             ]}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (
                     value ||
-                    getFieldValue(["birthday", "day"]) ||
-                    getFieldValue(["birthday", "year"])
+                    getFieldValue([name, "day"]) ||
+                    getFieldValue([name, "year"])
                   ) {
                     if (!value)
-                      return Promise.reject(new Error("Phải nhập đủ các mục!"));
+                      return Promise.reject(new Error("Please select month!"));
                   }
                   return Promise.resolve();
                 },
@@ -105,28 +84,28 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
               showSearch
               filterOption={filterOption}
               allowClear
-              options={createMonthsArray()}
+              options={months}
             />
           </Form.Item>
         </Col>
         <Col span={8}>
           <Form.Item
-            name={["birthday", "year"]}
+            name={[name, "year"]}
             initialValue={year}
             dependencies={[
-              ["birthday", "day"],
-              ["birthday", "month"],
+              [name, "day"],
+              [name, "month"],
             ]}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (
                     value ||
-                    getFieldValue(["birthday", "day"]) ||
-                    getFieldValue(["birthday", "month"])
+                    getFieldValue([name, "day"]) ||
+                    getFieldValue([name, "month"])
                   ) {
                     if (!value)
-                      return Promise.reject(new Error("Phải nhập đủ các mục!"));
+                      return Promise.reject(new Error("Please select year!"));
                   }
                   return Promise.resolve();
                 },
@@ -138,7 +117,7 @@ export default function Birthday({ defaultValue, label }: iDataInput) {
               showSearch
               filterOption={filterOption}
               allowClear
-              options={createYearsArray()}
+              options={years}
             />
           </Form.Item>
         </Col>

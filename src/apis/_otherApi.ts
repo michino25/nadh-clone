@@ -37,6 +37,14 @@ const _otherApi = {
     });
   },
 
+  addProperty(property_name: string, value: string) {
+    const url = "api/property_values";
+    return axios().post(url, {
+      name: property_name,
+      value,
+    });
+  },
+
   getIndustry(params: any) {
     const url = "api/categories";
     return axios().get(url, { params });

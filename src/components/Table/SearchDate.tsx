@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Button, DatePicker } from "antd";
 import useFilter from "src/hooks/useFilter";
+import { getColByKey, rawColumnsByTable } from "_constants/index";
 
 dayjs.extend(customParseFormat);
 
@@ -12,46 +13,44 @@ const formatDate = (date: dayjs.Dayjs, format: string) => {
 
 export default function SearchDate({
   columnKey,
+  table,
   closeFn,
 }: {
   columnKey: string;
+  table: string;
   closeFn: () => void;
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
+  const fromSearch =
+    getColByKey(rawColumnsByTable(table), columnKey).search + "_from";
+  const toSearch =
+    getColByKey(rawColumnsByTable(table), columnKey).search + "_to";
 
   const [from, setFrom] = useState(
-    getAllParams()[columnKey + "_from"] &&
-      dayjs(getAllParams()[columnKey + "_from"])
+    getAllParams()[fromSearch] && dayjs(getAllParams()[fromSearch])
   );
   const [to, setTo] = useState(
-    getAllParams()[columnKey + "_to"] &&
-      dayjs(getAllParams()[columnKey + "_to"])
+    getAllParams()[toSearch] && dayjs(getAllParams()[toSearch])
   );
 
   useEffect(() => {
-    setFrom(
-      getAllParams()[columnKey + "_from"] &&
-        dayjs(getAllParams()[columnKey + "_from"])
-    );
-    setTo(
-      getAllParams()[columnKey + "_to"] &&
-        dayjs(getAllParams()[columnKey + "_to"])
-    );
+    setFrom(getAllParams()[fromSearch]);
+    setTo(getAllParams()[toSearch]);
   }, [window.location.href]);
 
   const submit = () => {
     console.log(to, from);
     if (to || from) {
-      if (from) changeOneFilter(getAllParams(), columnKey + "_from", from);
-      if (to) changeOneFilter(getAllParams(), columnKey + "_to", to);
+      if (from) changeOneFilter(getAllParams(), fromSearch, from);
+      if (to) changeOneFilter(getAllParams(), toSearch, to);
       closeFn();
     } else reset();
   };
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(getAllParams(), columnKey + "_from");
-    removeOneFilter(getAllParams(), columnKey + "_to");
+    removeOneFilter(getAllParams(), fromSearch);
+    removeOneFilter(getAllParams(), toSearch);
     setFrom(null);
     setTo(null);
     closeFn();

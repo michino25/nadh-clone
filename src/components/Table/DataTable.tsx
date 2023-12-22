@@ -19,7 +19,11 @@ import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
 import { useEffect, useState } from "react";
 import SearchNumber from "./SearchNumber";
-import { getColByKey, rawColumnsByTable } from "_constants/index";
+import {
+  getColByKey,
+  getColByParam,
+  rawColumnsByTable,
+} from "_constants/index";
 import SearchSelect from "./SearchSelect";
 import SearchDate from "./SearchDate";
 import useFilter from "src/hooks/useFilter";
@@ -29,6 +33,7 @@ import SearchAddress from "./SearchAddress";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import SearchCurrency from "./SearchCurrency";
 
 type DataType = iUser;
 
@@ -82,6 +87,10 @@ const DataTable = ({
               <SearchNumber closeFn={close} columnKey={columnKey} />
             )}
 
+            {col.type === "currency" && (
+              <SearchCurrency closeFn={close} columnKey={columnKey} />
+            )}
+
             {col.type === "select" && (
               <SearchSelect
                 closeFn={close}
@@ -92,7 +101,11 @@ const DataTable = ({
             )}
 
             {col.type === "industry" && (
-              <SearchIndustry closeFn={close} columnKey={columnKey} />
+              <SearchIndustry
+                closeFn={close}
+                table={tableName}
+                columnKey={columnKey}
+              />
             )}
 
             {col.type === "address" && <SearchAddress closeFn={close} />}
@@ -107,7 +120,11 @@ const DataTable = ({
             )}
 
             {col.type === "date" && (
-              <SearchDate closeFn={close} columnKey={columnKey} />
+              <SearchDate
+                closeFn={close}
+                table={tableName}
+                columnKey={columnKey}
+              />
             )}
           </>
         ),
@@ -117,7 +134,11 @@ const DataTable = ({
               style={{
                 color:
                   Object.keys(getAllParams()).filter(
-                    (item) => item.replace(/_(from|to)$/, "") === columnKey
+                    (item) =>
+                      getColByParam(
+                        rawColumnsByTable(tableName),
+                        item.replace(/_(from|to)$/, "")
+                      )?.key === columnKey
                   ).length > 0 ||
                   (columnKey === "location" && getAllParams()["city"])
                     ? "#1677ff"
@@ -202,6 +223,7 @@ const DataTable = ({
                 ) : index === 0 || index === 1 ? (
                   <Button
                     type="link"
+                    className="font-medium"
                     onClick={() => {
                       showDetail(id);
                     }}

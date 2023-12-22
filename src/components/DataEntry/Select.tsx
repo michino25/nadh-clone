@@ -11,7 +11,7 @@ interface iDataInput {
   data: iOption[];
   disable?: boolean;
   value?: any;
-  setChange?: (value: any) => void;
+  onChange?: (value: any) => void;
 }
 
 const filterOption = (input: string, option?: iOption) =>
@@ -27,7 +27,7 @@ export default function DataSelect({
   data,
   disable,
   value,
-  setChange,
+  onChange,
 }: iDataInput) {
   return (
     <Form.Item
@@ -45,7 +45,7 @@ export default function DataSelect({
         filterOption={filterOption}
         allowClear={allowClear}
         value={value}
-        onChange={(e) => setChange && setChange(e.target.value)}
+        onChange={(value) => onChange && onChange(value)}
         disabled={disable}
         options={data}
         showSearch

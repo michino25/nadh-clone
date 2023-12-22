@@ -28,7 +28,12 @@ const commentItem = (name: string, content: string, date: string) => (
   </div>
 );
 
-export default function Notes({ data, clientID, refetch }: any) {
+export default function Notes({
+  data,
+  clientID,
+  refetch,
+  module = "client",
+}: any) {
   const [edit, setEdit] = useState(false);
   const [note, setNote] = useState("");
 
@@ -64,7 +69,7 @@ export default function Notes({ data, clientID, refetch }: any) {
     const data = {
       content: note,
       source: {
-        module: "client",
+        module,
         section: "detail",
       },
       source_uuid: clientID,

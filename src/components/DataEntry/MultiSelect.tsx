@@ -6,10 +6,11 @@ interface iData {
   label: string;
   name: string;
   required: boolean;
+  placeholder?: string;
   allowClear?: boolean;
   defaultValue?: string | number;
-  value: string[];
-  setValue: (data: string[]) => void;
+  value?: string[];
+  setValue?: (data: string[]) => void;
   options: iOption[];
 }
 
@@ -17,6 +18,7 @@ export default function MultiSelect({
   label,
   name,
   required,
+  placeholder,
   defaultValue,
   allowClear = false,
   value,
@@ -29,9 +31,9 @@ export default function MultiSelect({
     value: value,
     options,
     onChange: (newValue: string[]) => {
-      setValue(newValue);
+      setValue && setValue(newValue);
     },
-    placeholder: "Select Item...",
+    placeholder: placeholder || "Select Item...",
     maxTagCount: "responsive",
     allowClear,
   };

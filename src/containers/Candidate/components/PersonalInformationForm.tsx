@@ -11,7 +11,6 @@ import DataInputNumber from "components/DataEntry/InputNumber";
 import { createSelectData, gender, primaryStatus } from "_constants/index";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { formatName } from "utils/format";
 import { DataDatePicker } from "components/DataEntry";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
@@ -25,9 +24,6 @@ export default function PersonalInformationForm({
   setAddress: (data: any) => void;
   address: any;
 }) {
-  const [nationality, setNationality] = useState<string[]>([]);
-  const [position, setPosition] = useState<string[]>([]);
-
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
     queryFn: async () =>
@@ -213,8 +209,6 @@ export default function PersonalInformationForm({
               (item: any) => item.key + "_" + item.label
             )}
             allowClear
-            value={position}
-            setValue={setPosition}
             propertyName="position"
           />
         </Col>
@@ -227,8 +221,6 @@ export default function PersonalInformationForm({
               (item: any) => item.key + "_" + item.label
             )}
             allowClear
-            value={nationality}
-            setValue={setNationality}
             propertyName="nationality"
           />
         </Col>

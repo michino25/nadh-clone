@@ -10,9 +10,11 @@ const filterOption = (input: string, option?: iOption) =>
 export default function Address({
   defaultValue,
   onChange,
+  onlyCity,
 }: {
   defaultValue?: any;
   onChange: (data: any) => void;
+  onlyCity?: boolean;
 }) {
   const [country, setCountry] = useState<iOption | undefined>(
     defaultValue?.country
@@ -121,7 +123,7 @@ export default function Address({
     <div className="flex-col w-full justify-between items-center">
       <div className="flex w-full space-x-3">
         <Form.Item
-          className={"w-1/3 mb-3"}
+          className={onlyCity ? "w-1/2 mb-3" : "w-1/3 mb-3"}
           rules={[
             {
               required: true,
@@ -142,7 +144,7 @@ export default function Address({
         </Form.Item>
 
         <Form.Item
-          className={"w-1/3 mb-3"}
+          className={onlyCity ? "w-1/2 mb-3" : "w-1/3 mb-3"}
           initialValue={city ? (city.value as number) : undefined}
         >
           <Select
@@ -159,6 +161,7 @@ export default function Address({
 
         <Form.Item
           className={"w-1/3 mb-3"}
+          hidden={onlyCity}
           initialValue={district ? (district.value as number) : undefined}
         >
           <Select
@@ -174,7 +177,7 @@ export default function Address({
         </Form.Item>
       </div>
 
-      <Form.Item className="w-full mb-3">
+      <Form.Item hidden={onlyCity} className="w-full mb-3">
         <Input
           placeholder="Address..."
           className="w-full"

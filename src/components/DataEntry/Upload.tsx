@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload, Form, Descriptions } from "antd";
 import type { RcFile } from "antd/es/upload";
@@ -31,6 +31,10 @@ export default function DataUpload({
   const [previewCreateAt, setPreviewCreateAt] = useState("");
 
   const [fileList, setFileList] = useState<any[]>(imgList);
+
+  useEffect(() => {
+    setFileList(imgList);
+  }, [imgList]);
 
   // [
   //   {

@@ -1,6 +1,22 @@
 export interface StatusData {
   [key: number]: string;
 }
+export const typeJob = [
+  { value: "1", label: "Full-time" },
+  { value: "2", label: "Contract" },
+  { value: "3", label: "Part-time" },
+  { value: "4", label: "Internship" },
+  { value: "5", label: "Temporary" },
+  { value: "6", label: "Other" },
+];
+
+export const currencyData = [
+  { value: "1", label: "USD" },
+  { value: "2", label: "VND" },
+  { value: "3", label: "JPY" },
+  { value: "4", label: "EUR" },
+];
+
 export const experiences = [
   { label: "Internship Level", value: "1" },
   { label: "Entry Level", value: "2" },
@@ -128,6 +144,12 @@ export const months = [
   { label: "Dec", value: "12" },
 ];
 
+export const days: any = [];
+for (let day = 1; day <= 31; day++) {
+  const value = day.toString().padStart(2, "0");
+  days.push({ value, label: value });
+}
+
 export const clientType = [
   { label: "Type A", value: "1" },
   { label: "Type B", value: "2" },
@@ -248,7 +270,7 @@ export const candidateColumns = [
   {
     title: "Industry",
     key: "industry",
-    search: "industry",
+    search: "industry_id",
     type: "industry",
   },
   {
@@ -330,7 +352,7 @@ export const clientColumns = [
   {
     title: "Industry",
     key: "industry",
-    search: "industry",
+    search: "industry_id",
     type: "industry",
   },
   {
@@ -395,54 +417,62 @@ export const jobColumns = [
   {
     title: "Open Date",
     key: "target_date",
-    search: "target_date",
+    search: "target_day",
     type: "date",
   },
   {
     title: "Expire Date",
     key: "end_date",
-    search: "end_date",
+    search: "end_day",
     type: "date",
   },
   {
     title: "Status",
     key: "status",
     search: "status",
+    type: "multiple_select",
   },
   {
     title: "Client",
     key: "client",
     search: "client",
+    type: "multiple_select",
   },
   {
     title: "Search Consultant",
     key: "search_consultants",
     search: "search_consultants",
+    type: "multiple_select",
   },
   {
     title: "Activity",
     key: "candidate_flows_status",
     search: "candidate_flows_status",
+    type: "multiple_select",
   },
   {
     title: "Experience level",
     key: "experience_level",
     search: "experience_level",
+    type: "multiple_select",
   },
   {
     title: "Mapping by",
     key: "mapping_by",
     search: "mapping_by",
+    type: "multiple_select",
   },
   {
     title: "City",
     key: "location",
-    search: "location",
+    search: "city",
+    type: "address",
   },
   {
     title: "Industry",
     key: "industry",
-    search: "industry",
+    search: "industry_id",
+    type: "industry",
   },
   {
     title: "Year of services",
@@ -454,6 +484,7 @@ export const jobColumns = [
     title: "Salary Range",
     key: "salary",
     search: "salary",
+    type: "currency",
   },
 ];
 

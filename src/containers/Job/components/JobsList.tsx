@@ -5,7 +5,7 @@ import { Tag as TagAntd } from "antd";
 import { iJob, iUser } from "utils/models";
 import { formatDate, formatName, formatPrice } from "utils/format";
 import { useNavigate } from "react-router-dom";
-import { jobApi } from "apis/index";
+import { clientApi, jobApi, userApi } from "apis/index";
 import {
   experiences,
   getLabelByValue,
@@ -127,14 +127,36 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     total,
   };
 
+  const allParams = {
+    ...getAllParams(),
+
+    ...(getAllParams()["city"] &&
+      getAllParams()["city"].split(",").length > 0 && {
+        country: getAllParams()["city"].split(",")[0],
+        city: getAllParams()["city"].split(",")[1],
+      }),
+
+    ...(getAllParams()["salary"] &&
+      getAllParams()["salary"].split(",").length > 0 && {
+        ...(getAllParams()["salary"].split(",")[0] !== "-" && {
+          salary_from: getAllParams()["salary"].split(",")[0],
+        }),
+        ...(getAllParams()["salary"].split(",")[1] !== "-" && {
+          salary_to: getAllParams()["salary"].split(",")[1],
+        }),
+        currency: getAllParams()["salary"].split(",")[2],
+      }),
+  };
+  delete allParams["salary"];
+
   useQuery({
     queryKey: ["Jobs", window.location.href],
     queryFn: async () =>
       await jobApi
         .getJobs({
           perPage: pageSize,
-          ...getAllParams(),
-          mapping_by_recruiters: userDetail?.id,
+          ...allParams,
+          ...(userDetail?.id && { mapping_by_recruiters: userDetail?.id }),
         })
         .then((res) => {
           setTotal(res.data.count);
@@ -203,25 +225,46 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     title: "Create Job",
   };
 
-  // const filterSelectData = {
-  //   update_last_by: userData,
-  //   lead_consultants: userData,
-  //   cpa: cpa,
-  //   type: clientType,
-  //   account_status: statusData2,
-  //   status: primaryStatus2,
-  // };
+  const { data: userData } = useQuery({
+    queryKey: ["userData"],
+    queryFn: async () =>
+      userApi.getUsers({}).then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.id,
+          label: formatName(item.full_name),
+        }))
+      ),
+  });
+
+  const { data: clientData } = useQuery({
+    queryKey: ["clientData"],
+    queryFn: async () =>
+      clientApi.getClients({}).then((res) =>
+        res.data.data.map((item: any) => ({
+          value: item.id,
+          label: formatName(item.name),
+        }))
+      ),
+  });
+
+  const filterSelectData = {
+    status: statusData3,
+    experience_level: experiences,
+    candidate_flows_status: statusData2,
+    search_consultants: userData,
+    mapping_by: userData,
+    client: clientData,
+  };
 
   return (
     <div className="flex-col w-full">
-      <Tag tableName={jobTable} />
-      {/* <Tag filterSelectData={filterSelectData} tableName={clientTable} /> */}
+      <Tag filterSelectData={filterSelectData} tableName={jobTable} />
 
       {data && (
         <DataTable
           titleTable={`Jobs List`}
           tableName={jobTable}
-          // filterSelectData={filterSelectData}
+          filterSelectData={filterSelectData}
           createBtn={createBtn}
           data={data}
           showDetail={goDetail}

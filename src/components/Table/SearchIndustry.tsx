@@ -1,4 +1,4 @@
-import { iOption } from "_constants/index";
+import { getColByKey, iOption, rawColumnsByTable } from "_constants/index";
 import { Button } from "antd";
 import Industry from "components/DataEntry/Industry";
 import { useState } from "react";
@@ -6,9 +6,11 @@ import useFilter from "src/hooks/useFilter";
 
 export default function SearchIndustry({
   columnKey,
+  table,
   closeFn,
 }: {
   columnKey: string;
+  table: string;
   closeFn: () => void;
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
@@ -19,6 +21,8 @@ export default function SearchIndustry({
 
   const [sectorData, setSectorData] = useState<iOption[]>();
   const [categoryData, setCategoryData] = useState<iOption[]>();
+
+  const keySearch = getColByKey(rawColumnsByTable(table), columnKey).search;
 
   // const [resetData, setResetData] = useState<() => void>(() => {});
 
@@ -32,7 +36,7 @@ export default function SearchIndustry({
     const industry_id = getData();
     //   // console.log(filter);
     if (industry_id) {
-      changeOneFilter(getAllParams(), columnKey, industry_id.toString());
+      changeOneFilter(getAllParams(), keySearch, industry_id.toString());
       closeFn();
     } else reset();
   };
@@ -41,7 +45,7 @@ export default function SearchIndustry({
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(getAllParams(), columnKey);
+    removeOneFilter(getAllParams(), keySearch);
     setIndustry(undefined);
     setSector(undefined);
     setCategory(undefined);
@@ -69,7 +73,7 @@ export default function SearchIndustry({
           setSector={setSector}
           category={category}
           setCategory={setCategory}
-          industry_id={getAllParams()[columnKey]}
+          industry_id={getAllParams()[keySearch]}
           sectorData={sectorData}
           setSectorData={setSectorData}
           categoryData={categoryData}
