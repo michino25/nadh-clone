@@ -1,17 +1,19 @@
+import dayjs from "dayjs";
 import { Descriptions } from "antd";
-import { clientApi, userApi } from "apis/index";
+import { clientApi, otherApi, userApi } from "apis/index";
 import { formatDate, formatName } from "utils/format";
-import EditableInputForm from "containers/Client/components/EditableInputForm";
-import EditableSelectForm from "containers/Client/components/EditableSelectForm";
+import EditableAddressForm from "components/EditableForm/EditableAddressForm";
+import EditableSelectForm from "components/EditableForm/EditableSelectForm";
+import EditableInputNumberForm from "components/EditableForm/EditableInputNumberForm";
 import {
-  clientType,
   convertValuetoKey,
-  primaryStatus2,
+  experiences,
+  statusData3,
+  typeJob,
 } from "_constants/index";
-import EditableForm from "containers/Client/components/EditableAddressForm";
-import { MyAvatar } from "components/DataEntry/MyAvatar";
 import { useQuery } from "@tanstack/react-query";
-import { getUser } from "utils/getUser";
+import EditableForm from "components/EditableForm/EditableDateForm";
+import EditableMultiSelectForm from "components/EditableForm/EditableMultiSelectForm";
 
 export default function JobInformation({
   data,
@@ -19,7 +21,7 @@ export default function JobInformation({
   editable,
   setEditable,
 }: any) {
-  const { data: companyData, isPending: companyIsPending } = useQuery({
+  const { data: clientData, isPending: clientIsPending } = useQuery({
     queryKey: ["company"],
     queryFn: async () =>
       await clientApi
@@ -34,7 +36,7 @@ export default function JobInformation({
         }),
   });
 
-  const { data: consultantData, isPending: consultantIsPending } = useQuery({
+  const { data: userData, isPending: userIsPending } = useQuery({
     queryKey: ["user"],
     queryFn: async () =>
       await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
@@ -45,6 +47,43 @@ export default function JobInformation({
       }),
   });
 
+  const { data: positionData, isPending: positionIsPending } = useQuery({
+    queryKey: ["position", "info"],
+    queryFn: async () =>
+      await otherApi.getProperty("position").then((res) =>
+        res.data.data.map((item: any) => ({
+          label: item.label,
+          value: item.key,
+        }))
+      ),
+  });
+
+  const { data: departmentData, isPending: departmentIsPending } = useQuery({
+    queryKey: ["department", "info"],
+    queryFn: async () =>
+      await otherApi.getProperty("department").then((res) =>
+        res.data.data.map((item: any) => ({
+          label: item.label,
+          value: item.key,
+        }))
+      ),
+  });
+
+  const { data: contactPersonsData, isPending: contactPersonsIsPending } =
+    useQuery({
+      queryKey: ["contact_persons", data.client_id],
+      queryFn: async () =>
+        await clientApi.getContactPersonsInClient(data.client_id).then((res) =>
+          res.data.data.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }))
+        ),
+      enabled: !!data?.client_id,
+    });
+
+  console.log(contactPersonsData);
+
   const onFinish = (values: any) => {
     const data = {
       ...values,
@@ -53,12 +92,29 @@ export default function JobInformation({
     console.log("Received values of form: ", data);
   };
 
+  const onFinishDate = (values: any) => {
+    const date = dayjs(values.extend_date.$d.toLocaleDateString()).format(
+      "YYYY-MM-DD"
+    );
+
+    const data = {
+      extend_date: date,
+    };
+
+    updateMutation.mutate(data);
+    console.log("Received values of form: ", data);
+  };
+
   const onFinishSelect = (values: any, option?: string) => {
-    if (option === "lead_consultants") {
+    if (!option)
       values = {
-        lead_consultants: [values.lead_consultants],
+        [Object.keys(values)[0]]: { key: values[Object.keys(values)[0]] },
       };
-    }
+
+    if (option === "array")
+      values = {
+        [Object.keys(values)[0]]: [values[Object.keys(values)[0]]],
+      };
 
     updateMutation.mutate(values);
     console.log("Received values of form: ", values);
@@ -74,216 +130,180 @@ export default function JobInformation({
       }),
     };
 
-    const transferData =
-      option === "factory_site1"
-        ? { factory_site: [data, data.factory_site[1]] }
-        : option === "factory_site2"
-        ? { factory_site: [data.factory_site[0], data] }
-        : { address: data };
+    const transferData = { [option]: data };
     // console.log("Received values of form: ", { [option]: [data] });
     updateMutation.mutate(transferData);
   };
 
-  const avtUpload = (id: string) => {
-    if (id) {
-      const data = {
-        mediafiles: {
-          logo: id,
-        },
-      };
-
-      updateMutation.mutate(data);
-    }
-  };
-
   return (
-    <>
-      <EditableInputForm
-        editing={editable}
-        setEditing={setEditable}
-        name="name"
-        key="name"
-        label=""
-        value={data.name}
-        onSubmit={onFinish}
-        className="mb-4 font-bold text-lg"
-      />
-
-      <div className="flex">
-        <Descriptions className="w-1/2" column={1}>
-          <Descriptions.Item label="Address">
-            <EditableForm
-              editing={editable}
-              setEditing={setEditable}
-              name="address"
-              onSubmit={(data) => onFinishAddress(data, "address")}
-              value={data.address}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="Phone number">
-            {/* <EditablePhoneForm
-              editing={editable}
-              setEditing={setEditable}
-              name="phone"
-              onSubmit={(data) => onFinishPhone(data, "phone")}
-              value={data.phone}
-            /> */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Fax">
-            {/* <EditablePhoneForm
-              editing={editable}
-              setEditing={setEditable}
-              name="fax"
-              onSubmit={(data) => onFinishPhone(data, "fax")}
-              value={data.fax}
-            /> */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Email">
-            <EditableInputForm
-              editing={editable}
-              setEditing={setEditable}
-              name="email"
-              key={"email"}
-              label="Email"
-              type="email"
-              value={data.email}
-              onSubmit={onFinish}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="Tax Code">
-            <EditableInputForm
-              editing={true}
-              setEditing={setEditable}
-              name="tax_code"
-              key={"tax_code"}
-              label="Tax Code"
-              value={data.tax_code}
-              onSubmit={onFinish}
-            />
-          </Descriptions.Item>
-        </Descriptions>
-
-        <div className="w-1/2">
-          <MyAvatar
+    <div className="flex">
+      <Descriptions className="w-1/2" column={1}>
+        <Descriptions.Item label="Job ID">{data.job_id}</Descriptions.Item>
+        <Descriptions.Item label="Job Title">
+          <EditableSelectForm
+            placeholder="Job Title"
             editing={editable}
-            img={
-              data.mediafiles.logo
-                ? "https://lubrytics.com:8443/nadh-mediafile/file/" +
-                  data.mediafiles.logo
-                : ""
-            }
-            data={{
-              type: "avatar",
-              uploadedByUserId: getUser().user_sent.user_id,
-            }}
-            onChange={avtUpload}
+            setEditing={setEditable}
+            name="title"
+            value={data.title.key}
+            data={!positionIsPending ? positionData : []}
+            onSubmit={onFinishSelect}
           />
-        </div>
-      </div>
-      <div className="my-5 font-medium text-lg">Client Information</div>
-      <div className="flex">
-        <Descriptions className="w-1/2" column={1}>
-          <Descriptions.Item label="Client ID">
-            {data.client_id}
-          </Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <EditableSelectForm
-              placeholder="Status"
-              editing={editable}
-              setEditing={setEditable}
-              prevent
-              name="status"
-              option="tag"
-              value={data.status.toString()}
-              data={primaryStatus2}
-              onSubmit={onFinishSelect}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="Client's shortened name">
-            <EditableInputForm
-              editing={editable}
-              setEditing={setEditable}
-              name="code"
-              key={"code"}
-              label="Client's shortened name"
-              value={data.code}
-              onSubmit={onFinish}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="Parent Company">
-            <EditableSelectForm
-              placeholder="Parent Company"
-              editing={editable}
-              setEditing={setEditable}
-              name="parent_id"
-              value={data?.parent_company?.key}
-              data={!companyIsPending ? companyData : []}
-              onSubmit={(values) => onFinishSelect(values)}
-            />
-          </Descriptions.Item>
-          {/* <Descriptions.Item label="Factory Site 1">
-            <EditableForm
-              editing={editable}
-              setEditing={setEditable}
-              name="factory_site"
-              onSubmit={(data) => onFinishAddress(data, "factory_site1")}
-              value={data.factory_site[0]}
-            />
-          </Descriptions.Item> */}
-          {/* <Descriptions.Item label="Factory Site 2">
-            <EditableForm
-              editing={editable}
-              setEditing={setEditable}
-              name="factory_site"
-              onSubmit={(data) => onFinishAddress(data, "factory_site2")}
-              value={data.factory_site[1]}
-            />
-          </Descriptions.Item> */}
-        </Descriptions>
+        </Descriptions.Item>
+        <Descriptions.Item label="Department">
+          <EditableSelectForm
+            placeholder="Department"
+            editing={editable}
+            setEditing={setEditable}
+            name="department"
+            value={data.department.key}
+            data={!departmentIsPending ? departmentData : []}
+            onSubmit={onFinishSelect}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Quantity">
+          <EditableInputNumberForm
+            editing={editable}
+            setEditing={setEditable}
+            name="quantity"
+            key={"quantity"}
+            label="Quantity"
+            value={data.quantity}
+            onSubmit={onFinish}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Job Type">
+          <EditableSelectForm
+            placeholder="Job Type"
+            editing={editable}
+            setEditing={setEditable}
+            name="type"
+            value={data.type.toString()}
+            data={typeJob}
+            onSubmit={(values) => onFinishSelect(values, "nokey")}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Experience Level">
+          <EditableSelectForm
+            placeholder="Experience Level"
+            editing={editable}
+            setEditing={setEditable}
+            name="experience_level"
+            value={data.experience_level.toString()}
+            data={experiences}
+            onSubmit={(values) => onFinishSelect(values, "nokey")}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Created By">
+          {formatName(data.creator.full_name)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Created On">
+          {formatDate(data.createdAt, "ISOdate", "date&hour")}
+        </Descriptions.Item>
+        <Descriptions.Item label="Last Updated">
+          {formatDate(data.updatedAt, "ISOdate", "date&hour")}
+        </Descriptions.Item>
+      </Descriptions>
 
-        <Descriptions className="w-1/2" column={1}>
-          <Descriptions.Item label="Client Type">
-            <EditableSelectForm
-              editing={editable}
-              placeholder="Client Type"
-              setEditing={setEditable}
-              name="type"
-              value={data.type.toString()}
-              data={clientType}
-              onSubmit={onFinishSelect}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="CPA">
-            {/* <EditableSelectForm
-              editing={editable}
-              placeholder="CPA"
-              setEditing={setEditable}
-              name="cpa"
-              value={data.cpa.toString()}
-              data={cpa}
-              onSubmit={onFinishSelect}
-            /> */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Lead Consultant">
-            {/* <EditableSelectForm
-              placeholder="Lead Consultant"
-              editing={editable}
-              setEditing={setEditable}
-              name="lead_consultants"
-              value={data.lead_consultants[0]?.id}
-              data={!consultantIsPending ? consultantData : []}
-              onSubmit={(values) => onFinishSelect(values, "lead_consultants")}
-            /> */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Search Consultant">-</Descriptions.Item>
-          <Descriptions.Item label="Updated By">
-            {formatName(data.creator.full_name)}
-          </Descriptions.Item>
-          <Descriptions.Item label="Updated On">
-            {formatDate(data.updatedAt, "ISOdate", "date&hour")}
-          </Descriptions.Item>
-        </Descriptions>
-      </div>
-    </>
+      <Descriptions className="w-1/2" column={1}>
+        <Descriptions.Item label="Job Status">
+          <EditableSelectForm
+            placeholder="Job Status"
+            editing={editable}
+            setEditing={setEditable}
+            prevent
+            name="status"
+            option="tag"
+            value={data.status.toString()}
+            data={statusData3}
+            onSubmit={(values) => onFinishSelect(values, "nokey")}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Open Date">
+          <EditableForm
+            editing={true}
+            setEditing={setEditable}
+            name="target_date"
+            value={data.target_date}
+            onSubmit={onFinishSelect}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Expire Date">
+          <EditableForm
+            editing={true}
+            setEditing={setEditable}
+            name="end_date"
+            value={data.end_date}
+            onSubmit={onFinishSelect}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Extend Date">
+          <EditableForm
+            editing={editable}
+            setEditing={setEditable}
+            name="extend_date"
+            value={data.extend_date}
+            onSubmit={(value) => onFinishDate(value)}
+          />
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Address">
+          <EditableAddressForm
+            editing={editable}
+            setEditing={setEditable}
+            name="location"
+            onSubmit={(data) => onFinishAddress(data, "location")}
+            value={data.location}
+            onlyCity
+          />
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Client's Name">
+          <EditableSelectForm
+            placeholder="Client's Name"
+            editing={editable}
+            setEditing={setEditable}
+            name="client_id"
+            value={data?.client_id}
+            data={!clientIsPending ? clientData : []}
+            onSubmit={(values) => onFinishSelect(values, "nokey")}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Client's Contact Person">
+          <EditableMultiSelectForm
+            placeholder="Client's Contact Person"
+            editing={editable}
+            setEditing={setEditable}
+            name="pic"
+            value={data.pic}
+            data={!contactPersonsIsPending ? contactPersonsData : []}
+            onSubmit={(values) => onFinishSelect(values, "-")}
+          />
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Search Consultant">
+          <EditableSelectForm
+            placeholder="Search Consultant"
+            editing={editable}
+            setEditing={setEditable}
+            name="recruiters"
+            value={data.recruiters[0]?.id}
+            data={!userIsPending ? userData : []}
+            onSubmit={(values) => onFinishSelect(values, "array")}
+          />
+        </Descriptions.Item>
+        <Descriptions.Item label="Mapping by">
+          <EditableMultiSelectForm
+            placeholder="Mapping by"
+            editing={editable}
+            setEditing={setEditable}
+            name="related_users"
+            value={data.related_users}
+            data={!userIsPending ? userData : []}
+            onSubmit={(values) => onFinishSelect(values, "-")}
+          />
+        </Descriptions.Item>
+      </Descriptions>
+    </div>
   );
 }

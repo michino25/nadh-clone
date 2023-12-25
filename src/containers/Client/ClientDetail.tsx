@@ -5,8 +5,6 @@ import BackToTopButton from "components/BackToTopButton";
 import { clientApi, otherApi, userApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import EditableInputForm from "./components/EditableInputForm";
-import EditableSelectForm from "./components/EditableSelectForm";
 import {
   clientType,
   convertValuetoKey,
@@ -21,8 +19,10 @@ import { DataUpload } from "components/DataEntry/index";
 import ActivityLogsTable from "./components/ActivityLogsTable";
 import { v4 as uuidv4 } from "uuid";
 import ContactPersonWrapper from "./components/ContactPersonWrapper";
-import EditablePhoneForm from "./components/EditablePhoneForm";
-import EditableForm from "./components/EditableAddressForm";
+import EditablePhoneForm from "components/EditableForm/EditablePhoneForm";
+import EditableForm from "components/EditableForm/EditableAddressForm";
+import EditableInputForm from "components/EditableForm/EditableInputForm";
+import EditableSelectForm from "components/EditableForm/EditableSelectForm";
 import { useEffect, useState } from "react";
 import Notes from "./components/Notes";
 import { MyAvatar } from "components/DataEntry/MyAvatar";

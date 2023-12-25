@@ -32,7 +32,6 @@ export default function EditableForm({
 
   const showData =
     data.length > 0 ? data.filter((item) => item.value === value)[0] : null;
-  console.log(showData);
 
   const closeEdit = () => {
     setEdit(false);
@@ -57,19 +56,7 @@ export default function EditableForm({
         >
           {showData ? (
             option === "tag" ? (
-              <Tag
-                color={
-                  showData.label === "Active"
-                    ? "success"
-                    : showData.label === "Off - limit"
-                    ? "processing"
-                    : showData.label === "Inactive"
-                    ? "error"
-                    : "default"
-                }
-              >
-                {showData.label}
-              </Tag>
+              <Tag color="processing">{showData.label}</Tag>
             ) : (
               showData.label
             )

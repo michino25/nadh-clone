@@ -1,63 +1,75 @@
-import { convertKeytoValue } from "_constants/index";
-import { Button, Col, Form, Row } from "antd";
-import Address from "components/DataEntry/Address";
+import { iOption } from "_constants/index";
+import { Button, Col, Row, Form } from "antd";
+import { MultiSelect } from "components/DataEntry";
 import { useState } from "react";
+import { formatName } from "utils/format";
 
 interface iDataInput {
   name: string;
+  placeholder: string;
   value: any;
+  data: iOption[];
   onSubmit: (value: any) => void;
   editing: any;
   setEditing: (value: any) => void;
+  prevent?: boolean;
 }
 
 export default function EditableForm({
+  name,
+  placeholder,
   value,
+  data,
   onSubmit,
   editing,
   setEditing,
+  prevent = false,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
-  const [data, setdata] = useState();
+  // console.log(data);
+  // console.log(value);
+
+  const closeEdit = () => {
+    setEdit(false);
+    if (!prevent) setEditing(false);
+  };
 
   return (
     <>
       {!edit ? (
         <button
-          className={
-            "text-black p-0 m-0 w-full text-left " +
-            (editing && "cursor-not-allowed")
-          }
-          disabled={editing}
           onClick={() => {
             setEdit(true);
             setEditing(true);
           }}
+          className={
+            "text-black p-0 m-0 w-full text-left " +
+            (editing && "cursor-not-allowed")
+          }
+          disabled={editing && !prevent}
         >
-          {(value?.district?.label ? value?.district?.label + " - " : "") +
-            (value?.city?.label ? value?.city?.label + " - " : "") +
-            (value?.country?.label ? value?.country?.label : "-")}
+          {value && value.length > 0
+            ? value.map((item: any) => formatName(item.label)).join(", ")
+            : "-"}
         </button>
       ) : (
         <Form
           name="global_state"
-          onFinish={() => {
-            onSubmit(data);
-            setEdit(false);
-            setEditing(false);
+          onFinish={(values: any) => {
+            onSubmit(values);
+            closeEdit();
           }}
           className="w-full mr-5"
         >
           <Row gutter={16}>
             <Col span={24}>
-              <Address
-                onChange={(data) => setdata(data)}
-                defaultValue={{
-                  address: value?.address,
-                  district: convertKeytoValue(value?.district),
-                  city: convertKeytoValue(value?.city),
-                  country: convertKeytoValue(value?.country),
-                }}
+              <MultiSelect
+                placeholder={placeholder}
+                label=""
+                name={name}
+                defaultValue={value}
+                options={data}
+                required={false}
               />
             </Col>
           </Row>
@@ -66,8 +78,7 @@ export default function EditableForm({
             <Form.Item>
               <Button
                 onClick={() => {
-                  setEdit(false);
-                  setEditing(false);
+                  closeEdit();
                 }}
               >
                 Cancel

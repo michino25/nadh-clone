@@ -10,6 +10,7 @@ interface iDataInput {
   placeholder: string;
   data: iOption[];
   disable?: boolean;
+  multiple?: boolean;
   value?: any;
   onChange?: (value: any) => void;
 }
@@ -26,6 +27,7 @@ export default function DataSelect({
   placeholder,
   data,
   disable,
+  multiple,
   value,
   onChange,
 }: iDataInput) {
@@ -49,6 +51,7 @@ export default function DataSelect({
         disabled={disable}
         options={data}
         showSearch
+        mode={multiple ? "multiple" : undefined}
         placeholder={placeholder}
       />
     </Form.Item>

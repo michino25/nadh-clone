@@ -41,6 +41,11 @@ const _clientApi = {
     return axios().put(url);
   },
 
+  getContactPersonsInClient(id: string) {
+    const url = "api/contact_persons?client=" + id;
+    return axios().get(url);
+  },
+
   getComments(id: string) {
     const url = "api/account_developments/" + id;
     return axios().get(url);
