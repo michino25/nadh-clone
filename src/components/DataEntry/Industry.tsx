@@ -1,4 +1,4 @@
-import { Select, Form, Skeleton } from "antd";
+import { Select, Form } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import { iOption } from "_constants/index";
@@ -142,14 +142,13 @@ export default function Industry({
     setCategory(categoryData?.filter((item: any) => item.value === value)[0]);
   };
 
-  if (industryIsPending || allIndustryIsPending) return <Skeleton active />;
-
   return (
     <>
       <Form.Item className={direction === "row" ? "w-1/3 mb-3" : "w-full mb-3"}>
         <Select
           allowClear
           showSearch
+          loading={industryIsPending || allIndustryIsPending}
           filterOption={filterOption}
           options={industryData}
           value={industry ? (industry.value as number) : undefined}
@@ -163,6 +162,7 @@ export default function Industry({
           allowClear
           showSearch
           filterOption={filterOption}
+          loading={industryIsPending || allIndustryIsPending}
           options={sectorData}
           value={sector ? (sector.value as number) : undefined}
           disabled={!sectorData}
@@ -176,6 +176,7 @@ export default function Industry({
           allowClear
           showSearch
           filterOption={filterOption}
+          loading={industryIsPending || allIndustryIsPending}
           options={categoryData}
           value={category ? (category.value as number) : undefined}
           disabled={!categoryData}

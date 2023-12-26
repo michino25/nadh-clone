@@ -12,7 +12,7 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
       requirement: {
         industry_years: value.requirement.industry_years,
         management_years: value.requirement.management_years,
-        major: {
+        major: value.requirement.major && {
           key: value.requirement.major.split("_")[0],
           label: value.requirement.major.split("_")[1],
         },
@@ -77,6 +77,7 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               allowClear
               propertyName="major"
               defaultValue={
+                data.requirement.major.key &&
                 data.requirement.major.key + "_" + data.requirement.major.label
               }
             />

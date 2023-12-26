@@ -35,8 +35,10 @@ export default function EditableForm({
 
   const closeEdit = () => {
     setEdit(false);
-    if (!(prevent && showData?.value === "12")) setEditing(false);
+    setEditing(false);
   };
+
+  console.log(editing, !prevent, name);
 
   return (
     <>
@@ -44,15 +46,13 @@ export default function EditableForm({
         <button
           onClick={() => {
             setEdit(true);
-            setEditing(true);
+            if (!prevent) setEditing(true);
           }}
           className={
             "text-black p-0 m-0 w-full text-left " +
-            (editing &&
-              !(prevent && showData?.value === "12") &&
-              "cursor-not-allowed")
+            (editing && prevent && "cursor-not-allowed")
           }
-          disabled={editing && !(prevent && showData?.value === "12")}
+          disabled={editing && prevent}
         >
           {showData ? (
             option === "tag" ? (

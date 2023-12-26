@@ -51,7 +51,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
 
   const [data, setData] = useState<any[]>([]);
 
-  useQuery({
+  const { isPending } = useQuery({
     queryKey: ["Clients", window.location.href],
     queryFn: async () =>
       await clientApi
@@ -138,8 +138,6 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     status: primaryStatus2,
   };
 
-  // if (isPending) return <Skeleton active />;
-
   return (
     <div className="flex-col w-full">
       <Tag filterSelectData={filterSelectData} tableName={clientTable} />
@@ -147,6 +145,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         <DataTable
           titleTable={`Clients List`}
           tableName={clientTable}
+          loading={isPending}
           filterSelectData={filterSelectData}
           createBtn={createBtn}
           data={data}

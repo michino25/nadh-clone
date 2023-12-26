@@ -10,10 +10,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.responsibility}
             label="RESPONSIBILITIES / DAILY DUTIES"
-            updateFn={(value: string) =>
-              updateFn({
-                responsibility: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  responsibility: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -21,10 +24,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.expectation}
             label="ROLE EXPECTATIONS"
-            updateFn={(value: string) =>
-              updateFn({
-                expectation: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  expectation: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -35,10 +41,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.kpi}
             label="MEASURES of SUCCESS? KPIs"
-            updateFn={(value: string) =>
-              updateFn({
-                kpi: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  kpi: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -46,10 +55,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.selling_point}
             label="SELLING POINT of THE ROLE"
-            updateFn={(value: string) =>
-              updateFn({
-                selling_point: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  selling_point: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -60,10 +72,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.department_structure}
             label="DEPARTMENT STRUCTURE"
-            updateFn={(value: string) =>
-              updateFn({
-                department_structure: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  department_structure: value,
+                },
+                onSuccess
+              )
             }
             sublabel="(Manager - Subordinates - Team - Organisation chart? - Where do they fit in the entire company)"
           />
@@ -72,10 +87,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.competency}
             label="COMPETENCIES / BEHAVIOURS"
-            updateFn={(value: string) =>
-              updateFn({
-                competency: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  competency: value,
+                },
+                onSuccess
+              )
             }
             sublabel="(The client is looking for vs candidate's competencies)"
           />
@@ -87,10 +105,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.development_opportunity}
             label="DEVELOPMENT OPPORTUNITIES"
-            updateFn={(value: string) =>
-              updateFn({
-                development_opportunity: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  development_opportunity: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -98,10 +119,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.fill_rate}
             label="SUCCESSFUL FILL RATE"
-            updateFn={(value: string) =>
-              updateFn({
-                fill_rate: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  fill_rate: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -112,10 +136,13 @@ export default function JobDescription({ data, updateFn }: any) {
           <CkeditorData
             data={data?.recruitment_process}
             label="RECRUITMENT PROCESS"
-            updateFn={(value: string) =>
-              updateFn({
-                recruitment_process: value,
-              })
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  recruitment_process: value,
+                },
+                onSuccess
+              )
             }
           />
         </Col>
@@ -123,10 +150,13 @@ export default function JobDescription({ data, updateFn }: any) {
 
       <DisplayTag
         data={data?.social_media}
-        updateFn={(value: any[]) =>
-          updateFn({
-            social_media: value,
-          })
+        updateFn={(value: any[], onSuccess: () => void) =>
+          updateFn(
+            {
+              social_media: value,
+            },
+            onSuccess
+          )
         }
       />
     </>

@@ -348,7 +348,12 @@ export default function JobDetail() {
 
           <div id="part-3" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Job Description</p>
-            <JobDescription data={jobData} updateFn={updateMutation2.mutate} />
+            <JobDescription
+              data={jobData}
+              updateFn={(value: any, onSuccess: () => void) =>
+                updateMutation2.mutate(value, { onSuccess })
+              }
+            />
           </div>
 
           <div id="part-4" className="p-4 bg-white rounded-lg">

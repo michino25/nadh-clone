@@ -211,7 +211,6 @@ export default function JobInformation({
             placeholder="Job Status"
             editing={editable}
             setEditing={setEditable}
-            prevent
             name="status"
             option="tag"
             value={data.status.toString()}

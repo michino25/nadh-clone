@@ -8,6 +8,7 @@ interface iDataInput {
   placeholder: string;
   disabled?: boolean;
   formatter?: any;
+  suffix?: any;
 }
 
 export default function DataInputNumber({
@@ -18,6 +19,7 @@ export default function DataInputNumber({
   defaultValue,
   placeholder,
   disabled,
+  suffix,
 }: iDataInput) {
   return (
     <Form.Item
@@ -37,6 +39,7 @@ export default function DataInputNumber({
         formatter={formatter}
         placeholder={placeholder}
         disabled={disabled}
+        suffix={suffix}
       />
     </Form.Item>
   );

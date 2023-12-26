@@ -142,7 +142,6 @@ export default function Remuneration({
         className="flex-col w-full"
         form={form}
         onBlur={() => onFinish(form.getFieldsValue())}
-        // onValuesChange={() => onFinish(form.getFieldsValue())}
       >
         <Row gutter={16} align={"middle"}>
           <Col span={12}>
@@ -279,84 +278,54 @@ export default function Remuneration({
 
         <Row gutter={16}>
           <Col span={12}>
-            <Row gutter={16} align={"middle"}>
-              <Col span={16}>
-                <InputNumber
-                  label="Pension scheme"
-                  placeholder="Pension scheme"
-                  name="pension_scheme"
-                  defaultValue={data?.benefit?.pension_scheme.toString()}
-                />
-              </Col>
-              <Col span={8}>
-                <span>%</span>
-              </Col>
-            </Row>
+            <InputNumber
+              label="Pension scheme"
+              placeholder="Pension scheme"
+              name="pension_scheme"
+              defaultValue={data?.benefit?.pension_scheme.toString()}
+              suffix="%"
+            />
           </Col>
           <Col span={12}>
-            <Row gutter={16} align={"middle"}>
-              <Col span={16}>
-                <InputNumber
-                  label="Annual leaves"
-                  placeholder="Annual leaves"
-                  name="no_holiday"
-                  defaultValue={data?.benefit?.no_holiday.toString()}
-                />
-              </Col>
-              <Col span={8}>
-                <span>day(s)</span>
-              </Col>
-            </Row>
+            <InputNumber
+              label="Annual leaves"
+              placeholder="Annual leaves"
+              name="no_holiday"
+              defaultValue={data?.benefit?.no_holiday.toString()}
+              suffix="day(s)"
+            />
           </Col>
         </Row>
         <Row gutter={16} align={"bottom"}>
           <Col span={12}>
-            <Row gutter={16} align={"middle"}>
-              <Col span={16}>
-                <InputNumber
-                  label="Hours of work/overtime"
-                  placeholder="Hours of work"
-                  name="working_hour"
-                  defaultValue={data?.benefit?.working_hour}
-                />
-              </Col>
-              <Col span={8}>
-                <span>hour per day</span>
-              </Col>
-            </Row>
+            <InputNumber
+              label="Hours of work/overtime"
+              placeholder="Hours of work"
+              name="working_hour"
+              defaultValue={data?.benefit?.working_hour}
+              suffix="hours per day"
+            />
           </Col>
           <Col span={12}>
-            <Row gutter={16} align={"stretch"}>
-              <Col span={16}>
-                <InputNumber
-                  label=""
-                  placeholder="Hours of overtime"
-                  name="overtime_hour"
-                  defaultValue={data?.benefit?.overtime_hour.toString()}
-                />
-              </Col>
-              <Col span={8}>
-                <span>hours per week</span>
-              </Col>
-            </Row>
+            <InputNumber
+              label=""
+              placeholder="Hours of overtime"
+              name="overtime_hour"
+              defaultValue={data?.benefit?.overtime_hour.toString()}
+              suffix="hours per week"
+            />
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Row gutter={16} align={"middle"}>
-              <Col span={16}>
-                <InputNumber
-                  label="Notice days"
-                  placeholder="Notice days"
-                  name="notice_days"
-                  defaultValue={data?.benefit.notice_days?.toString() || 0}
-                  disabled
-                />
-              </Col>
-              <Col span={8}>
-                <span>day(s)</span>
-              </Col>
-            </Row>
+            <InputNumber
+              label="Notice days"
+              placeholder="Notice days"
+              name="notice_days"
+              defaultValue={data?.benefit.notice_days?.toString() || 0}
+              disabled
+              suffix="day(s)"
+            />
           </Col>
         </Row>
       </Form>

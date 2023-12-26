@@ -1,4 +1,4 @@
-import { Select, Form, Skeleton, Input } from "antd";
+import { Select, Form, Input } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import { iOption } from "_constants/index";
@@ -117,8 +117,6 @@ export default function Address({
     });
   }, [country, city, district, address]);
 
-  if (countryIsPending) return <Skeleton active />;
-
   return (
     <div className="flex-col w-full justify-between items-center">
       <div className="flex w-full space-x-3">
@@ -134,6 +132,7 @@ export default function Address({
         >
           <Select
             allowClear
+            loading={countryIsPending}
             showSearch
             filterOption={filterOption}
             options={countryData}
@@ -150,6 +149,7 @@ export default function Address({
           <Select
             allowClear
             showSearch
+            loading={countryIsPending}
             filterOption={filterOption}
             options={cityData}
             value={city ? (city.value as number) : undefined}
@@ -166,6 +166,7 @@ export default function Address({
         >
           <Select
             allowClear
+            loading={countryIsPending}
             showSearch
             filterOption={filterOption}
             options={districtData}

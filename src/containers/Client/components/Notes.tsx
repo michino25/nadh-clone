@@ -7,24 +7,25 @@ import { useMutation } from "@tanstack/react-query";
 import { clientApi } from "apis/index";
 
 const commentItem = (name: string, content: string, date: string) => (
-  <div className="p-4  text-base bg-gray-100/50 rounded-lg mb-3">
-    <div className="flex items-center mb-2">
-      <p className="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold">
+  <div className="p-5 text-base bg-gray-100/50 rounded-lg mb-3">
+    <div className="flex gap-4 px-4 mb-2">
+      <div>
         <Avatar
           style={{ backgroundColor: "#87d068" }}
           icon={<UserOutlined />}
           size="small"
-          className="mr-2 w-6 h-6 rounded-full"
         />
-        {name}
-      </p>
-      <p className="text-sm text-gray-600">
-        <span>{date}</span>
+      </div>
+      <p className="flex-col gap-3">
+        <p className="flex gap-2 text-sm mb-3">
+          <span className="text-gray-900 font-semibold">{name}</span>
+          <span className="text-gray-600">{date}</span>
+        </p>
+        <p className="text-gray-500 text-sm flex space-y-5">
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        </p>
       </p>
     </div>
-    <p className="text-gray-500 text-sm">
-      <div dangerouslySetInnerHTML={{ __html: content }} />
-    </p>
   </div>
 );
 
@@ -108,16 +109,18 @@ export default function Notes({
         )}
       </div>
 
-      {data.length > 0 &&
-        data.map((item: any) => (
-          <div key={item.createdAt}>
-            {commentItem(
-              formatName(item.user.full_name) as string,
-              item.content,
-              formatDate(item.createdAt, "ISOdate", "date&hour") as string
-            )}
-          </div>
-        ))}
+      <div className="max-h-[400px] overflow-y-scroll">
+        {data.length > 0 &&
+          data.map((item: any) => (
+            <div key={item.createdAt}>
+              {commentItem(
+                formatName(item.user.full_name) as string,
+                item.content,
+                formatDate(item.createdAt, "ISOdate", "date&hour") as string
+              )}
+            </div>
+          ))}
+      </div>
     </>
   );
 }

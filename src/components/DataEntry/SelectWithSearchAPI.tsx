@@ -106,6 +106,7 @@ export default function SelectWithSearchAPI({
     <Form.Item
       label={label}
       name={name}
+      validateDebounce={1000}
       className="w-full"
       initialValue={defaultValue}
       rules={[

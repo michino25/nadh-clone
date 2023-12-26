@@ -5,14 +5,21 @@ import { useEffect, useState } from "react";
 export default function CkeditorData({ label, sublabel, data, updateFn }: any) {
   const [edit, setEdit] = useState(false);
   const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setNote(data);
   }, [data]);
 
   const addComment = () => {
-    updateFn(note);
-    setEdit(false);
+    setLoading(true);
+
+    updateFn(note, () => {
+      setTimeout(() => {
+        setEdit(false);
+        setLoading(false);
+      }, 500);
+    });
   };
 
   return (
@@ -26,7 +33,7 @@ export default function CkeditorData({ label, sublabel, data, updateFn }: any) {
                 <MyCKEditor value={note} setValue={setNote} />
                 <div className="w-full flex justify-end gap-3 mt-3">
                   <Button onClick={() => setEdit(false)}>Cancel</Button>
-                  <Button type="primary" onClick={addComment}>
+                  <Button type="primary" onClick={addComment} loading={loading}>
                     Save
                   </Button>
                 </div>

@@ -47,7 +47,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     : getAllParams();
 
   const [data, setData] = useState<any[]>([]);
-  useQuery({
+  const { isPending } = useQuery({
     queryKey: ["Candidates", window.location.href],
     queryFn: async () =>
       await candidateApi
@@ -126,8 +126,6 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     priority_status: primaryStatus,
   };
 
-  // if (isPending) return <Skeleton active />;
-
   return (
     <div className="flex-col w-full">
       {!langPending && (
@@ -135,6 +133,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       )}
       <DataTable
         titleTable={`Candidates List`}
+        loading={isPending}
         filterSelectData={filterSelectData}
         tableName={candidateTable}
         data={data}

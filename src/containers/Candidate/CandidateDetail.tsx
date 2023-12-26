@@ -39,18 +39,6 @@ export default function Candidates() {
         // console.log(!res.data.addresses[0].city);
         return {
           ...res.data,
-          // addresses: res.data.addresses.map((addressItem: any) => ({
-          //   address: addressItem.address,
-          //   country: addressItem.country
-          //     ? addressItem.country.key + "_" + addressItem.country.label
-          //     : null,
-          //   city: addressItem.city
-          //     ? addressItem.city.key + "_" + addressItem.city.label
-          //     : null,
-          //   district: addressItem.district
-          //     ? addressItem.district.key + "_" + addressItem.district.label
-          //     : null,
-          // })),
           business_line: res.data.business_line.map((item: any) => ({
             ...item,
             id: uuidv4(),

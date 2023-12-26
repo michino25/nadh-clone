@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
-import { Select, Button, Form, Skeleton } from "antd";
+import { Select, Button, Form } from "antd";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import { iOption } from "_constants/index";
@@ -94,8 +94,6 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
     setCity(value);
   };
 
-  if (isPending) return <Skeleton active />;
-
   return (
     <div className="p-3" onKeyDown={(e) => e.stopPropagation()}>
       <div className="w-full flex justify-between gap-2">
@@ -112,6 +110,7 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
           <Select
             allowClear
             showSearch
+            loading={isPending}
             filterOption={filterOption}
             options={countryData}
             value={country}
@@ -123,6 +122,7 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
         <Form.Item className="w-full mb-3">
           <Select
             allowClear
+            loading={isPending}
             showSearch
             filterOption={filterOption}
             options={cityData}

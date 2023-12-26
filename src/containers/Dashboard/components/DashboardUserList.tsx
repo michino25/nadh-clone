@@ -4,7 +4,6 @@ import { useState } from "react";
 import DashboardDetail from "containers/Dashboard/DashboardDetail";
 import Tag from "components/Table/Tag";
 import { formatDate, formatName } from "utils/format";
-import { Skeleton } from "antd";
 import { iUser } from "utils/models";
 import { userApi } from "apis/index";
 import { roleData, userColumns, userTable } from "_constants/index";
@@ -73,8 +72,6 @@ export default function DashboardUserList() {
 
   console.log(filterSelectData.type);
 
-  if (isPending) return <Skeleton active />;
-
   if (error) return <p>An error has occurred: {error.message}</p>;
 
   return (
@@ -85,6 +82,7 @@ export default function DashboardUserList() {
         titleTable={`System Users List`}
         tableName={userTable}
         filterSelectData={filterSelectData}
+        loading={isPending}
         createBtn={undefined}
         data={data}
         rawColumns={userColumns}

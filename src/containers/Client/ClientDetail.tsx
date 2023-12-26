@@ -469,7 +469,7 @@ export default function Clients() {
                     placeholder="Status"
                     editing={editable}
                     setEditing={setEditable}
-                    prevent
+                    prevent={clientData.status !== 12}
                     name="status"
                     option="tag"
                     value={clientData.status.toString()}

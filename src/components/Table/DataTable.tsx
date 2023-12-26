@@ -4,16 +4,7 @@ import {
   EyeOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import {
-  Pagination,
-  Card,
-  Button,
-  Space,
-  Table,
-  Flex,
-  Dropdown,
-  Skeleton,
-} from "antd";
+import { Pagination, Card, Button, Space, Table, Flex, Dropdown } from "antd";
 import { iUser } from "../../utils/models";
 import type { ColumnType, ColumnsType } from "antd/es/table";
 import SearchInput from "./SearchInput";
@@ -51,6 +42,7 @@ interface DataTableProps {
     pageSize: number;
   };
   noFilter?: boolean;
+  loading?: boolean;
 }
 
 const DataTable = ({
@@ -63,6 +55,7 @@ const DataTable = ({
   createBtn,
   paginationOption,
   noFilter,
+  loading,
 }: DataTableProps) => {
   const { getAllParams, removeAllFilter, getPathname } = useFilter();
   const [filterCol, setFilterCol] = useState(
@@ -310,12 +303,6 @@ const DataTable = ({
     </div>
   );
 
-  if (
-    colIsPending &&
-    (getPathname() === "/candidates" || getPathname() === "/clients")
-  )
-    return <Skeleton active />;
-
   return (
     <Card>
       <Space
@@ -326,6 +313,7 @@ const DataTable = ({
 
       <Table
         className="w-full"
+        loading={colIsPending || loading}
         title={() => header}
         footer={() => footer}
         scroll={{ x: true }}
