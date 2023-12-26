@@ -6,9 +6,10 @@ import { useState } from "react";
 
 interface iData {
   label: string;
-  name: string;
+  name: string | string[];
   required: boolean;
   allowClear?: boolean;
+  OptGroup?: boolean;
   placeholder?: string;
   defaultValue?: string | number;
   value?: string[];
@@ -23,6 +24,7 @@ export default function MultiSelectWithSearchAPI({
   defaultValue,
   placeholder,
   allowClear = false,
+  OptGroup = false,
   value,
   setValue,
   propertyName,
@@ -31,16 +33,29 @@ export default function MultiSelectWithSearchAPI({
   const [searchData, setSearchData] = useState();
 
   useQuery({
-    queryKey: [propertyName, searchValue],
+    queryKey: [propertyName, searchValue, OptGroup],
     queryFn: async () =>
-      await otherApi.getProperty(propertyName, searchValue).then((res) => {
-        setSearchData(
-          res.data.data.map((item: any) => ({
-            label: item.label,
-            value: item.key + "_" + item.label,
-          }))
-        );
-      }),
+      await otherApi
+        .getProperty(propertyName, searchValue, OptGroup)
+        .then((res) => {
+          if (OptGroup)
+            setSearchData(
+              res.data.data.map((parent: any) => ({
+                label: parent.label,
+                options: parent.children.map((item: any) => ({
+                  label: item.label,
+                  value: item.key + "_" + item.label,
+                })),
+              }))
+            );
+          else
+            setSearchData(
+              res.data.data.map((item: any) => ({
+                label: item.label,
+                value: item.key + "_" + item.label,
+              }))
+            );
+        }),
   });
 
   const selectProps: SelectProps = {

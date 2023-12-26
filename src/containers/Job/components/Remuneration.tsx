@@ -5,6 +5,7 @@ import { useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import DataRadioNote from "components/DataEntry/RadioNote";
+import CkeditorData from "components/DataEntry/CkeditorData";
 
 export default function Remuneration({
   data,
@@ -359,6 +360,38 @@ export default function Remuneration({
           </Col>
         </Row>
       </Form>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorData
+            data={data?.future_prospect}
+            label="Development / training opportunities / future prospects"
+            updateFn={(value: string) =>
+              updateFn({
+                remuneration: {
+                  future_prospect: value,
+                },
+              })
+            }
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorData
+            data={data?.extra}
+            label="Anything else"
+            updateFn={(value: string) =>
+              updateFn({
+                remuneration: {
+                  extra: value,
+                },
+              })
+            }
+          />
+        </Col>
+      </Row>
     </>
   );
 }

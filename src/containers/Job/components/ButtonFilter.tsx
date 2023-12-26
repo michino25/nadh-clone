@@ -3,10 +3,9 @@ export default function ButtonFilter({
   setFilterStatus,
 }: {
   candidate_flows: any;
-  setFilterStatus: (value: any) => void;
+  setFilterStatus: (value: string) => void;
 }) {
   const rawData = candidate_flows.map((item: any) => item.status);
-  console.log(rawData);
 
   const data = [
     { key: "2", name: "Screening Call" },

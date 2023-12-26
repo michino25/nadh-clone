@@ -7,7 +7,7 @@ import { PlusOutlined } from "@ant-design/icons";
 
 interface iData {
   label: string;
-  name: string;
+  name: string | string[];
   required: boolean;
   allowClear?: boolean;
   placeholder?: string;

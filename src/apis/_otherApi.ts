@@ -27,11 +27,14 @@ const _otherApi = {
     });
   },
 
-  getProperty(property_name: string, value?: string) {
+  getProperty(property_name: string, value?: string, OptGroup?: boolean) {
     const url = "api/property_values";
+    console.log(property_name, value, OptGroup);
+
     return axios().get(url, {
       params: {
         property_name,
+        ...(OptGroup && { parent_id: "null" }),
         ...(value && { value }),
       },
     });
@@ -90,6 +93,14 @@ const _otherApi = {
   getConflictTax(content: string) {
     const url = "api/clients-conflict?tax_code=" + content;
     return axios().get(url);
+  },
+
+  addCandidateFlows(job_id: string, candidate_array: any) {
+    const url = "api/candidate_flows";
+    return axios().post(url, {
+      job_id,
+      candidate_array,
+    });
   },
 };
 

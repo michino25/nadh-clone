@@ -7,8 +7,6 @@ import { jobApi, otherApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "utils/format";
-import FormIndustry from "../Client/components/FormIndustry";
-import IndustryTable from "components/DataDisplay/IndustryTable";
 import { getUser } from "utils/getUser";
 import { DataUpload } from "components/DataEntry/index";
 import ActivityLogsTable from "../Client/components/ActivityLogsTable";
@@ -19,6 +17,9 @@ import { v4 as uuidv4 } from "uuid";
 import Remuneration from "./components/Remuneration";
 import CandidatesList from "./components/CandidatesList";
 import ButtonFilter from "./components/ButtonFilter";
+import JobDescription from "./components/JobDescription";
+import JobRequirements from "./components/JobRequirements";
+import Industry from "./components/Industry";
 
 const anchorItems = [
   {
@@ -66,7 +67,7 @@ const anchorItems = [
 export default function JobDetail() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [filterStatus, setFilterStatus] = useState();
+  const [filterStatus, setFilterStatus] = useState<string>("");
 
   const {
     data: jobData,
@@ -92,6 +93,37 @@ export default function JobDetail() {
       setEditable(jobData?.status === 12);
     }
   }, [jobData?.status]);
+
+  const addFlow = async (data: any) => {
+    setLoading(true);
+    try {
+      await otherApi.addCandidateFlows(jobData.id, data);
+
+      // success
+      // console.log(res.data);
+      refetch();
+
+      notification.success({
+        message: "Update Job",
+        description: "Update success.",
+      });
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update Job",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addFlowMutation = useMutation({
+    mutationFn: (formData: any) => addFlow(formData),
+  });
 
   const updateJob2 = async (data: any) => {
     setLoading(true);
@@ -236,62 +268,6 @@ export default function JobDetail() {
     },
   });
 
-  const addIndustry = (data: any) => {
-    const newData: any = {};
-    if (data.industry) newData.industry_id = data.industry.value;
-    if (data.sector) newData.sector_id = data.sector.value;
-    if (data.category) newData.category_id = data.category.value;
-    newData.primary = -1;
-
-    const transformedData = jobData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.primary,
-      };
-
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
-
-      return transformedItem;
-    });
-
-    updateMutation.mutate({ business_line: [...transformedData, newData] });
-  };
-
-  const deleteIndustry = (id: string) => {
-    const transformedData = jobData?.business_line
-      .filter((item: any) => item.id !== id)
-      .map((item: any) => {
-        const transformedItem: any = {
-          industry_id: item.industry.id,
-          primary: item.primary,
-        };
-
-        if (item.sector) transformedItem.sector_id = item.sector.id;
-        if (item.category) transformedItem.category_id = item.category.id;
-
-        return transformedItem;
-      });
-
-    updateMutation.mutate({ business_line: transformedData });
-  };
-
-  const primaryIndustry = (id: string) => {
-    const transformedData = jobData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.id === id ? item.primary * -1 : item.primary,
-      };
-
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
-
-      return transformedItem;
-    });
-
-    updateMutation.mutate({ business_line: transformedData });
-  };
-
   if (isPending || !id) return <Skeleton active />;
 
   return (
@@ -331,7 +307,7 @@ export default function JobDetail() {
       <div className="flex w-full p-5">Detail {id}</div>
       <div className="px-8 my-5">
         <div className="flex-col space-y-4">
-          <div id="part-0" className="p-4 bg-white rounded-lg">
+          <div id="part-1" className="p-4 bg-white rounded-lg">
             <ButtonFilter
               candidate_flows={jobData?.candidate_flows}
               setFilterStatus={setFilterStatus}
@@ -348,15 +324,31 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-3" className="p-4 bg-white rounded-lg">
+          <div id="part-1" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Industry</p>
-            <FormIndustry saveData={addIndustry} />
-            <IndustryTable
+            <Industry
               data={jobData?.business_line}
+              updateFn={(value: any) =>
+                updateMutation.mutate({
+                  business_line: value,
+                })
+              }
               loading={loading}
-              deleteItem={deleteIndustry}
-              primaryItem={primaryIndustry}
             />
+          </div>
+
+          <div id="part-2" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Job Requirements</p>
+            <JobRequirements
+              data={jobData}
+              loading={loading}
+              updateFn={updateMutation2.mutate}
+            />
+          </div>
+
+          <div id="part-3" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Job Description</p>
+            <JobDescription data={jobData} updateFn={updateMutation2.mutate} />
           </div>
 
           <div id="part-4" className="p-4 bg-white rounded-lg">
@@ -373,6 +365,7 @@ export default function JobDetail() {
               data={jobData}
               filterStatus={filterStatus}
               setFilterStatus={setFilterStatus}
+              addCandidateFlow={addFlowMutation.mutate}
             />
           </div>
 

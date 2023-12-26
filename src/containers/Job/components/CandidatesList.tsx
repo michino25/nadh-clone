@@ -1,10 +1,22 @@
 import { Link } from "react-router-dom";
-import { Tag, Flex, Button, Table, Drawer, Descriptions, Modal } from "antd";
+import {
+  Tag,
+  Flex,
+  Button,
+  Table,
+  Drawer,
+  Descriptions,
+  Modal,
+  Select,
+} from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDate, formatName } from "utils/format";
 import { useState } from "react";
 import { experiences, getLabelByValue, statusData2 } from "_constants/index";
+import { useQuery } from "@tanstack/react-query";
+import { candidateApi } from "apis/index";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const rawColumns = [
   {
@@ -53,13 +65,50 @@ export default function CandidatesList({
   data,
   filterStatus,
   setFilterStatus,
+  addCandidateFlow,
 }: any) {
   const [viewProfile, setViewProfile] = useState<any>();
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const candidate_flows = data.candidate_flows;
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  console.log(filterStatus);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchData, setSearchData] = useState<any[]>();
+
+  useQuery({
+    queryKey: ["candidate", searchValue],
+    queryFn: async () =>
+      await candidateApi
+        .getCandidates({
+          page: 1,
+          perPage: 20,
+          advance_search: searchValue,
+        })
+        .then((res) => {
+          setSearchData(
+            res.data.data.length &&
+              res.data.data.map((item: any) => ({
+                label: (
+                  <>
+                    <p className="font-bold">
+                      {item.candidate_id_int} - {formatName(item.full_name)}
+                    </p>
+                    <p className="font-bold">Position Applied:</p>
+                    <p>
+                      {item.prefer_position.positions.map((item: any) => (
+                        <p>{item.label}</p>
+                      ))}
+                    </p>
+                  </>
+                ),
+                value: item.id,
+              }))
+          );
+        }),
+  });
+
+  console.log(searchData);
 
   const showDrawer = () => {
     setOpen(true);
@@ -74,6 +123,7 @@ export default function CandidatesList({
   };
 
   const handleOk = () => {
+    addCandidateFlow(selectedItems);
     setIsModalOpen(false);
   };
 
@@ -221,6 +271,38 @@ export default function CandidatesList({
             {getLabelByValue(experiences, data?.experience_level.toString())}
           </Descriptions.Item>
         </Descriptions>
+
+        <Select
+          mode="multiple"
+          placeholder="Select Candidate"
+          value={selectedItems}
+          onChange={setSelectedItems}
+          style={{ width: "100%" }}
+          options={searchData}
+          onSearch={setSearchValue}
+          onBlur={() => setSearchValue("")}
+          tagRender={() => <></>}
+        />
+        <div>
+          {selectedItems.map((item) => (
+            <div className="mt-3 flex justify-between">
+              <p>
+                {searchData &&
+                  searchData.length &&
+                  searchData.find((candidate) => candidate.value === item)
+                    .label}
+              </p>
+              <DeleteOutlined
+                className="hover:text-red-500 cursor-pointer p-4"
+                onClick={() =>
+                  setSelectedItems(
+                    selectedItems.filter((candidate) => candidate !== item)
+                  )
+                }
+              />
+            </div>
+          ))}
+        </div>
       </Modal>
     </div>
   );
