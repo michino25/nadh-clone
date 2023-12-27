@@ -8,7 +8,7 @@ import IndustryTable from "components/DataDisplay/IndustryTable";
 
 import { DataUpload, TextArea } from "components/DataEntry/index";
 
-import BackToTopButton from "components/BackToTopButton";
+import BackToTopButton from "components/ShareComponents/BackToTopButton";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
@@ -22,7 +22,8 @@ import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
 import Remuneration from "./components/Remuneration";
 import PersonalInformationForm from "./components/PersonalInformationForm";
-import { formatDate } from "utils/format";
+import { formatDate, formatName } from "utils/format";
+import CommentItem from "components/ShareComponents/CommentItem";
 
 export default function Candidates() {
   const { id } = useParams();
@@ -505,6 +506,11 @@ export default function Candidates() {
               href: "#part-6",
               title: "Attachments",
             },
+            {
+              key: "part-7",
+              href: "#part-7",
+              title: "Note",
+            },
           ]}
         />
       </div>
@@ -521,7 +527,7 @@ export default function Candidates() {
           form={form}
           onValuesChange={() => setShowBtn(true)}
         >
-          <div className="flex-col w-2/3 space-y-4">
+          <div className="flex-col w-2/3 space-y-4 pb-12">
             <div id="part-1" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Overview</p>
               <TextArea
@@ -604,6 +610,39 @@ export default function Candidates() {
                 )}
               </div>
             </div>
+            <div id="part-8" className="p-4 bg-white rounded-lg">
+              <p className="mb-4 font-bold text-lg">Note</p>
+              <div className="max-h-[400px] overflow-y-scroll px-2">
+                {candidateData?.notes.length > 0
+                  ? candidateData?.notes.map((item: any) => (
+                      <CommentItem
+                        name={formatName(item.user.full_name) as string}
+                        content={item.content}
+                        date={
+                          formatDate(
+                            item.createdAt,
+                            "ISOdate",
+                            "date&hour"
+                          ) as string
+                        }
+                        avtLink={
+                          item.user.mediafiles.avatar &&
+                          "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                            item.user.mediafiles.avatar
+                        }
+                        optionFn={() =>
+                          updateMutation.mutate({
+                            note_comments: candidateData?.notes
+                              .map((item: any) => item.id)
+                              .filter((note: string) => note !== item.id),
+                          })
+                        }
+                        optionTitle="Remove from Note"
+                      />
+                    ))
+                  : "* Can't find any note"}
+              </div>
+            </div>
           </div>
           {showBtn && (
             <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end py-3 px-8">
@@ -618,7 +657,13 @@ export default function Candidates() {
           <div className="w-1/3 pl-5">
             <div className="bg-white flex-col p-4 rounded-lg">
               <p className="mb-4 font-bold text-lg">Interview Loop</p>
-              <InterviewLoop data={candidateData?.flows} />
+              <InterviewLoop
+                allData={candidateData}
+                updateFn={(value: any, onSuccess?: () => void) =>
+                  updateMutation.mutate(value, { onSuccess })
+                }
+                refetch={refetch}
+              />
             </div>
           </div>
         </Form>

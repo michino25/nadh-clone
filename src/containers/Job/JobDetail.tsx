@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Anchor, Skeleton, notification, Button } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 
-import BackToTopButton from "components/BackToTopButton";
+import BackToTopButton from "components/ShareComponents/BackToTopButton";
 import { jobApi, otherApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";

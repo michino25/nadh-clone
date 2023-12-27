@@ -102,6 +102,26 @@ const _otherApi = {
       candidate_array,
     });
   },
+
+  updateCandidateFlows(flowId: string, param: any, option?: string) {
+    const url = "api/candidate_flows/" + flowId + (option ? "/" + option : "");
+    return axios().put(url, param);
+  },
+
+  getCompare(candidate_id: string, job_id: string) {
+    const url = `api/assessments/compare?candidate_id=${candidate_id}&job_id=${job_id}`;
+    return axios().get(url);
+  },
+
+  getComments(id: string) {
+    const url = "api/account_developments/" + id;
+    return axios().get(url);
+  },
+
+  createComment(params: any) {
+    const url = "api/comments";
+    return axios().post(url, params);
+  },
 };
 
 export default _otherApi;

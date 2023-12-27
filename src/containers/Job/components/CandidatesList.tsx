@@ -13,7 +13,12 @@ import type { ColumnsType, TableProps } from "antd/es/table";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDate, formatName } from "utils/format";
 import { useState } from "react";
-import { experiences, getLabelByValue, statusData2 } from "_constants/index";
+import {
+  experiences,
+  getIndustryString,
+  getLabelByValue,
+  statusData2,
+} from "_constants/index";
 import { useQuery } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -94,10 +99,16 @@ export default function CandidatesList({
                     <p className="font-bold">
                       {item.candidate_id_int} - {formatName(item.full_name)}
                     </p>
-                    <p className="font-bold">Position Applied:</p>
                     <p>
-                      {item.prefer_position.positions.map((item: any) => (
-                        <p>{item.label}</p>
+                      <span className="font-bold">Position Applied: </span>
+                      {item.prefer_position.positions
+                        .map((item: any) => item.label)
+                        .join(", ")}
+                    </p>
+                    <p>
+                      <span className="font-bold">Industry: </span>
+                      {item.business_line.map((item: any) => (
+                        <p>{getIndustryString(item)}</p>
                       ))}
                     </p>
                   </>
@@ -263,7 +274,7 @@ export default function CandidatesList({
           <Descriptions.Item label="Industry">
             <div className="flex-col">
               {data?.business_line.map((item: any) => (
-                <p>{item.industry ? item.industry.label : ""}</p>
+                <p>{getIndustryString(item)}</p>
               ))}
             </div>
           </Descriptions.Item>
@@ -275,17 +286,24 @@ export default function CandidatesList({
         <Select
           mode="multiple"
           placeholder="Select Candidate"
-          value={selectedItems}
-          onChange={setSelectedItems}
+          value={[]}
+          // value={selectedItems}
+          onChange={(value) => setSelectedItems([...value, ...selectedItems])}
           style={{ width: "100%" }}
-          options={searchData}
+          options={searchData?.map((item) => ({
+            ...item,
+            disabled: selectedItems.includes(item.value),
+          }))}
           onSearch={setSearchValue}
           onBlur={() => setSearchValue("")}
-          tagRender={() => <></>}
+          // tagRender={() => undefined}
         />
-        <div>
+        <p className="font-semibold my-5 text-base">
+          {selectedItems.length} Candidates Picked
+        </p>
+        <div className="max-h-[400px] overflow-y-scroll mt-5">
           {selectedItems.map((item) => (
-            <div className="mt-3 flex justify-between">
+            <div className="mt-3 pb-3 flex justify-between border-b border-gray-200">
               <p>
                 {searchData &&
                   searchData.length &&

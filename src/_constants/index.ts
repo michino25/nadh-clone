@@ -46,7 +46,6 @@ export const statusData: StatusData[] = [
 export const statusData2 = [
   { label: "Raw", value: "1" },
   { label: "Screening Call", value: "2" },
-  { label: "Client Canceled", value: "-4" },
   { label: "Interview with NADH", value: "3" },
   { label: "Shortlisting", value: "4" },
   { label: "Submit to Client", value: "5" },
@@ -56,8 +55,10 @@ export const statusData2 = [
   { label: "Offer Accepted", value: "9" },
   { label: "Placement", value: "10" },
   { label: "Follow-up", value: "11" },
-  { label: "Rejected by NADH", value: "-2" },
   { label: "Candidate Declined", value: "-1" },
+  { label: "Rejected by NADH", value: "-2" },
+  { label: "Rejected by Client", value: "-3" },
+  { label: "Client Canceled", value: "-4" },
 ];
 
 export const statusData3 = [
@@ -553,3 +554,12 @@ export const convertValuetoKey = (data: any, toString?: boolean) => {
 
 export const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+export const getIndustryString = (data: any) => {
+  if (!data) return undefined;
+  let industry = "";
+  if (data.industry?.label) industry += data.industry.label;
+  if (data.sector?.label) industry += " / " + data.sector.label;
+  if (data.category?.label) industry += " / " + data.category.label;
+  return industry;
+};

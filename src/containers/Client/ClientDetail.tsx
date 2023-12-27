@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
 
-import BackToTopButton from "components/BackToTopButton";
+import BackToTopButton from "components/ShareComponents/BackToTopButton";
 import { clientApi, otherApi, userApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";

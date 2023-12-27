@@ -1,33 +1,10 @@
-import { Avatar, Button, notification } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Button, notification } from "antd";
 import { formatDate, formatName } from "utils/format";
 import MyCKEditor from "components/DataEntry/MyCKEditor";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { clientApi } from "apis/index";
-
-const commentItem = (name: string, content: string, date: string) => (
-  <div className="p-5 text-base bg-gray-100/50 rounded-lg mb-3">
-    <div className="flex gap-4 px-4 mb-2">
-      <div>
-        <Avatar
-          style={{ backgroundColor: "#87d068" }}
-          icon={<UserOutlined />}
-          size="small"
-        />
-      </div>
-      <p className="flex-col gap-3">
-        <p className="flex gap-2 text-sm mb-3">
-          <span className="text-gray-900 font-semibold">{name}</span>
-          <span className="text-gray-600">{date}</span>
-        </p>
-        <p className="text-gray-500 text-sm flex space-y-5">
-          <div dangerouslySetInnerHTML={{ __html: content }} />
-        </p>
-      </p>
-    </div>
-  </div>
-);
+import { otherApi } from "apis/index";
+import CommentItem from "components/ShareComponents/CommentItem";
 
 export default function Notes({
   data,
@@ -40,7 +17,7 @@ export default function Notes({
 
   const createNote = async (data: any) => {
     try {
-      await clientApi.createComment(data);
+      await otherApi.createComment(data);
 
       // success
       // console.log(res.data);
@@ -113,11 +90,13 @@ export default function Notes({
         {data.length > 0 &&
           data.map((item: any) => (
             <div key={item.createdAt}>
-              {commentItem(
-                formatName(item.user.full_name) as string,
-                item.content,
-                formatDate(item.createdAt, "ISOdate", "date&hour") as string
-              )}
+              <CommentItem
+                name={formatName(item.user.full_name) as string}
+                content={item.content}
+                date={
+                  formatDate(item.createdAt, "ISOdate", "date&hour") as string
+                }
+              />
             </div>
           ))}
       </div>

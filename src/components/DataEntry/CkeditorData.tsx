@@ -2,7 +2,13 @@ import { Button, Form } from "antd";
 import MyCKEditor from "components/DataEntry/MyCKEditor";
 import { useEffect, useState } from "react";
 
-export default function CkeditorData({ label, sublabel, data, updateFn }: any) {
+export default function CkeditorData({
+  label,
+  sublabel,
+  data,
+  updateFn,
+  resetSuccess,
+}: any) {
   const [edit, setEdit] = useState(false);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,6 +24,7 @@ export default function CkeditorData({ label, sublabel, data, updateFn }: any) {
       setTimeout(() => {
         setEdit(false);
         setLoading(false);
+        if (resetSuccess) setNote("");
       }, 500);
     });
   };
