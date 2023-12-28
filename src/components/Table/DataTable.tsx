@@ -313,7 +313,7 @@ const DataTable = ({
 
       <Table
         className="w-full"
-        loading={colIsPending || loading}
+        loading={(colIsPending && getPathname() !== "/dashboard") || loading}
         title={() => header}
         footer={() => footer}
         scroll={{ x: true }}

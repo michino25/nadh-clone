@@ -87,7 +87,7 @@ const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
               onChange={(data: any) => update(item.id, data)}
             />
 
-            {address.length > 1 && (
+            {address.length > 0 && (
               <MinusCircleOutlined
                 className="hover:text-red-500 pb-3"
                 onClick={() => remove(item.id)}

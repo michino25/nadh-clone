@@ -125,7 +125,7 @@ export default function CandidatesList({
     setOpen(true);
   };
 
-  const onClose = () => {
+  const closeDrawer = () => {
     setOpen(false);
   };
 
@@ -134,12 +134,13 @@ export default function CandidatesList({
   };
 
   const handleOk = () => {
-    addCandidateFlow(selectedItems);
+    addCandidateFlow(selectedItems, { onSuccess: () => setSelectedItems([]) });
     setIsModalOpen(false);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setSelectedItems([]);
   };
 
   const header = (
@@ -230,7 +231,7 @@ export default function CandidatesList({
         title="Candidate Detail"
         placement="right"
         closable={false}
-        onClose={onClose}
+        onClose={closeDrawer}
         open={open}
       >
         <Descriptions column={1}>
@@ -292,7 +293,11 @@ export default function CandidatesList({
           style={{ width: "100%" }}
           options={searchData?.map((item) => ({
             ...item,
-            disabled: selectedItems.includes(item.value),
+            disabled:
+              selectedItems.includes(item.value) ||
+              candidate_flows
+                .map((item: any) => item.candidate_id)
+                .includes(item.value),
           }))}
           onSearch={setSearchValue}
           onBlur={() => setSearchValue("")}

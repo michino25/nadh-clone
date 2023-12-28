@@ -9,7 +9,7 @@ interface iDataInput {
   className?: string;
   type?: string | undefined;
   value: string;
-  onSubmit: (value: any) => void;
+  onSubmit: (value: any, onSuccess: () => void) => void;
   editing: any;
   setEditing: (value: any) => void;
 }
@@ -24,6 +24,8 @@ export default function EditableForm({
   className,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   return (
     <>
       {!edit ? (
@@ -45,9 +47,12 @@ export default function EditableForm({
         <Form
           name="global_state"
           onFinish={(values: any) => {
-            onSubmit(values);
-            setEdit(false);
-            setEditing(false);
+            setLoading(true);
+            onSubmit(values, () => {
+              setLoading(false);
+              setEdit(false);
+              setEditing(false);
+            });
           }}
           className="w-full mr-5"
         >
@@ -68,7 +73,7 @@ export default function EditableForm({
                 <DatePicker
                   format="DD-MM-YYYY"
                   placeholder="Start date"
-                  className="mt-3 block"
+                  className="block"
                 />
               </Form.Item>
             </Col>
@@ -81,13 +86,14 @@ export default function EditableForm({
                   setEdit(false);
                   setEditing(false);
                 }}
+                disabled={loading}
               >
                 Cancel
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Save
               </Button>
             </Form.Item>

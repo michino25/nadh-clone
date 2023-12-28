@@ -6,9 +6,9 @@ import { useState } from "react";
 interface iDataInput {
   name: string;
   placeholder: string;
-  value: string;
+  value: any;
   data: iOption[];
-  onSubmit: (value: any) => void;
+  onSubmit: (value: any, onSuccess: () => void) => void;
   editing: any;
   setEditing: (value: any) => void;
   prevent?: boolean;
@@ -18,7 +18,7 @@ interface iDataInput {
 export default function EditableForm({
   name,
   placeholder,
-  value,
+  value: defaultValue,
   data,
   onSubmit,
   editing,
@@ -27,18 +27,23 @@ export default function EditableForm({
   prevent = false,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
   // console.log(data);
   // console.log(value);
 
   const showData =
-    data.length > 0 ? data.filter((item) => item.value === value)[0] : null;
+    defaultValue?.label && defaultValue?.value
+      ? defaultValue
+      : data.length > 0 && defaultValue?.value
+      ? data.filter((item) => item.value === defaultValue?.value)[0]
+      : null;
 
   const closeEdit = () => {
     setEdit(false);
-    setEditing(false);
+    if (!prevent) setEditing(false);
   };
 
-  console.log(editing, !prevent, name);
+  console.log(editing, !prevent, name, defaultValue);
 
   return (
     <>
@@ -50,9 +55,9 @@ export default function EditableForm({
           }}
           className={
             "text-black p-0 m-0 w-full text-left " +
-            (editing && prevent && "cursor-not-allowed")
+            (editing && !prevent && "cursor-not-allowed")
           }
-          disabled={editing && prevent}
+          disabled={editing && !prevent}
         >
           {showData ? (
             option === "tag" ? (
@@ -68,8 +73,11 @@ export default function EditableForm({
         <Form
           name="global_state"
           onFinish={(values: any) => {
-            onSubmit(values);
-            closeEdit();
+            setLoading(true);
+            onSubmit(values, () => {
+              setLoading(false);
+              closeEdit();
+            });
           }}
           className="w-full mr-5"
         >
@@ -79,7 +87,7 @@ export default function EditableForm({
                 placeholder={placeholder}
                 label=""
                 name={name}
-                defaultValue={value}
+                defaultValue={defaultValue?.value}
                 data={data}
               />
             </Col>
@@ -91,13 +99,14 @@ export default function EditableForm({
                 onClick={() => {
                   closeEdit();
                 }}
+                disabled={loading}
               >
                 Cancel
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Save
               </Button>
             </Form.Item>

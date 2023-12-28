@@ -67,6 +67,7 @@ export default function SearchCurrency({
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
+        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       />
 
       <InputNumber
@@ -78,6 +79,7 @@ export default function SearchCurrency({
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
+        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       />
 
       <Select

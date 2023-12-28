@@ -11,6 +11,7 @@ interface iDataInput {
   data: iOption[];
   disable?: boolean;
   multiple?: boolean;
+  loading?: boolean;
   value?: any;
   onChange?: (value: any) => void;
 }
@@ -29,6 +30,7 @@ export default function DataSelect({
   disable,
   multiple,
   value,
+  loading,
   onChange,
 }: iDataInput) {
   return (
@@ -53,6 +55,7 @@ export default function DataSelect({
         showSearch
         mode={multiple ? "multiple" : undefined}
         placeholder={placeholder}
+        loading={loading}
       />
     </Form.Item>
   );

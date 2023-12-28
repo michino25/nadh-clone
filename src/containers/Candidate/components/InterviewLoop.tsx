@@ -1,4 +1,5 @@
 import {
+  getIndustryString,
   getLabelByValue,
   getStatusDataByKey,
   statusData2,
@@ -6,6 +7,7 @@ import {
 } from "_constants/index";
 import dayjs from "dayjs";
 import {
+  Button,
   Timeline,
   Collapse,
   Dropdown,
@@ -16,15 +18,21 @@ import {
   DatePicker,
   Select,
   notification,
+  Descriptions,
 } from "antd";
 import type { CollapseProps } from "antd";
 import { formatDate, formatName } from "utils/format";
-import { MoreOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  ExclamationCircleFilled,
+  PlusOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { otherApi, userApi } from "apis/index";
+import { jobApi, otherApi, userApi } from "apis/index";
 import CompareTable from "./CompareTable";
 import CommentItem from "components/ShareComponents/CommentItem";
 import CkeditorData from "components/DataEntry/CkeditorData";
@@ -33,10 +41,12 @@ export default function InterviewLoop({
   allData,
   updateFn,
   refetch,
+  addCandidateFlow,
 }: {
   allData: any;
   updateFn: (value: any, onSuccess?: () => void) => void;
   refetch: () => void;
+  addCandidateFlow: (data: any, option?: any) => void;
 }) {
   const data = allData?.flows;
   const currentNote = allData.notes.map((item: any) => item.id);
@@ -233,7 +243,6 @@ export default function InterviewLoop({
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log(flow);
                   setCurrentFlow(item.id);
                   setCurrentFlowItem(flow.id);
                   showDetailModal();
@@ -252,11 +261,80 @@ export default function InterviewLoop({
     })
   );
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  const [searchValue, setSearchValue] = useState("");
+  const [searchData, setSearchData] = useState<any[]>();
+
+  useQuery({
+    queryKey: ["job", searchValue],
+    queryFn: async () =>
+      await jobApi
+        .getJobs(
+          searchValue
+            ? {
+                advance_search: searchValue,
+              }
+            : {
+                page: 1,
+                perPage: 20,
+              }
+        )
+        .then((res) => {
+          // setSearchData(res.data.data);
+          setSearchData(
+            res.data.data.length &&
+              res.data.data.map((item: any) => ({
+                label: (
+                  <>
+                    <p className="font-bold">
+                      {item.job_id} - {item.title.label} - {item.target_date}
+                    </p>
+                    <p>
+                      <span className="font-bold">Client Name: </span>
+                      {item.client.code}
+                    </p>
+                    <p>
+                      <span className="font-bold">Industry: </span>
+                      {item.business_line.map((item: any) => (
+                        <p>{getIndustryString(item)}</p>
+                      ))}
+                    </p>
+                  </>
+                ),
+                value: item.id,
+              }))
+          );
+        }),
+  });
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    addCandidateFlow(selectedItems, {
+      onSuccess: () => setSelectedItems([]),
+    });
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setSelectedItems([]);
+  };
+
   console.log(flowData);
   console.log(flowItemData);
 
   return (
     <>
+      <Button onClick={showModal} className="flex items-center mb-4">
+        <PlusOutlined />
+        Pick Job
+      </Button>
+
       <Collapse accordion items={items} />
 
       <Modal
@@ -501,6 +579,75 @@ export default function InterviewLoop({
               ))}
           </Col>
         </Row>
+      </Modal>
+
+      <Modal
+        title="Pick Job"
+        open={isModalOpen}
+        okText="Pick"
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Descriptions column={1} layout="horizontal">
+          <Descriptions.Item label="Full name">
+            {formatName(allData?.full_name)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Position Applied">
+            {allData?.prefer_position.positions
+              .map((item: any) => item.label)
+              .join(", ")}
+          </Descriptions.Item>
+          <Descriptions.Item label="Industry">
+            <div className="flex-col">
+              {allData?.business_line.map((item: any) => (
+                <p>{getIndustryString(item)}</p>
+              ))}
+            </div>
+          </Descriptions.Item>
+        </Descriptions>
+
+        <Select
+          mode="multiple"
+          placeholder="Select Job"
+          value={[]}
+          onChange={(value) => setSelectedItems([...value, ...selectedItems])}
+          style={{ width: "100%" }}
+          options={
+            searchData?.length
+              ? searchData?.map((item) => ({
+                  ...item,
+                  disabled:
+                    selectedItems.includes(item.value) ||
+                    data.map((item: any) => item.job_id).includes(item.value),
+                }))
+              : []
+          }
+          onSearch={setSearchValue}
+          onBlur={() => setSearchValue("")}
+        />
+        <p className="font-semibold my-5 text-base">
+          {selectedItems.length} Jobs Picked
+        </p>
+        <div className="max-h-[400px] overflow-y-scroll mt-5">
+          {selectedItems.map((item) => (
+            <div className="mt-3 pb-3 flex justify-between border-b border-gray-200">
+              <p>
+                {searchData &&
+                  searchData.length &&
+                  searchData.find((candidate) => candidate.value === item)
+                    .label}
+              </p>
+              <DeleteOutlined
+                className="hover:text-red-500 cursor-pointer p-4"
+                onClick={() =>
+                  setSelectedItems(
+                    selectedItems.filter((candidate) => candidate !== item)
+                  )
+                }
+              />
+            </div>
+          ))}
+        </div>
       </Modal>
     </>
   );

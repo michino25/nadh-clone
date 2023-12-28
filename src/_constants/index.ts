@@ -61,6 +61,16 @@ export const statusData2 = [
   { label: "Client Canceled", value: "-4" },
 ];
 
+export const statusData4 = [
+  { label: "Create Client", value: "1" },
+  { label: "Tele Marketing", value: "2" },
+  { label: "Client Meeting", value: "3" },
+  { label: "Proposal Sent", value: "4" },
+  { label: "Follow Up", value: "5" },
+  { label: "Sign Contract", value: "6" },
+  { label: "Job Order Received", value: "7" },
+];
+
 export const statusData3 = [
   { label: "Lost", value: "-3" },
   { label: "Cancel", value: "-2" },

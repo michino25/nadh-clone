@@ -442,6 +442,37 @@ export default function Candidates() {
     createCandidateHistoriesMutation.mutate(data);
   };
 
+  const addFlow = async (data: any) => {
+    setLoading(true);
+    try {
+      await otherApi.addCandidateFlows2(candidateData.id, data);
+
+      // success
+      // console.log(res.data);
+      refetch();
+
+      notification.success({
+        message: "Update Candidate",
+        description: "Update success.",
+      });
+    } catch (error: any) {
+      // error
+      // console.error("Update failed", error);
+      notification.error({
+        message: "Update Candidate",
+        description: `Update failed. ${
+          error.response.data[0].message || "Please try again."
+        }`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addFlowMutation = useMutation({
+    mutationFn: (formData: any) => addFlow(formData),
+  });
+
   if (isPending || !id) return <Skeleton active />;
 
   return (
@@ -573,6 +604,15 @@ export default function Candidates() {
               />
             </div>
             <div id="part-5" className="p-4 bg-white rounded-lg">
+              <p className="mb-4 font-bold text-lg">Certificate</p>
+              <TextArea
+                name="certificate_text"
+                label=""
+                placeholder="Certificate"
+                defaultValue={candidateData.certificate_text}
+              />
+            </div>
+            <div id="part-5" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Working History</p>
               <WorkingHistory
                 data={candidateData?.histories}
@@ -612,7 +652,7 @@ export default function Candidates() {
             </div>
             <div id="part-8" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Note</p>
-              <div className="max-h-[400px] overflow-y-scroll px-2">
+              <div className="max-h-[400px] overflow-y-auto px-2">
                 {candidateData?.notes.length > 0
                   ? candidateData?.notes.map((item: any) => (
                       <CommentItem
@@ -663,6 +703,7 @@ export default function Candidates() {
                   updateMutation.mutate(value, { onSuccess })
                 }
                 refetch={refetch}
+                addCandidateFlow={addFlowMutation.mutate}
               />
             </div>
           </div>

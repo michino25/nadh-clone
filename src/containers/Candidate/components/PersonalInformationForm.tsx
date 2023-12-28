@@ -72,7 +72,6 @@ export default function PersonalInformationForm({
             label="Primary status"
             placeholder="Primary status"
             name="priority_status"
-            required
             defaultValue={candidateData?.priority_status.toString()}
             data={primaryStatus}
           />

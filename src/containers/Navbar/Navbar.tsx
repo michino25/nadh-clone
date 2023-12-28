@@ -150,7 +150,16 @@ export default function Navbar() {
                   </p>
                 </Flex>
 
-                <Avatar icon={<UserOutlined />} />
+                {user?.user_sent.avatar ? (
+                  <Avatar
+                    src={
+                      "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                      user?.user_sent.avatar
+                    }
+                  />
+                ) : (
+                  <Avatar icon={<UserOutlined />} />
+                )}
               </Flex>
             </a>
           </Dropdown>

@@ -1,7 +1,7 @@
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import FormIndustry from "containers/Client/components/FormIndustry";
 
-export default function Industry({ data, updateFn, loading }: any) {
+export default function IndustryAPI({ data, updateFn, loading }: any) {
   const addIndustry = (data: any) => {
     const newData: any = {};
     if (data.industry) newData.industry_id = data.industry.value;

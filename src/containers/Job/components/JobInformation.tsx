@@ -8,6 +8,7 @@ import EditableInputNumberForm from "components/EditableForm/EditableInputNumber
 import {
   convertValuetoKey,
   experiences,
+  getSelectByValue,
   statusData3,
   typeJob,
 } from "_constants/index";
@@ -84,15 +85,15 @@ export default function JobInformation({
 
   console.log(contactPersonsData);
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: any, onSuccess: () => void) => {
     const data = {
       ...values,
     };
-    updateMutation.mutate(data);
+    updateMutation.mutate(data, { onSuccess });
     console.log("Received values of form: ", data);
   };
 
-  const onFinishDate = (values: any) => {
+  const onFinishDate = (values: any, onSuccess: () => void) => {
     const date = dayjs(values.extend_date.$d.toLocaleDateString()).format(
       "YYYY-MM-DD"
     );
@@ -101,11 +102,15 @@ export default function JobInformation({
       extend_date: date,
     };
 
-    updateMutation.mutate(data);
+    updateMutation.mutate(data, { onSuccess });
     console.log("Received values of form: ", data);
   };
 
-  const onFinishSelect = (values: any, option?: string) => {
+  const onFinishSelect = (
+    values: any,
+    onSuccess: () => void,
+    option?: string
+  ) => {
     if (!option)
       values = {
         [Object.keys(values)[0]]: { key: values[Object.keys(values)[0]] },
@@ -116,11 +121,15 @@ export default function JobInformation({
         [Object.keys(values)[0]]: [values[Object.keys(values)[0]]],
       };
 
-    updateMutation.mutate(values);
+    updateMutation.mutate(values, { onSuccess });
     console.log("Received values of form: ", values);
   };
 
-  const onFinishAddress = (values: any, option: string) => {
+  const onFinishAddress = (
+    values: any,
+    onSuccess: () => void,
+    option: string
+  ) => {
     const data = {
       ...(values.address && { address: values.address }),
       ...(values.country && { country: convertValuetoKey(values.country) }),
@@ -132,7 +141,7 @@ export default function JobInformation({
 
     const transferData = { [option]: data };
     // console.log("Received values of form: ", { [option]: [data] });
-    updateMutation.mutate(transferData);
+    updateMutation.mutate(transferData, { onSuccess });
   };
 
   return (
@@ -145,7 +154,14 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="title"
-            value={data.title.key}
+            value={
+              data.title
+                ? {
+                    value: data?.title?.key,
+                    label: data?.title?.label,
+                  }
+                : {}
+            }
             data={!positionIsPending ? positionData : []}
             onSubmit={onFinishSelect}
           />
@@ -156,7 +172,14 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="department"
-            value={data.department.key}
+            value={
+              data.department
+                ? {
+                    value: data?.department?.key,
+                    label: data?.department?.label,
+                  }
+                : {}
+            }
             data={!departmentIsPending ? departmentData : []}
             onSubmit={onFinishSelect}
           />
@@ -178,9 +201,11 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="type"
-            value={data.type.toString()}
+            value={getSelectByValue(typeJob, data.type.toString())}
             data={typeJob}
-            onSubmit={(values) => onFinishSelect(values, "nokey")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "nokey")
+            }
           />
         </Descriptions.Item>
         <Descriptions.Item label="Experience Level">
@@ -189,9 +214,14 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="experience_level"
-            value={data.experience_level.toString()}
+            value={getSelectByValue(
+              experiences,
+              data.experience_level.toString()
+            )}
             data={experiences}
-            onSubmit={(values) => onFinishSelect(values, "nokey")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "nokey")
+            }
           />
         </Descriptions.Item>
         <Descriptions.Item label="Created By">
@@ -213,9 +243,11 @@ export default function JobInformation({
             setEditing={setEditable}
             name="status"
             option="tag"
-            value={data.status.toString()}
+            value={getSelectByValue(statusData3, data.status.toString())}
             data={statusData3}
-            onSubmit={(values) => onFinishSelect(values, "nokey")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "nokey")
+            }
           />
         </Descriptions.Item>
         <Descriptions.Item label="Open Date">
@@ -242,7 +274,7 @@ export default function JobInformation({
             setEditing={setEditable}
             name="extend_date"
             value={data.extend_date}
-            onSubmit={(value) => onFinishDate(value)}
+            onSubmit={(value, onSuccess) => onFinishDate(value, onSuccess)}
           />
         </Descriptions.Item>
 
@@ -251,7 +283,9 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="location"
-            onSubmit={(data) => onFinishAddress(data, "location")}
+            onSubmit={(data, onSuccess) =>
+              onFinishAddress(data, onSuccess, "location")
+            }
             value={data.location}
             onlyCity
           />
@@ -263,9 +297,18 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="client_id"
-            value={data?.client_id}
+            value={
+              data?.client
+                ? {
+                    value: data?.client?.key,
+                    label: data?.client?.label,
+                  }
+                : {}
+            }
             data={!clientIsPending ? clientData : []}
-            onSubmit={(values) => onFinishSelect(values, "nokey")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "nokey")
+            }
           />
         </Descriptions.Item>
         <Descriptions.Item label="Client's Contact Person">
@@ -274,9 +317,18 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="pic"
-            value={data.pic}
+            value={
+              data?.pic
+                ? data?.pic.map((item: any) => ({
+                    value: item?.key,
+                    label: item?.label,
+                  }))
+                : {}
+            }
             data={!contactPersonsIsPending ? contactPersonsData : []}
-            onSubmit={(values) => onFinishSelect(values, "-")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "-")
+            }
           />
         </Descriptions.Item>
 
@@ -286,9 +338,18 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="recruiters"
-            value={data.recruiters[0]?.id}
+            value={
+              data.recruiters[0]
+                ? {
+                    value: data.recruiters[0]?.key,
+                    label: data.recruiters[0]?.label,
+                  }
+                : {}
+            }
             data={!userIsPending ? userData : []}
-            onSubmit={(values) => onFinishSelect(values, "array")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "array")
+            }
           />
         </Descriptions.Item>
         <Descriptions.Item label="Mapping by">
@@ -297,9 +358,18 @@ export default function JobInformation({
             editing={editable}
             setEditing={setEditable}
             name="related_users"
-            value={data.related_users}
+            value={
+              data.related_users
+                ? data.related_users.map((item: any) => ({
+                    value: item?.key,
+                    label: item?.label,
+                  }))
+                : {}
+            }
             data={!userIsPending ? userData : []}
-            onSubmit={(values) => onFinishSelect(values, "-")}
+            onSubmit={(values, onSuccess) =>
+              onFinishSelect(values, onSuccess, "-")
+            }
           />
         </Descriptions.Item>
       </Descriptions>

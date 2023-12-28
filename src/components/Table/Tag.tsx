@@ -8,6 +8,7 @@ import { Skeleton, Tag } from "antd";
 import { otherApi } from "apis/index";
 import useFilter from "src/hooks/useFilter";
 import { useQuery } from "@tanstack/react-query";
+import { formatPrice } from "utils/format";
 
 const pageCol = { title: "Page" };
 
@@ -176,8 +177,9 @@ const App = ({
   const currencyHandler = (paramItem: string) => {
     const data = paramItem.split(",");
     const currency = " " + getSelectByValue(currencyData, data[2]).label;
-    const from = data[0] !== "-" ? "from " + data[0] + currency : "";
-    const to = data[1] !== "-" ? "to " + data[1] + currency : "";
+    const from =
+      data[0] !== "-" ? "from " + formatPrice(data[0]) + currency : "";
+    const to = data[1] !== "-" ? "to " + formatPrice(data[1]) + currency : "";
     return from + " " + to;
   };
 

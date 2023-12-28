@@ -9,7 +9,7 @@ interface iDataInput {
   placeholder: string;
   value: any;
   data: iOption[];
-  onSubmit: (value: any) => void;
+  onSubmit: (value: any, onSuccess: () => void) => void;
   editing: any;
   setEditing: (value: any) => void;
   prevent?: boolean;
@@ -26,6 +26,7 @@ export default function EditableForm({
   prevent = false,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
   // console.log(data);
   // console.log(value);
 
@@ -56,8 +57,11 @@ export default function EditableForm({
         <Form
           name="global_state"
           onFinish={(values: any) => {
-            onSubmit(values);
-            closeEdit();
+            setLoading(true);
+            onSubmit(values, () => {
+              setLoading(false);
+              closeEdit();
+            });
           }}
           className="w-full mr-5"
         >
@@ -67,7 +71,7 @@ export default function EditableForm({
                 placeholder={placeholder}
                 label=""
                 name={name}
-                defaultValue={value}
+                defaultValue={value.map((item: any) => item.value)}
                 options={data}
                 required={false}
               />
@@ -80,13 +84,14 @@ export default function EditableForm({
                 onClick={() => {
                   closeEdit();
                 }}
+                disabled={loading}
               >
                 Cancel
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Save
               </Button>
             </Form.Item>

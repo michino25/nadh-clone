@@ -59,6 +59,7 @@ export default function SearchNumber({
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
+        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       />
       <InputNumber
         min={0}
@@ -69,6 +70,7 @@ export default function SearchNumber({
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
+        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       />
 
       {(!!to || to === 0) && !!from && from > to && (

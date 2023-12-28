@@ -5,7 +5,7 @@ import { useState } from "react";
 interface iDataInput {
   name: string;
   value: any;
-  onSubmit: (value: any) => void;
+  onSubmit: (value: any, onSuccess: () => void) => void;
   editing: any;
   setEditing: (value: any) => void;
 }
@@ -18,6 +18,7 @@ export default function EditableForm({
   setEditing,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
@@ -39,9 +40,12 @@ export default function EditableForm({
         <Form
           name="global_state"
           onFinish={(values: any) => {
-            onSubmit(values);
-            setEdit(false);
-            setEditing(false);
+            setLoading(true);
+            onSubmit(values, () => {
+              setLoading(false);
+              setEdit(false);
+              setEditing(false);
+            });
           }}
           className="w-full mr-5"
         >
@@ -58,13 +62,14 @@ export default function EditableForm({
                   setEdit(false);
                   setEditing(false);
                 }}
+                disabled={loading}
               >
                 Cancel
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Save
               </Button>
             </Form.Item>

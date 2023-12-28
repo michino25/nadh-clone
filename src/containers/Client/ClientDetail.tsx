@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { Timeline, Anchor, Descriptions, Skeleton, notification } from "antd";
+import { Anchor, Descriptions, Skeleton, notification } from "antd";
 
 import BackToTopButton from "components/ShareComponents/BackToTopButton";
 import { clientApi, otherApi, userApi } from "apis/index";
@@ -9,6 +9,7 @@ import {
   clientType,
   convertValuetoKey,
   cpa,
+  getSelectByValue,
   primaryStatus2,
 } from "_constants/index";
 import { formatDate, formatName } from "utils/format";
@@ -26,8 +27,9 @@ import EditableSelectForm from "components/EditableForm/EditableSelectForm";
 import { useEffect, useState } from "react";
 import Notes from "./components/Notes";
 import { MyAvatar } from "components/DataEntry/MyAvatar";
-
-const statusData: any = ["Create Client", "Tele Marketing", "Client Meeting"];
+import AccountDevelopment from "./components/AccountDevelopment";
+import RelatedJob from "./components/RelatedJob";
+import ClientDescription from "./components/ClientDescription";
 
 const anchorItems = [
   {
@@ -48,11 +50,16 @@ const anchorItems = [
   {
     key: "part-4",
     href: "#part-4",
-    title: "Attachments",
+    title: "Related Job Codes",
   },
   {
     key: "part-5",
     href: "#part-5",
+    title: "Attachments",
+  },
+  {
+    key: "part-6",
+    href: "#part-6",
     title: "Activity Logs",
   },
 ];
@@ -78,6 +85,18 @@ export default function Clients() {
         };
       }),
   });
+
+  const { data: accountDevelopmentsData, refetch: accountDevelopmentRefetch } =
+    useQuery({
+      queryKey: ["accountDevelopments", clientData?.id_int],
+      queryFn: async () =>
+        await otherApi
+          .getAccountDevelopments(clientData?.id_int as string)
+          .then((res) => {
+            return res.data;
+          }),
+      enabled: !!clientData,
+    });
 
   const { data: companyData, isPending: companyIsPending } = useQuery({
     queryKey: ["company"],
@@ -147,8 +166,6 @@ export default function Clients() {
     queryKey: ["files", clientData?.id],
     queryFn: () =>
       otherApi.getFile(clientData?.id, "client").then((res) => {
-        console.log(res.data.data);
-
         return res.data.data.map((item: any) => ({
           uid: item.id,
           name: item.name,
@@ -159,8 +176,6 @@ export default function Clients() {
       }),
     enabled: !!clientData?.id,
   });
-
-  console.log(clientImage);
 
   const fileUpload = (id: string) => {
     if (id) {
@@ -237,22 +252,26 @@ export default function Clients() {
     },
   });
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: any, onSuccess: () => void) => {
     const data = {
       ...values,
     };
-    updateMutation.mutate(data);
+    updateMutation.mutate(data, { onSuccess });
     console.log("Received values of form: ", data);
   };
 
-  const onFinishSelect = (values: any, option?: string) => {
+  const onFinishSelect = (
+    values: any,
+    onSuccess: () => void,
+    option?: string
+  ) => {
     if (option === "lead_consultants") {
       values = {
         lead_consultants: [values.lead_consultants],
       };
     }
 
-    updateMutation.mutate(values);
+    updateMutation.mutate(values, { onSuccess });
     console.log("Received values of form: ", values);
   };
 
@@ -262,7 +281,11 @@ export default function Clients() {
       await otherApi.getCountries().then((res) => res.data.data),
   });
 
-  const onFinishPhone = (values: any, option: string) => {
+  const onFinishPhone = (
+    values: any,
+    onSuccess: () => void,
+    option: string
+  ) => {
     const countryCode = values[option].phone_code.extra.dial_code;
 
     const countryInfo = countries.find(
@@ -279,11 +302,15 @@ export default function Clients() {
         },
       };
       // console.log("Received values of form: ", data);
-      updateMutation.mutate(data);
+      updateMutation.mutate(data, { onSuccess });
     }
   };
 
-  const onFinishAddress = (values: any, option: string) => {
+  const onFinishAddress = (
+    values: any,
+    onSuccess: () => void,
+    option: string
+  ) => {
     const data = {
       ...(values.address && { address: values.address }),
       ...(values.country && { country: convertValuetoKey(values.country) }),
@@ -293,12 +320,26 @@ export default function Clients() {
 
     const transferData =
       option === "factory_site1"
-        ? { factory_site: [data, clientData.factory_site[1]] }
+        ? {
+            factory_site: [
+              ...(data && Object.keys(data).length > 0 ? [data] : []),
+              ...(clientData.factory_site[1]
+                ? [clientData.factory_site[1]]
+                : []),
+            ],
+          }
         : option === "factory_site2"
-        ? { factory_site: [clientData.factory_site[0], data] }
+        ? {
+            factory_site: [
+              ...(clientData.factory_site[0]
+                ? [clientData.factory_site[0]]
+                : []),
+              ...(data && Object.keys(data).length > 0 ? [data] : []),
+            ],
+          }
         : { address: data };
     // console.log("Received values of form: ", { [option]: [data] });
-    updateMutation.mutate(transferData);
+    updateMutation.mutate(transferData, { onSuccess });
   };
 
   const addIndustry = (data: any) => {
@@ -394,7 +435,9 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="address"
-                    onSubmit={(data) => onFinishAddress(data, "address")}
+                    onSubmit={(data, onSuccess) =>
+                      onFinishAddress(data, onSuccess, "address")
+                    }
                     value={clientData.address}
                   />
                 </Descriptions.Item>
@@ -403,7 +446,9 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="phone"
-                    onSubmit={(data) => onFinishPhone(data, "phone")}
+                    onSubmit={(data, onSuccess) =>
+                      onFinishPhone(data, onSuccess, "phone")
+                    }
                     value={clientData.phone}
                   />
                 </Descriptions.Item>
@@ -412,7 +457,9 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="fax"
-                    onSubmit={(data) => onFinishPhone(data, "fax")}
+                    onSubmit={(data, onSuccess) =>
+                      onFinishPhone(data, onSuccess, "fax")
+                    }
                     value={clientData.fax}
                   />
                 </Descriptions.Item>
@@ -469,10 +516,13 @@ export default function Clients() {
                     placeholder="Status"
                     editing={editable}
                     setEditing={setEditable}
-                    prevent={clientData.status !== 12}
+                    prevent={clientData.status !== "12"}
                     name="status"
                     option="tag"
-                    value={clientData.status.toString()}
+                    value={getSelectByValue(
+                      primaryStatus2,
+                      clientData.status.toString()
+                    )}
                     data={primaryStatus2}
                     onSubmit={onFinishSelect}
                   />
@@ -494,9 +544,18 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="parent_id"
-                    value={clientData?.parent_company?.key}
+                    value={
+                      clientData?.parent_company
+                        ? {
+                            value: clientData?.parent_company?.key,
+                            label: clientData?.parent_company?.label,
+                          }
+                        : {}
+                    }
                     data={!companyIsPending ? companyData : []}
-                    onSubmit={(values) => onFinishSelect(values)}
+                    onSubmit={(values, onSuccess) =>
+                      onFinishSelect(values, onSuccess)
+                    }
                   />
                 </Descriptions.Item>
                 <Descriptions.Item label="Factory Site 1">
@@ -504,7 +563,9 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="factory_site"
-                    onSubmit={(data) => onFinishAddress(data, "factory_site1")}
+                    onSubmit={(data, onSuccess) =>
+                      onFinishAddress(data, onSuccess, "factory_site1")
+                    }
                     value={clientData.factory_site[0]}
                   />
                 </Descriptions.Item>
@@ -513,7 +574,9 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="factory_site"
-                    onSubmit={(data) => onFinishAddress(data, "factory_site2")}
+                    onSubmit={(data, onSuccess) =>
+                      onFinishAddress(data, onSuccess, "factory_site2")
+                    }
                     value={clientData.factory_site[1]}
                   />
                 </Descriptions.Item>
@@ -526,7 +589,10 @@ export default function Clients() {
                     placeholder="Client Type"
                     setEditing={setEditable}
                     name="type"
-                    value={clientData.type.toString()}
+                    value={getSelectByValue(
+                      clientType,
+                      clientData.type.toString()
+                    )}
                     data={clientType}
                     onSubmit={onFinishSelect}
                   />
@@ -537,7 +603,7 @@ export default function Clients() {
                     placeholder="CPA"
                     setEditing={setEditable}
                     name="cpa"
-                    value={clientData.cpa.toString()}
+                    value={getSelectByValue(cpa, clientData.cpa.toString())}
                     data={cpa}
                     onSubmit={onFinishSelect}
                   />
@@ -548,10 +614,19 @@ export default function Clients() {
                     editing={editable}
                     setEditing={setEditable}
                     name="lead_consultants"
-                    value={clientData.lead_consultants[0]?.id}
+                    value={
+                      clientData.lead_consultants[0]
+                        ? {
+                            value: clientData?.lead_consultants[0]?.key,
+                            label: formatName(
+                              clientData?.lead_consultants[0]?.label
+                            ),
+                          }
+                        : {}
+                    }
                     data={!consultantIsPending ? consultantData : []}
-                    onSubmit={(values) =>
-                      onFinishSelect(values, "lead_consultants")
+                    onSubmit={(values, onSuccess) =>
+                      onFinishSelect(values, onSuccess, "lead_consultants")
                     }
                   />
                 </Descriptions.Item>
@@ -591,24 +666,21 @@ export default function Clients() {
             </div>
             <div className="w-1/3 bg-white rounded-lg ml-5 p-6">
               <p className="mb-4 font-bold text-lg">Account Development</p>
-
-              <Timeline
-                items={clientData.account_development.process.map(
-                  (flow: any) => ({
-                    color: "green",
-                    children: (
-                      <>
-                        <strong>{statusData[flow.current_status - 1]}</strong>
-                        <p>
-                          {formatDate(flow.createdAt, "ISOdate", "date&hour")}
-                        </p>
-                        <p>0 comments</p>
-                      </>
-                    ),
-                  })
-                )}
+              <AccountDevelopment
+                data={accountDevelopmentsData}
+                refetch={accountDevelopmentRefetch}
               />
             </div>
+          </div>
+
+          <div id="part-3" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Client Description</p>
+            <ClientDescription
+              data={clientData}
+              updateFn={(value: any, onSuccess: () => void) =>
+                updateMutation.mutate(value, { onSuccess })
+              }
+            />
           </div>
 
           <div id="part-3" className="p-4 bg-white rounded-lg">
@@ -621,6 +693,17 @@ export default function Clients() {
           </div>
 
           <div id="part-4" className="p-4 bg-white rounded-lg">
+            <p className="mb-4 font-bold text-lg">Related Job Codes</p>
+            <div className="flex space-x-2">
+              <RelatedJob
+                data={clientData.jobs}
+                clientId={clientData.id}
+                refetch={refetch}
+              />
+            </div>
+          </div>
+
+          <div id="part-5" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Attachments</p>
             <div className="flex space-x-2">
               <DataUpload
@@ -637,7 +720,7 @@ export default function Clients() {
             </div>
           </div>
 
-          <div id="part-5" className="p-4 bg-white rounded-lg">
+          <div id="part-6" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Activity Logs</p>
             <div className="flex space-x-2">
               <ActivityLogsTable data={clientData.logs} />

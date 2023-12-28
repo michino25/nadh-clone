@@ -96,6 +96,11 @@ export default function Notes({
                 date={
                   formatDate(item.createdAt, "ISOdate", "date&hour") as string
                 }
+                avtLink={
+                  item.user.mediafiles.avatar &&
+                  "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                    item.user.mediafiles.avatar
+                }
               />
             </div>
           ))}

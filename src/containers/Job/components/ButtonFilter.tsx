@@ -14,9 +14,6 @@ export default function ButtonFilter({
     { key: "5", name: "Submit to Client" },
     { key: "6", name: "Interview with Client" },
     { key: "7", name: "Reference Check" },
-  ];
-
-  const data2 = [
     { key: "8", name: "Negotiation" },
     { key: "9", name: "Offer Accepted" },
     { key: "10", name: "Placement" },
@@ -25,49 +22,26 @@ export default function ButtonFilter({
   ];
 
   return (
-    <>
-      <div className="flex justify-start">
-        {data.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => {
-              setFilterStatus(item.key);
-              window.location.href = "#part-5";
-            }}
-            className="hover:text-blue-500 rounded-lg w-1/6 p-3 hover:bg-blue-200/10 border border-transparent hover:border-blue-300 duration-500"
-          >
-            <p className="font-medium text-lg">
-              {
-                rawData.filter(
-                  (candidate: any) => candidate.toString() === item.key
-                ).length
-              }
-            </p>
-            <p>{item.name}</p>
-          </button>
-        ))}
-      </div>
-      <div className="flex justify-start mt-8">
-        {data2.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => {
-              setFilterStatus(item.key);
-              window.location.href = "#part-5";
-            }}
-            className="hover:text-blue-500 rounded-lg p-3 w-1/6 hover:bg-blue-200/10 border border-transparent hover:border-blue-300 duration-500"
-          >
-            <p className="font-medium text-lg">
-              {
-                rawData.filter(
-                  (candidate: any) => candidate.toString() === item.key
-                ).length
-              }
-            </p>
-            <p>{item.name}</p>
-          </button>
-        ))}
-      </div>
-    </>
+    <div className="flex justify-start flex-wrap space-y-4">
+      {data.map((item) => (
+        <button
+          key={item.key}
+          onClick={() => {
+            setFilterStatus(item.key);
+            window.location.href = "#part-5";
+          }}
+          className="xl:w-1/6 md:w-1/4 w-1/3 hover:text-blue-500 rounded-lg py-3 hover:bg-blue-200/10 border border-transparent hover:border-blue-300 duration-500"
+        >
+          <p className="font-medium text-lg">
+            {
+              rawData.filter(
+                (candidate: any) => candidate.toString() === item.key
+              ).length
+            }
+          </p>
+          <p>{item.name}</p>
+        </button>
+      ))}
+    </div>
   );
 }

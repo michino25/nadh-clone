@@ -19,7 +19,7 @@ import CandidatesList from "./components/CandidatesList";
 import ButtonFilter from "./components/ButtonFilter";
 import JobDescription from "./components/JobDescription";
 import JobRequirements from "./components/JobRequirements";
-import Industry from "./components/Industry";
+import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 const anchorItems = [
   {
@@ -326,7 +326,7 @@ export default function JobDetail() {
 
           <div id="part-1" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Industry</p>
-            <Industry
+            <IndustryAPI
               data={jobData?.business_line}
               updateFn={(value: any) =>
                 updateMutation.mutate({

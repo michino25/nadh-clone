@@ -13,8 +13,10 @@ import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
 
 export default function CreateJobForm({
   setAddress,
+  defaultClient,
 }: {
-  setAddress: (data: any) => void;
+  setAddress?: (data: any) => void;
+  defaultClient?: string;
 }) {
   const { data: userData } = useQuery({
     queryKey: ["userData"],
@@ -100,6 +102,8 @@ export default function CreateJobForm({
             name="client_id"
             required
             data={clientData}
+            defaultValue={defaultClient}
+            disable={!!defaultClient}
           />
         </Col>
       </Row>
@@ -114,7 +118,10 @@ export default function CreateJobForm({
         </Col>
         <Col span={12}>
           <Form.Item label="Address" name="address">
-            <Address onChange={setAddress} onlyCity />
+            <Address
+              onChange={(value) => setAddress && setAddress(value)}
+              onlyCity
+            />
           </Form.Item>
         </Col>
       </Row>

@@ -165,9 +165,6 @@ export default function Remuneration({
               label={`From (${salary.name})`}
               placeholder="Salary From"
               name="salary_from"
-              formatter={(value: any) =>
-                value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
               defaultValue={salary.salary.from}
             />
           </Col>
@@ -176,9 +173,6 @@ export default function Remuneration({
               label={`To (${salary.name})`}
               placeholder="Salary To"
               name="salary_to"
-              formatter={(value: any) =>
-                value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
               defaultValue={salary.salary.to}
             />
           </Col>

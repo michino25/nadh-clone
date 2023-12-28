@@ -2,7 +2,7 @@ import { Col, Row, Form, InputNumber } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
-import Industry from "./Industry";
+import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 export default function JobRequirements({ data, updateFn, loading }: any) {
   const [form] = Form.useForm();
@@ -53,6 +53,9 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               <InputNumber
                 className="w-full"
                 placeholder="Industry Year of Services"
+                formatter={(value: any) =>
+                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
               />
             </Form.Item>
           </Col>
@@ -65,6 +68,9 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               <InputNumber
                 className="w-full"
                 placeholder="Year of Management"
+                formatter={(value: any) =>
+                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
               />
             </Form.Item>
           </Col>
@@ -131,7 +137,7 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
       <Row gutter={16}>
         <Col span={24}>
           <h5 className="pb-4">Expected Candidate's Industries</h5>
-          <Industry
+          <IndustryAPI
             data={data.requirement?.industry}
             updateFn={(value: any) =>
               updateFn({
@@ -150,12 +156,15 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
           <CkeditorData
             data={data?.requirement.other}
             label="Other"
-            updateFn={(value: string) =>
-              updateFn({
-                requirement: {
-                  other: value,
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  requirement: {
+                    other: value,
+                  },
                 },
-              })
+                { onSuccess }
+              )
             }
           />
         </Col>

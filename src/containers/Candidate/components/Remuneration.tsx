@@ -85,9 +85,6 @@ export default function Remuneration({
             label={`Based salary (${salary.name})`}
             placeholder="Based salary"
             name="current_salary"
-            formatter={(value: any) =>
-              value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
             defaultValue={salary.current_salary}
           />
         </Col>
@@ -186,9 +183,6 @@ export default function Remuneration({
                 label="From"
                 placeholder="Salary From"
                 name="salary_from"
-                formatter={(value: any) =>
-                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
                 defaultValue={salary.salary.from}
               />
             </Col>
@@ -204,9 +198,6 @@ export default function Remuneration({
                 label="To"
                 placeholder="Salary To"
                 name="salary_to"
-                formatter={(value: any) =>
-                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
                 defaultValue={salary.salary.to}
               />
             </Col>

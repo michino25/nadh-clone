@@ -103,6 +103,14 @@ const _otherApi = {
     });
   },
 
+  addCandidateFlows2(candidate_id: string, job_array: any) {
+    const url = "api/candidate_flows";
+    return axios().post(url, {
+      candidate_id,
+      job_array,
+    });
+  },
+
   updateCandidateFlows(flowId: string, param: any, option?: string) {
     const url = "api/candidate_flows/" + flowId + (option ? "/" + option : "");
     return axios().put(url, param);
@@ -113,9 +121,15 @@ const _otherApi = {
     return axios().get(url);
   },
 
-  getComments(id: string) {
+  getAccountDevelopments(id: string) {
     const url = "api/account_developments/" + id;
     return axios().get(url);
+  },
+
+  updateAccountDevelopments(accDevId: string, param: any, option?: string) {
+    const url =
+      "api/account_developments/" + accDevId + (option ? "/" + option : "");
+    return axios().put(url, param);
   },
 
   createComment(params: any) {

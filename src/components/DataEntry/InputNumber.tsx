@@ -7,7 +7,7 @@ interface iDataInput {
   defaultValue?: string | number;
   placeholder: string;
   disabled?: boolean;
-  formatter?: any;
+  noformat?: boolean;
   suffix?: any;
 }
 
@@ -15,10 +15,10 @@ export default function DataInputNumber({
   label,
   name,
   required,
-  formatter,
   defaultValue,
   placeholder,
   disabled,
+  noformat,
   suffix,
 }: iDataInput) {
   return (
@@ -36,7 +36,11 @@ export default function DataInputNumber({
       <InputNumber
         style={{ width: "100%" }}
         min={0}
-        formatter={formatter}
+        formatter={
+          !noformat
+            ? (value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            : undefined
+        }
         placeholder={placeholder}
         disabled={disabled}
         suffix={suffix}

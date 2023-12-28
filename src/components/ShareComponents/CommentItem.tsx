@@ -31,15 +31,18 @@ export default function CommentItem({
               />
             )}
           </div>
-          <p className="flex-col gap-2">
-            <p className="flex text-sm mb-1 gap-1 flex-wrap">
+          <div className="flex-col gap-2">
+            <div className="flex text-sm mb-1 gap-1 flex-wrap">
               <span className="text-gray-900 font-semibold">{name}</span>
               <span className="text-gray-600">{date}</span>
-            </p>
-            <p className="text-gray-500 text-sm flex space-y-5">
-              <div dangerouslySetInnerHTML={{ __html: content }} />
-            </p>
-          </p>
+            </div>
+            <div className="text-gray-500 text-sm flex space-y-5">
+              <div
+                className="StyleInjectInnerHTML"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </div>
+          </div>
         </div>
         {optionFn && optionTitle && (
           <div>
@@ -47,10 +50,11 @@ export default function CommentItem({
               menu={{
                 items: [
                   {
-                    label: <button onClick={optionFn}>{optionTitle}</button>,
-                    key: "0",
+                    label: optionTitle,
+                    key: "1",
                   },
                 ],
+                onClick: optionFn,
               }}
               trigger={["click"]}
             >

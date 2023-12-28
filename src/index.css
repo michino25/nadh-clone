@@ -87,3 +87,12 @@ img.ant-upload-list-item-image {
   box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   outline: 0;
 }
+
+.ck-content img,
+.StyleInjectInnerHTML img {
+  max-width: 400px !important;
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}

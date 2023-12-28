@@ -39,7 +39,15 @@ export default function CkeditorData({
               <>
                 <MyCKEditor value={note} setValue={setNote} />
                 <div className="w-full flex justify-end gap-3 mt-3">
-                  <Button onClick={() => setEdit(false)}>Cancel</Button>
+                  <Button
+                    onClick={() => {
+                      setEdit(false);
+                      setNote("");
+                    }}
+                    disabled={loading}
+                  >
+                    Cancel
+                  </Button>
                   <Button type="primary" onClick={addComment} loading={loading}>
                     Save
                   </Button>
@@ -48,10 +56,16 @@ export default function CkeditorData({
             ) : (
               <button
                 className="cursor-text w-full text-left border-gray-200 border rounded-lg p-3 hover:border-blue-500"
-                onClick={() => setEdit(true)}
+                onClick={() => {
+                  setEdit(true);
+                  setNote(data);
+                }}
               >
                 {data ? (
-                  <div dangerouslySetInnerHTML={{ __html: data }} />
+                  <div
+                    className="StyleInjectInnerHTML"
+                    dangerouslySetInnerHTML={{ __html: data }}
+                  />
                 ) : (
                   <span className="text-gray-400">Add content...</span>
                 )}
