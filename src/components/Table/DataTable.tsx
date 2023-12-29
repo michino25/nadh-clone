@@ -249,7 +249,7 @@ const DataTable = ({
   const header = (
     <Flex justify="space-between">
       <span className="text-xl font-bold">
-        {titleTable} ({paginationOption?.total})
+        {titleTable} ({paginationOption?.total || 0})
       </span>
 
       <Flex gap="middle">

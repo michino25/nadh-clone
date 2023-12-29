@@ -342,6 +342,7 @@ export default function InterviewLoop({
         open={isCompareModalOpen}
         width={1000}
         footer={null}
+        centered
         onCancel={handleCompareCancel}
       >
         <CompareTable

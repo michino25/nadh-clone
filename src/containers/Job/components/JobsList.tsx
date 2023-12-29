@@ -150,7 +150,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   delete allParams["salary"];
 
   const { isPending } = useQuery({
-    queryKey: ["Jobs", window.location.href],
+    queryKey: ["Jobs", window.location.href, userDetail.id],
     queryFn: async () =>
       await jobApi
         .getJobs({

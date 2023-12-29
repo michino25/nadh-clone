@@ -666,10 +666,12 @@ export default function Clients() {
             </div>
             <div className="w-1/3 bg-white rounded-lg ml-5 p-6">
               <p className="mb-4 font-bold text-lg">Account Development</p>
-              <AccountDevelopment
-                data={accountDevelopmentsData}
-                refetch={accountDevelopmentRefetch}
-              />
+              <div className="max-h-[630px] h-full overflow-y-auto">
+                <AccountDevelopment
+                  data={accountDevelopmentsData}
+                  refetch={accountDevelopmentRefetch}
+                />
+              </div>
             </div>
           </div>
 

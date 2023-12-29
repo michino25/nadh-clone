@@ -61,6 +61,7 @@ export default function MyCKEditor({ value, setValue }: any) {
       }}
       config={{
         extraPlugins: [uploadPlugin],
+        placeholder: "Add content",
       }}
 
       // config={editorConfiguration}

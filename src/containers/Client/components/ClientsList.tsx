@@ -52,7 +52,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const [data, setData] = useState<any[]>([]);
 
   const { isPending } = useQuery({
-    queryKey: ["Clients", window.location.href],
+    queryKey: ["Clients", window.location.href, userDetail.id],
     queryFn: async () =>
       await clientApi
         .getClients({

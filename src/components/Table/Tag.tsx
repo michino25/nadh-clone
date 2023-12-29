@@ -81,11 +81,22 @@ const App = ({
       .join(", ");
   };
 
-  const fromToHandler = (tagName: string, nextTagName: string) => {
-    const valueNext = nextTagName ? " to " + getAllParams()[nextTagName] : "";
+  const fromToHandler = (
+    tagName: string,
+    nextTagName: string,
+    type: string
+  ) => {
+    const valueNext = nextTagName
+      ? " to " +
+        (type === "number"
+          ? formatPrice(getAllParams()[nextTagName])
+          : getAllParams()[nextTagName])
+      : "";
     return (
       (tagName.match(/_(from)$/) ? "from " : "to ") +
-      getAllParams()[tagName] +
+      (type === "number"
+        ? formatPrice(getAllParams()[tagName])
+        : getAllParams()[tagName]) +
       valueNext
     );
   };
@@ -216,7 +227,8 @@ const App = ({
                 col.title,
                 fromToHandler(
                   tag,
-                  index !== array.length - 1 ? array[index + 1] : ""
+                  index !== array.length - 1 ? array[index + 1] : "",
+                  col.type
                 ),
                 tag,
                 col.type

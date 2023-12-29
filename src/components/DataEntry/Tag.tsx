@@ -75,6 +75,7 @@ export default function Tag({ tags, setTags }: any) {
               ref={editInputRef}
               key={tag}
               size="small"
+              placeholder="URL"
               style={tagInputStyle}
               value={editInputValue}
               onChange={handleEditInputChange}
@@ -117,6 +118,7 @@ export default function Tag({ tags, setTags }: any) {
           ref={inputRef}
           type="text"
           size="small"
+          placeholder="URL"
           style={tagInputStyle}
           value={inputValue}
           onChange={handleInputChange}

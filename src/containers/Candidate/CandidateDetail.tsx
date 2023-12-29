@@ -653,34 +653,36 @@ export default function Candidates() {
             <div id="part-8" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Note</p>
               <div className="max-h-[400px] overflow-y-auto px-2">
-                {candidateData?.notes.length > 0
-                  ? candidateData?.notes.map((item: any) => (
-                      <CommentItem
-                        name={formatName(item.user.full_name) as string}
-                        content={item.content}
-                        date={
-                          formatDate(
-                            item.createdAt,
-                            "ISOdate",
-                            "date&hour"
-                          ) as string
-                        }
-                        avtLink={
-                          item.user.mediafiles.avatar &&
-                          "https://lubrytics.com:8443/nadh-mediafile/file/" +
-                            item.user.mediafiles.avatar
-                        }
-                        optionFn={() =>
-                          updateMutation.mutate({
-                            note_comments: candidateData?.notes
-                              .map((item: any) => item.id)
-                              .filter((note: string) => note !== item.id),
-                          })
-                        }
-                        optionTitle="Remove from Note"
-                      />
-                    ))
-                  : "* Can't find any note"}
+                {candidateData?.notes.length > 0 ? (
+                  candidateData?.notes.map((item: any) => (
+                    <CommentItem
+                      name={formatName(item.user.full_name) as string}
+                      content={item.content}
+                      date={
+                        formatDate(
+                          item.createdAt,
+                          "ISOdate",
+                          "date&hour"
+                        ) as string
+                      }
+                      avtLink={
+                        item.user.mediafiles.avatar &&
+                        "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                          item.user.mediafiles.avatar
+                      }
+                      optionFn={() =>
+                        updateMutation.mutate({
+                          note_comments: candidateData?.notes
+                            .map((item: any) => item.id)
+                            .filter((note: string) => note !== item.id),
+                        })
+                      }
+                      optionTitle="Remove from Note"
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-400">Can't find any note</p>
+                )}
               </div>
             </div>
           </div>

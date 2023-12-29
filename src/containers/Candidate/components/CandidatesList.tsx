@@ -48,7 +48,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
   const [data, setData] = useState<any[]>([]);
   const { isPending } = useQuery({
-    queryKey: ["Candidates", window.location.href],
+    queryKey: ["Candidates", window.location.href, userDetail.id],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
