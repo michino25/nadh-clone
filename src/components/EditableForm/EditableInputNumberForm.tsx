@@ -1,5 +1,6 @@
 import { Button, Form, Col, Row, InputNumber } from "antd";
 import { useState } from "react";
+import { formatPrice } from "utils/format";
 
 interface iDataInput {
   label?: string;
@@ -38,7 +39,7 @@ export default function EditableForm({
             setEditing(true);
           }}
         >
-          {value || "-"}
+          {(value && formatPrice(value.toString())) || "-"}
         </button>
       ) : (
         <Form

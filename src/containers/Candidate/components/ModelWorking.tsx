@@ -117,7 +117,11 @@ export default function ModelWorking({
             name="End_month"
             required
             disable={checkbox}
-            defaultValue={defaultData?.end_time?.split("-")[1]}
+            defaultValue={
+              defaultData?.end_time !== "Present"
+                ? defaultData?.end_time?.split("-")[1]
+                : undefined
+            }
           />
         </Col>
         <Col span={6}>
@@ -128,7 +132,11 @@ export default function ModelWorking({
             name="End_year"
             required
             disable={checkbox}
-            defaultValue={defaultData?.end_time?.split("-")[0]}
+            defaultValue={
+              defaultData?.end_time !== "Present"
+                ? defaultData?.end_time?.split("-")[0]
+                : undefined
+            }
           />
         </Col>
       </Row>

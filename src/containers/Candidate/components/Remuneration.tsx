@@ -5,17 +5,20 @@ import { useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import DataRadioNote from "components/DataEntry/RadioNote";
+import CkeditorData from "components/DataEntry/CkeditorData";
 
 export default function Remuneration({
   data,
   currency: currencySelect,
   setCurrency: setCurrencySelect,
   form,
+  updateFn,
 }: {
   data: any;
   currency: number | undefined;
   setCurrency: (value: number) => void;
   form: any;
+  updateFn: (value: any, onSuccess: any) => void;
 }) {
   const [currencyData, setCurrencyData] = useState<any[]>();
   const [salary, setSalary] = useState(
@@ -177,116 +180,90 @@ export default function Remuneration({
 
       <Row gutter={16}>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="From"
-                placeholder="Salary From"
-                name="salary_from"
-                defaultValue={salary.salary.from}
-              />
-            </Col>
-            <Col span={8}>
-              <span>({salary.name})</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label={`From (${salary.name})`}
+            placeholder="Salary From"
+            name="salary_from"
+            defaultValue={salary.salary.from}
+          />
         </Col>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="To"
-                placeholder="Salary To"
-                name="salary_to"
-                defaultValue={salary.salary.to}
-              />
-            </Col>
-            <Col span={8}>
-              <span>({salary.name})</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label={`To (${salary.name})`}
+            placeholder="Salary To"
+            name="salary_to"
+            defaultValue={salary.salary.to}
+          />
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="Pension scheme"
-                placeholder="Pension scheme"
-                name="pension_scheme"
-                defaultValue={data?.benefit?.pension_scheme.toString()}
-              />
-            </Col>
-            <Col span={8}>
-              <span>%</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label="Pension scheme"
+            placeholder="Pension scheme"
+            name="pension_scheme"
+            defaultValue={data?.benefit?.pension_scheme.toString()}
+            suffix="%"
+          />
         </Col>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="Annual leaves"
-                placeholder="Annual leaves"
-                name="no_holiday"
-                defaultValue={data?.benefit?.no_holiday.toString()}
-              />
-            </Col>
-            <Col span={8}>
-              <span>day(s)</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label="Annual leaves"
+            placeholder="Annual leaves"
+            name="no_holiday"
+            defaultValue={data?.benefit?.no_holiday.toString()}
+            suffix="day(s)"
+          />
         </Col>
       </Row>
       <Row gutter={16} align={"bottom"}>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="Hours of work/overtime"
-                placeholder="Hours of work"
-                name="working_hour"
-                defaultValue={data?.benefit?.working_hour}
-              />
-            </Col>
-            <Col span={8}>
-              <span>hour per day</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label="Hours of work/overtime"
+            placeholder="Hours of work"
+            name="working_hour"
+            defaultValue={data?.benefit?.working_hour}
+            suffix="hours per day"
+          />
         </Col>
         <Col span={12}>
-          <Row gutter={16} align={"stretch"}>
-            <Col span={16}>
-              <InputNumber
-                label=""
-                placeholder="Hours of overtime"
-                name="overtime_hour"
-                defaultValue={data?.benefit?.overtime_hour.toString()}
-              />
-            </Col>
-            <Col span={8}>
-              <span>hours per week</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label=""
+            placeholder="Hours of overtime"
+            name="overtime_hour"
+            defaultValue={data?.benefit?.overtime_hour.toString()}
+            suffix="hours per week"
+          />
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Row gutter={16} align={"middle"}>
-            <Col span={16}>
-              <InputNumber
-                label="Notice days"
-                placeholder="Notice days"
-                name="notice_days"
-                defaultValue={data?.notice_days?.toString() || 0}
-              />
-            </Col>
-            <Col span={8}>
-              <span>day(s)</span>
-            </Col>
-          </Row>
+          <InputNumber
+            label="Notice days"
+            placeholder="Notice days"
+            name="notice_days"
+            defaultValue={data?.notice_days?.toString() || 0}
+            suffix="day(s)"
+          />
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorData
+            data={data?.extra}
+            label="Anything else"
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  remuneration: {
+                    extra: value,
+                  },
+                },
+                { onSuccess }
+              )
+            }
+          />
         </Col>
       </Row>
     </>

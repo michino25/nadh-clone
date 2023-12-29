@@ -92,7 +92,7 @@ img.ant-upload-list-item-image {
 .StyleInjectInnerHTML img {
   max-width: 400px !important;
   width: 100%;
-  border-radius: 12px;
+  border-radius: 5px;
   margin-top: 8px;
   margin-bottom: 8px;
 }

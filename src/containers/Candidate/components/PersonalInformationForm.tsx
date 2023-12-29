@@ -19,10 +19,14 @@ export default function PersonalInformationForm({
   candidateData,
   setAddress,
   address,
+  reset,
+  setReset,
 }: {
   candidateData?: any;
   setAddress: (data: any) => void;
   address: any;
+  reset?: boolean;
+  setReset: (data: any) => void;
 }) {
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
@@ -191,9 +195,16 @@ export default function PersonalInformationForm({
       <Row gutter={16}>
         <Col span={24}>
           <DynamicFormAddress
-            defaultValue={candidateData?.addresses}
+            defaultValue={
+              candidateData?.addresses.country === undefined &&
+              candidateData?.addresses.address === undefined
+                ? candidateData?.addresses
+                : []
+            }
             setAddress={setAddress}
             address={address}
+            reset={reset}
+            setReset={setReset}
           />
         </Col>
       </Row>

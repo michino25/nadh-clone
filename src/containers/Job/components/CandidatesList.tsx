@@ -95,23 +95,23 @@ export default function CandidatesList({
             res.data.data.length &&
               res.data.data.map((item: any) => ({
                 label: (
-                  <>
+                  <div key={item.candidate_id_int}>
                     <p className="font-bold">
                       {item.candidate_id_int} - {formatName(item.full_name)}
                     </p>
-                    <p>
+                    <div>
                       <span className="font-bold">Position Applied: </span>
                       {item.prefer_position.positions
                         .map((item: any) => item.label)
                         .join(", ")}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                       <span className="font-bold">Industry: </span>
                       {item.business_line.map((item: any) => (
                         <p>{getIndustryString(item)}</p>
                       ))}
-                    </p>
-                  </>
+                    </div>
+                  </div>
                 ),
                 value: item.id,
               }))
@@ -309,12 +309,12 @@ export default function CandidatesList({
         <div className="max-h-[400px] overflow-y-scroll mt-5">
           {selectedItems.map((item) => (
             <div className="mt-3 pb-3 flex justify-between border-b border-gray-200">
-              <p>
+              <div>
                 {searchData &&
                   searchData.length &&
                   searchData.find((candidate) => candidate.value === item)
                     .label}
-              </p>
+              </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"
                 onClick={() =>

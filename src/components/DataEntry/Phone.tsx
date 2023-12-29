@@ -19,9 +19,19 @@ export default function Phone({
     queryKey: ["countries", "phone"],
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: any) => ({
-          ...item.extra,
-        }))
+        res.data.data
+          .map((item: any) => ({
+            ...item.extra,
+          }))
+          .sort((a: any, b: any) => {
+            if (a.dial_code < b.dial_code) {
+              return -1;
+            }
+            if (a.dial_code > b.dial_code) {
+              return 1;
+            }
+            return 0;
+          })
       ),
   });
 

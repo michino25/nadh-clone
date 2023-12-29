@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Anchor, Button, Form, Skeleton, notification } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -28,6 +28,7 @@ import CommentItem from "components/ShareComponents/CommentItem";
 export default function Candidates() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
+  const [resetAddress, setResetAddress] = useState(false);
 
   const {
     data: candidateData,
@@ -254,28 +255,29 @@ export default function Candidates() {
     const data = {
       ...values,
       addresses:
-        address &&
-        address.map((item) => ({
-          address: item.address.address,
-          ...{
-            country: item.address.country && {
-              key: item.address.country.value,
-              label: item.address.country.label,
-            },
-          },
-          ...{
-            city: item.address.city && {
-              key: item.address.city.value,
-              label: item.address.city.label,
-            },
-          },
-          ...{
-            district: item.address.district && {
-              key: item.address.district.value,
-              label: item.address.district.label,
-            },
-          },
-        })),
+        address && address[0]?.address?.country
+          ? address.map((item) => ({
+              address: item.address.address,
+              ...{
+                country: item.address.country && {
+                  key: item.address.country.value,
+                  label: item.address.country.label,
+                },
+              },
+              ...{
+                city: item.address.city && {
+                  key: item.address.city.value,
+                  label: item.address.city.label,
+                },
+              },
+              ...{
+                district: item.address.district && {
+                  key: item.address.district.value,
+                  label: item.address.district.label,
+                },
+              },
+            }))
+          : [],
 
       dob: dob,
       gender: parseInt(values.gender),
@@ -473,7 +475,13 @@ export default function Candidates() {
     mutationFn: (formData: any) => addFlow(formData),
   });
 
-  if (isPending || !id) return <Skeleton active />;
+  const linkPDF =
+    "https://lubrytics.com:8443/nadh-api-crm/api/export/candidates/" +
+    id +
+    "/CV?download=true&token=" +
+    getUser().token;
+
+  if (isPending || !id) return <Skeleton className="p-12" active />;
 
   return (
     <>
@@ -488,18 +496,21 @@ export default function Candidates() {
               {candidateData.full_name.toUpperCase()}
             </span>
           </div>
-          <div>
-            <Button
-              href={
-                "https://lubrytics.com:8443/nadh-api-crm/api/export/candidates/" +
-                id +
-                "/CV?download=true&token=" +
-                getUser().token
-              }
-              type="primary"
-              icon={<DownloadOutlined />}
-            >
+          <div className="flex gap-3">
+            <Button href={linkPDF} icon={<DownloadOutlined />}>
               Download File PDF
+            </Button>
+
+            <Button
+              onClick={async () => {
+                const data = await fetch(linkPDF).then((r) => r.blob());
+                const fileURL = window.URL.createObjectURL(data);
+                window.open(fileURL);
+              }}
+              type="primary"
+              icon={<FilePdfOutlined />}
+            >
+              View File PDF
             </Button>
           </div>
         </div>
@@ -552,11 +563,17 @@ export default function Candidates() {
           className="w-full flex"
           onFinish={onFinish}
           onReset={() => {
+            setResetAddress(true);
             form.resetFields();
-            setShowBtn(false);
+            setTimeout(() => {
+              setShowBtn(false);
+            }, 500);
           }}
           form={form}
-          onValuesChange={() => setShowBtn(true)}
+          onValuesChange={() => {
+            setShowBtn(true);
+            setResetAddress(false);
+          }}
         >
           <div className="flex-col w-2/3 space-y-4 pb-12">
             <div id="part-1" className="p-4 bg-white rounded-lg">
@@ -575,6 +592,8 @@ export default function Candidates() {
                 candidateData={candidateData}
                 setAddress={setAddress}
                 address={address}
+                reset={resetAddress}
+                setReset={setResetAddress}
               />
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
@@ -630,24 +649,23 @@ export default function Candidates() {
                 currency={currency}
                 setCurrency={setCurrency}
                 form={form}
+                updateFn={updateMutation.mutate}
               />
             </div>
             <div id="part-7" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>
               <div className="flex space-x-2">
-                {candidateImage?.length > 0 && (
-                  <DataUpload
-                    label=""
-                    imgList={candidateImage}
-                    onChange={fileUpload}
-                    onDelete={fileDelete}
-                    data={{
-                      obj_table: "candidates",
-                      obj_uid: candidateData.id,
-                      uploadedByUserId: getUser().user_sent.user_id,
-                    }}
-                  />
-                )}
+                <DataUpload
+                  label=""
+                  imgList={candidateImage}
+                  onChange={fileUpload}
+                  onDelete={fileDelete}
+                  data={{
+                    obj_table: "candidates",
+                    obj_uid: candidateData.id,
+                    uploadedByUserId: getUser().user_sent.user_id,
+                  }}
+                />
               </div>
             </div>
             <div id="part-8" className="p-4 bg-white rounded-lg">
@@ -688,7 +706,7 @@ export default function Candidates() {
           </div>
           {showBtn && (
             <Form.Item className="fixed bottom-0 right-0 left-0 bg-gray-200 mb-0 z-40 flex justify-end py-3 px-8">
-              <Button type="default" className="mr-3" htmlType="reset">
+              <Button type="default" className="mr-3 bg-white" htmlType="reset">
                 Cancel
               </Button>
               <Button type="primary" htmlType="submit">
@@ -696,7 +714,7 @@ export default function Candidates() {
               </Button>
             </Form.Item>
           )}
-          <div className="w-1/3 pl-5">
+          <div className="w-1/3 pl-5 fixed right-4">
             <div className="bg-white flex-col p-4 rounded-lg">
               <p className="mb-4 font-bold text-lg">Interview Loop</p>
               <InterviewLoop

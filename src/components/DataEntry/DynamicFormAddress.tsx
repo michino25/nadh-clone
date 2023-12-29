@@ -8,13 +8,20 @@ interface iDataInput {
   defaultValue?: string[];
   setAddress: (data: any) => void;
   address: any;
+  reset?: boolean;
+  setReset: (data: any) => void;
 }
 
-const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
+const App = ({
+  defaultValue = [""],
+  setAddress,
+  address,
+  reset,
+  setReset,
+}: iDataInput) => {
   // console.log(defaultValue);
-  useEffect(() => {
-    console.log(defaultValue);
 
+  const init = () => {
     if (defaultValue[0])
       setAddress(
         defaultValue.map((item: any) => ({
@@ -42,13 +49,17 @@ const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
           },
         }))
       );
-    else
-      setAddress([
-        {
-          id: uuidv4(),
-          address: {},
-        },
-      ]);
+  };
+
+  useEffect(() => {
+    if (reset === true) {
+      init();
+      setReset(false);
+    }
+  }, [reset]);
+
+  useEffect(() => {
+    init();
   }, []);
 
   const remove = (key: any) => {
@@ -57,7 +68,7 @@ const App = ({ defaultValue = [""], setAddress, address }: iDataInput) => {
 
   const add = () => {
     setAddress([
-      ...address,
+      ...(address ? address : []),
       {
         id: uuidv4(),
         address: {},

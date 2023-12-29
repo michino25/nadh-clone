@@ -58,7 +58,7 @@ const App = ({
 
   console.log(dataContactPersons);
 
-  if (isPending && !!id) return <Skeleton active />;
+  if (isPending && !!id) return <Skeleton className="p-12" active />;
 
   return (
     <Form

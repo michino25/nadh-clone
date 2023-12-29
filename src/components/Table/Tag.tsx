@@ -4,7 +4,7 @@ import {
   getSelectByValue,
   rawColumnsByTable,
 } from "_constants/index";
-import { Skeleton, Tag } from "antd";
+import { Tag } from "antd";
 import { otherApi } from "apis/index";
 import useFilter from "src/hooks/useFilter";
 import { useQuery } from "@tanstack/react-query";
@@ -251,17 +251,11 @@ const App = ({
                 tag
               )}
             {col.type === "industry" &&
-              (!allIndustryIsPending ? (
-                tagName("Industry", industryHandler(getAllParams()[tag]), tag)
-              ) : (
-                <Skeleton active />
-              ))}
+              !allIndustryIsPending &&
+              tagName("Industry", industryHandler(getAllParams()[tag]), tag)}
             {col.type === "address" &&
-              (!(countryIsPending || cityIsPending) ? (
-                tagName("City", cityHandler(getAllParams()["city"]), "city")
-              ) : (
-                <Skeleton active />
-              ))}
+              !(countryIsPending || cityIsPending) &&
+              tagName("City", cityHandler(getAllParams()["city"]), "city")}
             {/* currency */}
             {col.type === "currency" &&
               tagName(col.title, currencyHandler(getAllParams()[tag]), tag)}

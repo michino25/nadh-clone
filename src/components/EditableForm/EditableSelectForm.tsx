@@ -43,8 +43,6 @@ export default function EditableForm({
     if (!prevent) setEditing(false);
   };
 
-  console.log(editing, !prevent, name, defaultValue);
-
   return (
     <>
       {!edit ? (

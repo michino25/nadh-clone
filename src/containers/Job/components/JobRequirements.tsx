@@ -3,6 +3,7 @@ import CkeditorData from "components/DataEntry/CkeditorData";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
+import { v4 as uuidv4 } from "uuid";
 
 export default function JobRequirements({ data, updateFn, loading }: any) {
   const [form] = Form.useForm();
@@ -138,7 +139,10 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
         <Col span={24}>
           <h5 className="pb-4">Expected Candidate's Industries</h5>
           <IndustryAPI
-            data={data.requirement?.industry}
+            data={data.requirement?.industry.map((item: any) => ({
+              ...item,
+              id: uuidv4(),
+            }))}
             updateFn={(value: any) =>
               updateFn({
                 requirement: {

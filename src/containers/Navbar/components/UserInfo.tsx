@@ -69,7 +69,7 @@ export default function UserInfo() {
     console.log("Received values of form: ", data); // {username: 'a', password: 'a'}
   };
 
-  if (isPending || rolePending) return <Skeleton active />;
+  if (isPending || rolePending) return <Skeleton className="p-12" active />;
 
   return (
     <>

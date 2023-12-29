@@ -277,12 +277,14 @@ export const candidateColumns = [
     key: "location",
     search: "city",
     type: "address",
+    width: "50%",
   },
   {
     title: "Industry",
     key: "industry",
     search: "industry_id",
     type: "industry",
+    width: "50%",
   },
   {
     title: "YOB",
@@ -299,12 +301,12 @@ export const candidateColumns = [
   {
     title: "Recent companies",
     key: "current_company",
-    search: "current_company",
+    search: "current_company_text",
   },
   {
     title: "Recent positions",
     key: "current_position",
-    search: "current_position",
+    search: "current_position_text",
   },
   {
     title: "Year of services",
@@ -417,7 +419,7 @@ export const jobColumns = [
   {
     title: "Title",
     key: "title",
-    search: "title",
+    search: "title_text",
   },
   {
     title: "Quantity",

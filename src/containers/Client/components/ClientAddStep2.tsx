@@ -38,7 +38,7 @@ export default function CandidateAddStep1({
     });
   };
 
-  if (isPending) return <Skeleton active />;
+  if (isPending) return <Skeleton className="p-12" active />;
 
   return (
     <>

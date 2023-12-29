@@ -65,7 +65,7 @@ export default function DashboardUserList() {
   const filterSelectData = {
     type: roleData,
     status: [
-      { value: "-2", label: "Inactive" },
+      { value: "0", label: "Inactive" },
       { value: "1", label: "Active" },
     ],
   };

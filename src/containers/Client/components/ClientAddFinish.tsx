@@ -17,7 +17,7 @@ export default function CandidateAddFinish() {
 
   console.log(data);
 
-  if (isPending) return <Skeleton active />;
+  if (isPending) return <Skeleton className="p-12" active />;
 
   return (
     <div className="h-[500px] flex justify-center items-center">

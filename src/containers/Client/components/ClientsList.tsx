@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
+import { Tag as TagAntd } from "antd";
 import { clientApi, userApi } from "apis/index";
 import {
   clientColumns,
@@ -12,12 +13,99 @@ import {
   clientType,
   cpa,
   getSelectByValue,
-  getStatusDataByKey,
   primaryStatus2,
-  statusData2,
+  statusData4,
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
+
+const customColumns: any[] = clientColumns;
+customColumns[3] = {
+  ...customColumns[3],
+  render: (value: any) => <TagAntd color="geekblue">{value}</TagAntd>,
+};
+customColumns[4] = {
+  ...customColumns[4],
+
+  render: (value: any) => {
+    let color;
+    switch (value) {
+      case "Create Client":
+        color = "green";
+        break;
+      case "Tele Marketing":
+        color = "blue";
+        break;
+      case "Client Meeting":
+        color = "default";
+        break;
+      case "Proposal Sent":
+        color = "red";
+        break;
+      case "Follow Up":
+        color = "magenta";
+        break;
+      case "Sign Contract":
+        color = "cyan";
+        break;
+      case "Job Order Received":
+        color = "purple";
+        break;
+    }
+    return <TagAntd color={color}>{value}</TagAntd>;
+  },
+};
+customColumns[6] = {
+  ...customColumns[6],
+
+  render: (value: any) => {
+    let color;
+    switch (value) {
+      case "Retained Plus":
+        color = "green";
+        break;
+      case "Retained Minus":
+        color = "red";
+        break;
+      case "New":
+        color = "blue";
+        break;
+      case "Prospecting":
+        color = "purple";
+        break;
+      case "Lost":
+        color = "default";
+        break;
+    }
+    return <TagAntd color={color}>{value}</TagAntd>;
+  },
+};
+customColumns[10] = {
+  ...customColumns[10],
+
+  render: (value: any) => {
+    let color;
+    switch (value) {
+      case "Active":
+        color = "green";
+        break;
+      case "Off - limit":
+        color = "blue";
+        break;
+      case "Blacklist":
+        color = "red";
+        break;
+      case "Inactive":
+        color = "default";
+        break;
+    }
+    return <TagAntd color={color}>{value}</TagAntd>;
+  },
+};
+customColumns[13] = {
+  ...customColumns[13],
+  render: (value: any) => value && <TagAntd color="purple">{value}</TagAntd>,
+};
 
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {
   const [total, setTotal] = useState(0);
@@ -80,9 +168,10 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
               "timestamp",
               "date"
             ),
-            account_status: getStatusDataByKey(
-              client.account_development.status
-            ),
+            account_status: getSelectByValue(
+              statusData4,
+              client.account_development.status.toString()
+            ).label,
 
             client_jobs: client.jobs_count,
             industry: client.business_line.map((item) => item.sector?.name),
@@ -134,13 +223,16 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     lead_consultants: userData,
     cpa: cpa,
     type: clientType,
-    account_status: statusData2,
+    account_status: statusData4,
     status: primaryStatus2,
   };
 
   return (
     <div className="flex-col w-full">
-      <Tag filterSelectData={filterSelectData} tableName={clientTable} />
+      {userDetail?.id === "" && (
+        <Tag filterSelectData={filterSelectData} tableName={clientTable} />
+      )}
+
       {data && (
         <DataTable
           titleTable={`Clients List`}
@@ -150,7 +242,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
           createBtn={createBtn}
           data={data}
           showDetail={goDetail}
-          rawColumns={clientColumns}
+          rawColumns={customColumns}
           paginationOption={paginationOption}
           noFilter={userDetail?.id !== ""}
         />

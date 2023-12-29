@@ -30,6 +30,7 @@ const columns: ColumnsType<DataType> = [
     title: "Detail",
     key: "tags",
     dataIndex: "tags",
+    width: "40%",
     render: (_, { action, previous_value, current_value }: any) => (
       <span>
         {action} from:{" "}

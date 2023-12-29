@@ -14,23 +14,24 @@ export default function SearchInput({
 }) {
   const { getAllParams, removeOneFilter, changeOneFilter } = useFilter();
 
-  const [filter, setFilter] = useState(getAllParams()[columnKey] || "");
+  const keySearch = getColByKey(rawColumnsByTable(table), columnKey).search;
+  const [filter, setFilter] = useState(getAllParams()[keySearch] || "");
 
   useEffect(() => {
-    setFilter(getAllParams()[columnKey] || "");
+    setFilter(getAllParams()[keySearch] || "");
   }, [window.location.href]);
 
   const submit = () => {
     // console.log(filter);
     if (filter) {
-      changeOneFilter(getAllParams(), columnKey, filter);
-    } else removeOneFilter(getAllParams(), columnKey);
+      changeOneFilter(getAllParams(), keySearch, filter);
+    } else removeOneFilter(getAllParams(), keySearch);
     closeFn();
   };
 
   const reset = () => {
     // console.log(filter);
-    removeOneFilter(getAllParams(), columnKey);
+    removeOneFilter(getAllParams(), keySearch);
     setFilter("");
     closeFn();
   };
@@ -51,7 +52,7 @@ export default function SearchInput({
           "Search " + getColByKey(rawColumnsByTable(table), columnKey).title
         }
         value={filter}
-        defaultValue={getAllParams()[columnKey] || filter}
+        defaultValue={getAllParams()[keySearch] || filter}
         onChange={(e) => setFilter(e.target.value)}
         onPressEnter={submit}
         className="mt-3 block"

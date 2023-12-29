@@ -1,6 +1,6 @@
 import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tag as TagAntd } from "antd";
 import { iJob, iUser } from "utils/models";
 import { formatDate, formatName, formatPrice } from "utils/format";
@@ -208,11 +208,6 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     enabled: userDetail?.id !== undefined,
   });
 
-  useEffect(() => {
-    console.log("Data status:", status);
-    console.log("Data:", data);
-  }, [data, status]);
-
   const goDetail = (id: string) => {
     const jobs = data.filter((item: iJob) => item.id === id);
     navigate(`/job-detail/${jobs[0].job_id}`);
@@ -258,7 +253,9 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      <Tag filterSelectData={filterSelectData} tableName={jobTable} />
+      {userDetail?.id === "" && (
+        <Tag filterSelectData={filterSelectData} tableName={jobTable} />
+      )}
 
       {data && (
         <DataTable

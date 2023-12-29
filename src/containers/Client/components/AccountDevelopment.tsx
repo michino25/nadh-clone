@@ -29,6 +29,7 @@ export default function AccountDevelopment({
   const [formAction] = Form.useForm();
   const [formDate] = Form.useForm();
   const [formUser] = Form.useForm();
+  const [formExpiredDate] = Form.useForm();
 
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentFlowItem, setCurrentFlowItem] = useState<any>();
@@ -271,6 +272,59 @@ export default function AccountDevelopment({
                       }}
                       showTime
                       format="DD-MM-YYYY HH:mm:ss"
+                      className="w-full"
+                    />
+                  </Form.Item>
+                </Form>
+              )}
+
+              {flowItemData?.current_status === 6 && (
+                <Form
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  layout="horizontal"
+                  preserve={false}
+                  form={formExpiredDate}
+                >
+                  <Form.Item
+                    name="expired_date"
+                    label="Expired Date"
+                    rules={[
+                      {
+                        type: "object" as const,
+                        message: "Please select date!",
+                      },
+                    ]}
+                    className="mb-2"
+                    initialValue={
+                      flowItemData?.info?.expired_date &&
+                      dayjs(flowItemData?.info.expired_date)
+                    }
+                  >
+                    <DatePicker
+                      onChange={() => {
+                        console.log(formExpiredDate.getFieldsValue());
+                        showConfirm(
+                          `Pick ${dayjs(
+                            formExpiredDate.getFieldsValue().expired_date
+                          ).format("DD-MM-YYYY")} into Expired Date ?`,
+                          "",
+                          () =>
+                            updateFlowMutation.mutate({
+                              params: {
+                                process: {
+                                  id: flowItemData.id,
+                                  expired_date: dayjs(
+                                    formExpiredDate.getFieldsValue()
+                                      .expired_date
+                                  ).format("YYYY-MM-DD"),
+                                },
+                              },
+                            }),
+                          () => formExpiredDate.resetFields()
+                        );
+                      }}
+                      format="DD-MM-YYYY"
                       className="w-full"
                     />
                   </Form.Item>

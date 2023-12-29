@@ -2,16 +2,16 @@ import IndustryTable from "components/DataDisplay/IndustryTable";
 import FormIndustry from "containers/Client/components/FormIndustry";
 
 export default function IndustryAPI({ data, updateFn, loading }: any) {
-  const addIndustry = (data: any) => {
+  const addIndustry = (formdata: any) => {
     const newData: any = {};
-    if (data.industry) newData.industry_id = data.industry.value;
-    if (data.sector) newData.sector_id = data.sector.value;
-    if (data.category) newData.category_id = data.category.value;
+    if (formdata.industry) newData.industry_id = formdata.industry.value;
+    if (formdata.sector) newData.sector_id = formdata.sector.value;
+    if (formdata.category) newData.category_id = formdata.category.value;
     newData.primary = -1;
 
     const transformedData =
       data &&
-      data.length &&
+      data.length > 0 &&
       data.map((item: any) => {
         const transformedItem: any = {
           industry_id: item.industry.id,

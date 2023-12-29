@@ -42,6 +42,7 @@ export default function DataRadioNote({
             message: `Please input your your ${label}!`,
           },
         ]}
+        className={value === "1" ? "mb-2" : ""}
       >
         <Radio.Group onChange={onChange} value={value} disabled={disabled}>
           {data.map((item: iOption) => (
@@ -53,11 +54,15 @@ export default function DataRadioNote({
       </Form.Item>
 
       {value === "1" && (
-        <DataInput
-          name={name + "_text"}
-          placeholder="Note"
-          defaultValue={(defaultValue as any)[name + "_text"].toString() || ""}
-        />
+        <div className="lg:w-1/3 sm:w-1/2 w-full">
+          <DataInput
+            name={name + "_text"}
+            placeholder="Note"
+            defaultValue={
+              (defaultValue as any)[name + "_text"].toString() || ""
+            }
+          />
+        </div>
       )}
     </>
   );

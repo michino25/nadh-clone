@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export function formatName(name: string | undefined): string | undefined {
   return (
     name &&
@@ -21,24 +23,12 @@ export function formatDate(
     return undefined;
   }
 
-  let dateObject: Date;
+  const dateObject: Date =
+    convertFrom === "timestamp"
+      ? new Date(parseInt(date.toString()))
+      : new Date(date.toString());
 
-  if (convertFrom === "timestamp") {
-    dateObject = new Date(parseInt(date.toString()));
-  } else if (convertFrom === "ISOdate") {
-    dateObject = new Date(date.toString());
-  } else {
-    throw new Error('Invalid convertFrom value. Use "timestamp" or "ISOdate".');
-  }
-
-  if (convertTo === "date&hour") {
-    return dateObject.toLocaleString();
-  } else if (convertTo === "date") {
-    const day = dateObject.getDate().toString().padStart(2, "0");
-    const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObject.getFullYear();
-    return `${day}/${month}/${year}`;
-  } else {
-    throw new Error('Invalid convertTo value. Use "date&hour" or "date".');
-  }
+  return convertTo === "date&hour"
+    ? dayjs(dateObject).format("DD/MM/YYYY HH:mm:ss")
+    : dayjs(dateObject).format("DD/MM/YYYY");
 }

@@ -1,7 +1,8 @@
 import DataTable from "components/Table/DataTable";
+import { notification, Tag as TagAntd } from "antd";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { iUser, iCandidate } from "utils/models";
 import { useNavigate } from "react-router-dom";
 import { candidateApi, otherApi } from "apis/index";
@@ -16,6 +17,30 @@ import {
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
+
+const customColumns: any[] = candidateColumns;
+customColumns[2] = {
+  ...customColumns[2],
+
+  render: (value: any) => {
+    let color;
+    switch (value) {
+      case "Active":
+        color = "green";
+        break;
+      case "Off - limit":
+        color = "blue";
+        break;
+      case "Blacklist":
+        color = "red";
+        break;
+      case "Inactive":
+        color = "default";
+        break;
+    }
+    return <TagAntd color={color}>{value}</TagAntd>;
+  },
+};
 
 export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const navigate = useNavigate();
@@ -47,7 +72,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     : getAllParams();
 
   const [data, setData] = useState<any[]>([]);
-  const { isPending } = useQuery({
+  const { isPending, isError, error } = useQuery({
     queryKey: ["Candidates", window.location.href, userDetail.id],
     queryFn: async () =>
       await candidateApi
@@ -92,6 +117,16 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     enabled: userDetail?.id !== undefined,
   });
 
+  useEffect(() => {
+    if ((error as any)?.response?.status) {
+      setData([]);
+      notification.error({
+        message: "Get Candidate",
+        description: "Not Found",
+      });
+    }
+  }, [isError, error]);
+
   const goDetail = (id: string) => {
     const candidates = data.filter((item: iCandidate) => item.id === id);
     navigate(`/candidate-detail/${candidates[0].candidate_id}`);
@@ -128,9 +163,10 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
   return (
     <div className="flex-col w-full">
-      {!langPending && (
+      {userDetail?.id === "" && !langPending && (
         <Tag tableName={candidateTable} filterSelectData={filterSelectData} />
       )}
+
       <DataTable
         titleTable={`Candidates List`}
         loading={isPending}
@@ -139,7 +175,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
         data={data}
         createBtn={createBtn}
         showDetail={goDetail}
-        rawColumns={candidateColumns}
+        rawColumns={customColumns}
         paginationOption={paginationOption}
         noFilter={userDetail?.id !== ""}
       />

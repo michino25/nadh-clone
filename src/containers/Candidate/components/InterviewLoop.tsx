@@ -287,21 +287,21 @@ export default function InterviewLoop({
             res.data.data.length &&
               res.data.data.map((item: any) => ({
                 label: (
-                  <>
+                  <div key={item.job_id}>
                     <p className="font-bold">
                       {item.job_id} - {item.title.label} - {item.target_date}
                     </p>
-                    <p>
+                    <div>
                       <span className="font-bold">Client Name: </span>
                       {item.client.code}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                       <span className="font-bold">Industry: </span>
                       {item.business_line.map((item: any) => (
                         <p>{getIndustryString(item)}</p>
                       ))}
-                    </p>
-                  </>
+                    </div>
+                  </div>
                 ),
                 value: item.id,
               }))
@@ -335,7 +335,9 @@ export default function InterviewLoop({
         Pick Job
       </Button>
 
-      <Collapse accordion items={items} />
+      <div className="max-h-[400px] h-full overflow-y-auto px-2 -mx-2">
+        <Collapse accordion items={items} />
+      </div>
 
       <Modal
         title="Candidate Assessment"
@@ -632,12 +634,12 @@ export default function InterviewLoop({
         <div className="max-h-[400px] overflow-y-scroll mt-5">
           {selectedItems.map((item) => (
             <div className="mt-3 pb-3 flex justify-between border-b border-gray-200">
-              <p>
+              <div>
                 {searchData &&
                   searchData.length &&
                   searchData.find((candidate) => candidate.value === item)
                     .label}
-              </p>
+              </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"
                 onClick={() =>

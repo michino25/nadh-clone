@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Anchor, Skeleton, notification, Button } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, FilePdfOutlined } from "@ant-design/icons";
 
 import BackToTopButton from "components/ShareComponents/BackToTopButton";
 import { jobApi, otherApi } from "apis/index";
@@ -268,7 +268,13 @@ export default function JobDetail() {
     },
   });
 
-  if (isPending || !id) return <Skeleton active />;
+  const linkPDF =
+    "https://lubrytics.com:8443/nadh-api-crm/api/export/jobs/" +
+    id +
+    "/CV?download=true&token=" +
+    getUser().token;
+
+  if (isPending || !id) return <Skeleton className="p-12" active />;
 
   return (
     <>
@@ -282,18 +288,22 @@ export default function JobDetail() {
               / {id} - {jobData.title.label.toUpperCase()}
             </span>
           </div>
-          <div>
-            <Button
-              href={
-                "https://lubrytics.com:8443/nadh-api-crm/api/export/jobs/" +
-                id +
-                "/CV?download=true&token=" +
-                getUser().token
-              }
-              type="primary"
-              icon={<DownloadOutlined />}
-            >
+
+          <div className="flex gap-3">
+            <Button href={linkPDF} icon={<DownloadOutlined />}>
               Download File PDF
+            </Button>
+
+            <Button
+              onClick={async () => {
+                const data = await fetch(linkPDF).then((r) => r.blob());
+                const fileURL = window.URL.createObjectURL(data);
+                window.open(fileURL);
+              }}
+              type="primary"
+              icon={<FilePdfOutlined />}
+            >
+              View File PDF
             </Button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  PlusOutlined,
   SearchOutlined,
   EyeOutlined,
   CaretDownOutlined,
@@ -255,7 +256,10 @@ const DataTable = ({
       <Flex gap="middle">
         {createBtn && !noFilter && (
           <>
-            <Button onClick={createBtn.handler}>{createBtn.title}</Button>
+            <Button onClick={createBtn.handler} className="flex items-center">
+              <PlusOutlined />
+              {createBtn.title}
+            </Button>
             <Dropdown
               menu={{
                 items: [

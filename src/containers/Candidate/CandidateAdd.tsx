@@ -45,7 +45,12 @@ export default function CadidateAdd() {
         .then((res) => res.data.data[0].id),
   });
 
-  const { data: candidateData, refetch } = useQuery({
+  const {
+    data: candidateData,
+    refetch,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["candidate", candidateId],
     queryFn: async () =>
       await candidateApi.getOneCandidate(candidateId as string).then((res) => {
@@ -70,6 +75,16 @@ export default function CadidateAdd() {
         };
       }),
   });
+
+  useEffect(() => {
+    if (isError) {
+      notification({
+        title: "Error getting todos",
+        description: error.message,
+        status: "error",
+      });
+    }
+  }, [isError, error]);
 
   const [currency, setCurrency] = useState<number>(
     candidateData?.remuneration?.currency?.id || 2

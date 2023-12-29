@@ -317,7 +317,6 @@ export default function Remuneration({
               placeholder="Notice days"
               name="notice_days"
               defaultValue={data?.benefit.notice_days?.toString() || 0}
-              disabled
               suffix="day(s)"
             />
           </Col>
