@@ -5,7 +5,9 @@ export default function ButtonFilter({
   candidate_flows: any;
   setFilterStatus: (value: string) => void;
 }) {
-  const rawData = candidate_flows.map((item: any) => item.status);
+  const rawData = candidate_flows.map(
+    (item: { status: number }) => item.status
+  );
 
   const data = [
     { key: "2", name: "Screening Call" },
@@ -35,7 +37,7 @@ export default function ButtonFilter({
           <p className="font-medium text-lg">
             {
               rawData.filter(
-                (candidate: any) => candidate.toString() === item.key
+                (candidate: number) => candidate.toString() === item.key
               ).length
             }
           </p>

@@ -55,6 +55,8 @@ export default function MultiSelectWithSearchAPI({
                 value: item.key + "_" + item.label,
               }))
             );
+
+          return res.data;
         }),
   });
 

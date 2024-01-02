@@ -522,3 +522,25 @@ export interface iUserData {
     role: { name: string };
   };
 }
+
+export interface iIndustry {
+  industry?: {
+    id: number;
+    name: string;
+    key: number;
+    label: string;
+  };
+  sector?: {
+    id: number;
+    name: string;
+    key: number;
+    label: string;
+  };
+  category?: {
+    id: number;
+    name: string;
+    key: number;
+    label: string;
+  };
+  primary?: number;
+}

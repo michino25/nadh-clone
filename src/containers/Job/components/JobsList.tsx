@@ -2,7 +2,7 @@ import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Tag as TagAntd } from "antd";
-import { iJob, iUser } from "utils/models";
+import { iIndustry, iJob, iUser } from "utils/models";
 import { formatDate, formatName, formatPrice } from "utils/format";
 import { useNavigate } from "react-router-dom";
 import { clientApi, jobApi, userApi } from "apis/index";
@@ -22,7 +22,7 @@ const customColumns: ColumnsType = jobColumns;
 customColumns[5] = {
   ...customColumns[5],
 
-  render: (value: any) => {
+  render: (value: string) => {
     let color;
     switch (value) {
       case "Lost":
@@ -55,16 +55,16 @@ customColumns[5] = {
 };
 customColumns[7] = {
   ...customColumns[7],
-  render: (value: any) => (
+  render: (value: string) => (
     <TagAntd color="geekblue">{formatName(value)}</TagAntd>
   ),
 };
 customColumns[10] = {
   ...customColumns[10],
-  render: (value: any) => (
+  render: (value: string[]) => (
     <>
-      {value.map((item: any) => (
-        <TagAntd className="mb-2" color="purple">
+      {value.map((item: string) => (
+        <TagAntd key={item} className="mb-2" color="purple">
           {formatName(item)}
         </TagAntd>
       ))}
@@ -73,7 +73,7 @@ customColumns[10] = {
 };
 customColumns[14] = {
   ...customColumns[14],
-  render: (value: any) => {
+  render: (value: string[]) => {
     let color;
     switch (value[0]) {
       case "USD":
@@ -111,7 +111,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const { getAllParams, pageChange } = useFilter();
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<iJob[]>([]);
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
@@ -170,10 +170,11 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
             client: job.client.name,
             search_consultants:
               job.client.lead_consultants[0].consultant.full_name,
-            location: Object.values(job.location).map((location: any) =>
-              typeof location === "object" && location !== null
-                ? location.label
-                : ""
+            location: Object.values(job.location).map(
+              (location: { label: string } | undefined) =>
+                typeof location === "object" && location !== null
+                  ? location.label
+                  : ""
             ),
             industry_year: job.requirement.industry_years,
             salary:
@@ -184,7 +185,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
                     job?.remuneration?.salary?.to?.toFixed(0) || "max",
                   ]
                 : ["Negotiation"],
-            industry: job.business_line.map((business: any) =>
+            industry: job.business_line.map((business: iIndustry) =>
               typeof business === "object" && business !== null
                 ? business.category?.name ||
                   business.sector?.name ||
@@ -205,7 +206,10 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
             ),
           }));
         })
-        .then((res) => setData(res)),
+        .then((res) => {
+          setData(res);
+          return res;
+        }),
     enabled: userDetail?.id !== undefined,
   });
 
@@ -225,7 +229,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; full_name: string }) => ({
           value: item.id,
           label: formatName(item.full_name),
         }))
@@ -236,7 +240,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     queryKey: ["clientData"],
     queryFn: async () =>
       clientApi.getClients({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; name: string }) => ({
           value: item.id,
           label: formatName(item.name),
         }))

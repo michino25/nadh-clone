@@ -37,6 +37,8 @@ export default function SelectWithSearchAPI({
             value: item.key + "_" + item.label,
           }))
         );
+
+        return res.data;
       }),
   });
 

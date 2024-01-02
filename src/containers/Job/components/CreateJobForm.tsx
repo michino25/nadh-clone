@@ -22,7 +22,7 @@ export default function CreateJobForm({
     queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; full_name: string }) => ({
           value: item.id,
           label: formatName(item.full_name),
         }))
@@ -33,7 +33,7 @@ export default function CreateJobForm({
     queryKey: ["clientData"],
     queryFn: async () =>
       clientApi.getClients({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; name: string }) => ({
           value: item.id,
           label: formatName(item.name),
         }))

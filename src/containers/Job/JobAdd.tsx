@@ -6,13 +6,24 @@ import FormIndustry from "containers/Client/components/FormIndustry";
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import { useState } from "react";
 import { jobApi } from "apis/index";
+import { AxiosError } from "axios";
+import { iOption } from "_constants/index";
+
+interface iIndustryForm {
+  id?: string;
+  industry: iOption;
+  sector: iOption;
+  category: iOption;
+  primary: number;
+}
 
 export default function JobAdd() {
-  const [industry, setIndustry] = useState<any[]>([]);
+  const [industry, setIndustry] = useState<iIndustryForm[]>([]);
   const [, setAddress] = useState<any>();
 
   const deleteItem = (id: string) => {
-    if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
+    if (industry)
+      setIndustry(industry.filter((item: iIndustryForm) => item.id !== id));
   };
 
   const primaryItem = (id: string) => {
@@ -21,7 +32,7 @@ export default function JobAdd() {
 
     if (industry)
       setIndustry(
-        industry.map((item: any) =>
+        industry.map((item: iIndustryForm) =>
           item.id === id
             ? {
                 ...item,
@@ -121,15 +132,17 @@ export default function JobAdd() {
           ),
         });
       }, 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Job",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError) {
+        notification.error({
+          message: "Create Job",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
+      }
     }
   };
 
@@ -152,7 +165,9 @@ export default function JobAdd() {
           <Row gutter={16}>
             <Col span={24}>
               <FormIndustry
-                saveData={(data) => setIndustry([...(industry as any[]), data])}
+                saveData={(data) =>
+                  setIndustry([...(industry as iIndustryForm[]), data])
+                }
               />
               <IndustryTable
                 data={industry}

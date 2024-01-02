@@ -22,19 +22,24 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { DeleteOutlined } from "@ant-design/icons";
+import { iCandidate, iIndustry } from "utils/models";
 
 const rawColumns = [
   {
     title: "Candidate ID",
     key: ["candidate", "candidate_id"],
-    render: (value: any, { candidate: { candidate_id } }: any) => (
-      <Link to={"/candidate-detail/" + candidate_id}>{value}</Link>
-    ),
+    render: (
+      value: string,
+      { candidate: { candidate_id } }: { candidate: { candidate_id: string } }
+    ) => <Link to={"/candidate-detail/" + candidate_id}>{value}</Link>,
   },
   {
     title: "Name",
     key: ["candidate", "full_name"],
-    render: (value: any, { candidate: { candidate_id } }: any) => (
+    render: (
+      value: string,
+      { candidate: { candidate_id } }: { candidate: { candidate_id: string } }
+    ) => (
       <Link to={"/candidate-detail/" + candidate_id}>{formatName(value)}</Link>
     ),
   },
@@ -45,24 +50,26 @@ const rawColumns = [
   {
     title: "Recent Position",
     key: ["candidate", "histories"],
-    render: (_: any, { candidate }: any) => {
-      const data = candidate.histories.map((item: any) => item.title.label);
+    render: (_: string, { candidate }: any) => {
+      const data = candidate.histories.map(
+        (item: { title: { label: string } }) => item.title.label
+      );
 
-      return data.map((item: any) => <p>{item}</p>);
+      return data.map((item: string) => <p>{item}</p>);
     },
   },
   {
     title: "Previous Status",
     key: "previous_status",
-    render: (value: any) =>
-      value.map((item: any) => (
+    render: (value: number[]) =>
+      value.map((item: number) => (
         <p>{"-> " + getLabelByValue(statusData2, item.toString())}</p>
       )),
   },
   {
     title: "Status",
     key: "status",
-    render: (value: any) => getLabelByValue(statusData2, value.toString()),
+    render: (value: number) => getLabelByValue(statusData2, value.toString()),
   },
 ];
 
@@ -93,7 +100,7 @@ export default function CandidatesList({
         .then((res) => {
           setSearchData(
             res.data.data.length &&
-              res.data.data.map((item: any) => ({
+              res.data.data.map((item: iCandidate) => ({
                 label: (
                   <div key={item.candidate_id_int}>
                     <p className="font-bold">
@@ -102,13 +109,15 @@ export default function CandidatesList({
                     <div>
                       <span className="font-bold">Position Applied: </span>
                       {item.prefer_position.positions
-                        .map((item: any) => item.label)
+                        .map((item: { label: string }) => item.label)
                         .join(", ")}
                     </div>
                     <div>
                       <span className="font-bold">Industry: </span>
-                      {item.business_line.map((item: any) => (
-                        <p>{getIndustryString(item)}</p>
+                      {item.business_line.map((item: iIndustry) => (
+                        <p key={getIndustryString(item)}>
+                          {getIndustryString(item)}
+                        </p>
                       ))}
                     </div>
                   </div>
@@ -116,6 +125,8 @@ export default function CandidatesList({
                 value: item.id,
               }))
           );
+
+          return res.data;
         }),
   });
 
@@ -154,7 +165,7 @@ export default function CandidatesList({
     </Flex>
   );
 
-  let columns: ColumnsType<any> = [];
+  let columns: ColumnsType = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns.map((column: any) => ({
       ...column,
@@ -252,7 +263,7 @@ export default function CandidatesList({
           </Descriptions.Item>
           <Descriptions.Item label="Current Job">
             {viewProfile?.candidate.histories.map(
-              (item: any) => item.title.label + ", "
+              (item: { title: { label: string } }) => item.title.label + ", "
             )}
           </Descriptions.Item>
         </Descriptions>
@@ -274,8 +285,8 @@ export default function CandidatesList({
           </Descriptions.Item>
           <Descriptions.Item label="Industry">
             <div className="flex-col">
-              {data?.business_line.map((item: any) => (
-                <p>{getIndustryString(item)}</p>
+              {data?.business_line.map((item: iIndustry) => (
+                <p key={getIndustryString(item)}>{getIndustryString(item)}</p>
               ))}
             </div>
           </Descriptions.Item>
@@ -296,7 +307,7 @@ export default function CandidatesList({
             disabled:
               selectedItems.includes(item.value) ||
               candidate_flows
-                .map((item: any) => item.candidate_id)
+                .map((item: { candidate_id: string }) => item.candidate_id)
                 .includes(item.value),
           }))}
           onSearch={setSearchValue}

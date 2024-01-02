@@ -22,8 +22,11 @@ export default function DisplayTag({ data, updateFn }: any) {
         <span>Website: </span>
         <Tag
           tags={data
-            .filter((item: any) => item.platform === "website")
-            .map((item: any) => item.url)}
+            .filter(
+              (item: { platform: string; url: string }) =>
+                item.platform === "website"
+            )
+            .map((item: { platform: string; url: string }) => item.url)}
           setTags={(value: string[]) => setTags(value, "website")}
         />
       </div>
@@ -31,8 +34,11 @@ export default function DisplayTag({ data, updateFn }: any) {
         <span>Linked In: </span>
         <Tag
           tags={data
-            .filter((item: any) => item.platform === "linked")
-            .map((item: any) => item.url)}
+            .filter(
+              (item: { platform: string; url: string }) =>
+                item.platform === "linked"
+            )
+            .map((item: { platform: string; url: string }) => item.url)}
           setTags={(value: string[]) => setTags(value, "linked")}
         />
       </div>
@@ -40,8 +46,11 @@ export default function DisplayTag({ data, updateFn }: any) {
         <span>Facebook: </span>
         <Tag
           tags={data
-            .filter((item: any) => item.platform === "facebook")
-            .map((item: any) => item.url)}
+            .filter(
+              (item: { platform: string; url: string }) =>
+                item.platform === "facebook"
+            )
+            .map((item: { platform: string; url: string }) => item.url)}
           setTags={(value: string[]) => setTags(value, "facebook")}
         />
       </div>
@@ -49,8 +58,11 @@ export default function DisplayTag({ data, updateFn }: any) {
         <span>Others: </span>
         <Tag
           tags={data
-            .filter((item: any) => item.platform === "other")
-            .map((item: any) => item.url)}
+            .filter(
+              (item: { platform: string; url: string }) =>
+                item.platform === "other"
+            )
+            .map((item: { platform: string; url: string }) => item.url)}
           setTags={(value: string[]) => setTags(value, "other")}
         />
       </div>
