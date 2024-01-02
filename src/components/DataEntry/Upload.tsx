@@ -143,6 +143,7 @@ export default function DataUpload({
           onPreview={handlePreview}
           onChange={handleChange}
           onRemove={handleDelete}
+          multiple
         >
           {uploadButton}
         </Upload>

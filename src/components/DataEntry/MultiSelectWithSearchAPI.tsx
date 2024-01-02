@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Form, Select } from "antd";
 import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface iData {
   label: string;
@@ -32,11 +32,19 @@ export default function MultiSelectWithSearchAPI({
   const [searchValue, setSearchValue] = useState("");
   const [searchData, setSearchData] = useState();
 
+  const [debouncedValue, setDebouncedValue] = useState("");
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedValue(searchValue);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchValue]);
+
   useQuery({
-    queryKey: [propertyName, searchValue, OptGroup],
+    queryKey: [propertyName, debouncedValue, OptGroup],
     queryFn: async () =>
       await otherApi
-        .getProperty(propertyName, searchValue, OptGroup)
+        .getProperty(propertyName, debouncedValue, OptGroup)
         .then((res) => {
           if (OptGroup)
             setSearchData(

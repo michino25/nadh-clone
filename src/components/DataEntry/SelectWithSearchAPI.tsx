@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Divider, Form, Select, Button, notification } from "antd";
 import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 
 interface iData {
@@ -27,10 +27,18 @@ export default function SelectWithSearchAPI({
   const [searchValue, setSearchValue] = useState("");
   const [searchData, setSearchData] = useState();
 
+  const [debouncedValue, setDebouncedValue] = useState("");
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedValue(searchValue);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchValue]);
+
   useQuery({
-    queryKey: [propertyName, searchValue],
+    queryKey: [propertyName, debouncedValue],
     queryFn: async () =>
-      await otherApi.getProperty(propertyName, searchValue).then((res) => {
+      await otherApi.getProperty(propertyName, debouncedValue).then((res) => {
         setSearchData(
           res.data.data.map((item: any) => ({
             label: item.label,

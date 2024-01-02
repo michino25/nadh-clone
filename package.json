@@ -10,8 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-basic-styles": "^40.2.0",
     "@ckeditor/ckeditor5-build-classic": "^40.2.0",
+    "@ckeditor/ckeditor5-editor-classic": "^40.2.0",
+    "@ckeditor/ckeditor5-essentials": "^40.2.0",
+    "@ckeditor/ckeditor5-image": "^40.2.0",
+    "@ckeditor/ckeditor5-paragraph": "^40.2.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
+    "@ckeditor/ckeditor5-upload": "^40.2.0",
     "@tanstack/query-sync-storage-persister": "^5.8.3",
     "@tanstack/react-query": "^5.8.4",
     "@tanstack/react-query-devtools": "^5.8.4",
