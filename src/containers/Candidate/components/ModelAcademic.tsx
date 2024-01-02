@@ -4,7 +4,7 @@ import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CkeditorInput from "components/DataEntry/CkeditorInput";
 
 export default function ModelAcademic({
@@ -19,14 +19,19 @@ export default function ModelAcademic({
   edit?: boolean;
   execute: (data: any, id?: string) => void;
   data?: any;
-  onDelete?: (id: any) => void;
+  onDelete?: (id: string) => void;
   id?: string;
 }) {
+  const defaultData = data?.filter((item: any) => item.id === id)[0];
+
   console.log(data);
   console.log(id);
 
-  const defaultData = data?.filter((item: any) => item.id === id)[0];
-  console.log(defaultData);
+  const [achievement, setAchievement] = useState("");
+  useEffect(() => {
+    if (defaultData) setAchievement(defaultData?.achievement);
+  }, [defaultData]);
+
   const [checkbox, setCheckbox] = useState(
     defaultData?.status === "Is current school"
   );
@@ -69,29 +74,27 @@ export default function ModelAcademic({
       start_time: values.Start_year + "-01-01",
       ...(!checkbox ? { end_time: values.Graduation_year + "-01-01" } : {}),
 
-      organization: {
+      organization: values.school && {
         key: values.school.split("_")[0],
         label: values.school.split("_")[1],
       },
-      title: {
+      title: values.major && {
         key: values.major.split("_")[0],
         label: values.major.split("_")[1],
       },
-      degree: {
+      degree: values.degree && {
         key: values.degree.split("_")[0],
         label: values.degree.split("_")[1],
       },
 
-      achievement: null,
       type: 1,
       status: values.current_school ? 1 : -1,
+      achievement: achievement,
     };
 
     edit ? execute(outputData, defaultData.id) : execute(outputData);
     // console.log("Received values of form: ", outputData);
   };
-
-  console.log(schoolData);
 
   return (
     <Form
@@ -194,7 +197,7 @@ export default function ModelAcademic({
             label="School"
             name="school"
             defaultValue={
-              defaultData &&
+              defaultData?.school &&
               defaultData.school.key + "_" + defaultData.school.label
             }
           />
@@ -209,7 +212,7 @@ export default function ModelAcademic({
             label="Major"
             name="major"
             defaultValue={
-              defaultData &&
+              defaultData?.major &&
               defaultData.major.key + "_" + defaultData.major.label
             }
           />
@@ -225,7 +228,7 @@ export default function ModelAcademic({
             name="degree"
             required
             defaultValue={
-              defaultData &&
+              defaultData?.degree &&
               defaultData.degree.key + "_" + defaultData.degree.label
             }
           />
@@ -235,19 +238,10 @@ export default function ModelAcademic({
       <Row gutter={16}>
         <Col span={24}>
           <CkeditorInput
-            data={data?.extra}
-            label="Anything else"
-            updateFn={
-              (value: string, onSuccess: () => void) => {}
-              // updateFn(
-              //   {
-              //     remuneration: {
-              //       extra: value,
-              //     },
-              //   },
-              //   { onSuccess }
-              // )
-            }
+            value={achievement}
+            setValue={setAchievement}
+            label="Achievement"
+            defaultValue={defaultData?.achievement}
           />
         </Col>
       </Row>

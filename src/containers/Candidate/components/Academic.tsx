@@ -45,13 +45,13 @@ export default function Academic({
   const eduData = data
     ?.filter((item: any) => item.type === 1)
     .map((item: any) => ({
+      ...item,
       id: item.id.toString(),
       status: item.status === 1 ? "Is current school" : "",
       end_time: item.end_time?.split("-")[0],
       start_time: item.start_time?.split("-")[0],
       major: item.title,
       school: item.organization,
-      degree: item.degree,
     }));
 
   const eduDataTable = eduData?.map((item: any) => ({

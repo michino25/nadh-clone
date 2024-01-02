@@ -4,7 +4,8 @@ import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CkeditorInput from "components/DataEntry/CkeditorInput";
 
 export default function ModelCertificate({
   closeModal,
@@ -23,6 +24,12 @@ export default function ModelCertificate({
 }) {
   const defaultData = data?.filter((item: any) => item.id === id)[0];
   console.log(defaultData);
+
+  const [achievement, setAchievement] = useState("");
+  useEffect(() => {
+    if (defaultData) setAchievement(defaultData?.achievement);
+  }, [defaultData]);
+
   const [checkbox, setCheckbox] = useState(
     defaultData?.status === "Is current school"
   );
@@ -54,15 +61,15 @@ export default function ModelCertificate({
       start_time: values.Start_year + "-01-01",
       ...(!checkbox ? { end_time: values.Graduation_year + "-01-01" } : {}),
 
-      organization: {
+      organization: values.school && {
         key: values.school.split("_")[0],
         label: values.school.split("_")[1],
       },
-      title: {
+      title: values.degree && {
         key: values.degree.split("_")[0],
         label: values.degree.split("_")[1],
       },
-      achievement: null,
+      achievement: achievement,
       type: 3,
       status: values.current_school ? 1 : -1,
     };
@@ -174,7 +181,7 @@ export default function ModelCertificate({
             label="School"
             name="school"
             defaultValue={
-              defaultData &&
+              defaultData?.school &&
               defaultData.school.key + "_" + defaultData.school.label
             }
           />
@@ -190,9 +197,20 @@ export default function ModelCertificate({
             name="degree"
             required
             defaultValue={
-              defaultData &&
+              defaultData?.degree &&
               defaultData.degree.key + "_" + defaultData.degree.label
             }
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            value={achievement}
+            setValue={setAchievement}
+            label="Achievement"
+            defaultValue={defaultData?.achievement}
           />
         </Col>
       </Row>

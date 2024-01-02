@@ -43,6 +43,7 @@ export default function Certificate({
   const certData = data
     ?.filter((item: any) => item.type === 3)
     .map((item: any) => ({
+      ...item,
       id: item.id.toString(),
       status: item.status === 1 ? "Is current school" : "",
       end_time: item.end_time?.split("-")[0],
