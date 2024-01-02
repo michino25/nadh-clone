@@ -2,7 +2,7 @@ import { Button, Form } from "antd";
 import MyCKEditor from "components/DataEntry/MyCKEditor";
 import { useEffect, useState } from "react";
 
-export default function CkeditorData({
+export default function CkeditorInput({
   label,
   sublabel,
   data,

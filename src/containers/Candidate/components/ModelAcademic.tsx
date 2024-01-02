@@ -5,6 +5,7 @@ import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import { useState } from "react";
+import CkeditorInput from "components/DataEntry/CkeditorInput";
 
 export default function ModelAcademic({
   closeModal,
@@ -226,6 +227,26 @@ export default function ModelAcademic({
             defaultValue={
               defaultData &&
               defaultData.degree.key + "_" + defaultData.degree.label
+            }
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            data={data?.extra}
+            label="Anything else"
+            updateFn={
+              (value: string, onSuccess: () => void) => {}
+              // updateFn(
+              //   {
+              //     remuneration: {
+              //       extra: value,
+              //     },
+              //   },
+              //   { onSuccess }
+              // )
             }
           />
         </Col>
