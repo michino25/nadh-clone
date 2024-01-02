@@ -114,7 +114,11 @@ export default function CandidateAddStep1({
 
   return (
     <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
-      <PersonalInformationForm address={address} setAddress={setAddress} />
+      <PersonalInformationForm
+        address={address}
+        setAddress={setAddress}
+        setReset={() => {}}
+      />
       <Form.Item className="flex justify-end space-x-2">
         <Button type="primary" htmlType="submit">
           Save

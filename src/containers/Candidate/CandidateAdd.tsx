@@ -45,12 +45,7 @@ export default function CadidateAdd() {
         .then((res) => res.data.data[0].id),
   });
 
-  const {
-    data: candidateData,
-    refetch,
-    isError,
-    error,
-  } = useQuery({
+  const { data: candidateData, refetch } = useQuery({
     queryKey: ["candidate", candidateId],
     queryFn: async () =>
       await candidateApi.getOneCandidate(candidateId as string).then((res) => {
@@ -75,16 +70,6 @@ export default function CadidateAdd() {
         };
       }),
   });
-
-  useEffect(() => {
-    if (isError) {
-      notification({
-        title: "Error getting todos",
-        description: error.message,
-        status: "error",
-      });
-    }
-  }, [isError, error]);
 
   const [currency, setCurrency] = useState<number>(
     candidateData?.remuneration?.currency?.id || 2
@@ -395,6 +380,7 @@ export default function CadidateAdd() {
                 currency={currency}
                 setCurrency={setCurrency}
                 form={form}
+                updateFn={() => {}}
               />
               <Form.Item className="flex justify-end w-full gap-3 mt-5">
                 <Button
