@@ -42,6 +42,28 @@
     {
       "src": "/client-detail/([a-z0-9]+)/?",
       "dest": "/"
+    },
+
+    {
+      "src": "/jobs",
+      "dest": "/"
+    },
+    {
+      "src": "/job-add",
+      "dest": "/"
+    },
+    {
+      "src": "/job-detail/([a-z0-9]+)/?",
+      "dest": "/"
+    },
+
+    {
+      "src": "/500-error",
+      "dest": "/"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }

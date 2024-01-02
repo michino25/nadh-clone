@@ -16,8 +16,9 @@ import {
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
+import type { ColumnsType } from "antd/es/table";
 
-const customColumns: any[] = jobColumns;
+const customColumns: ColumnsType = jobColumns;
 customColumns[5] = {
   ...customColumns[5],
 

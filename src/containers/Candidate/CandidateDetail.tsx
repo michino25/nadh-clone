@@ -2,9 +2,6 @@ import { useParams, Link } from "react-router-dom";
 import { Anchor, Button, Form, Skeleton, notification } from "antd";
 import { DownloadOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
-import IndustryTable from "components/DataDisplay/IndustryTable";
 
 import { DataUpload, TextArea } from "components/DataEntry/index";
 
@@ -16,7 +13,6 @@ import InterviewLoop from "containers/Candidate/components/InterviewLoop";
 
 import { candidateApi, otherApi } from "apis/index";
 import { getUser } from "utils/getUser";
-import FormIndustry from "containers/Client/components/FormIndustry";
 import WorkingHistory from "./components/WorkingHistory";
 import Academic from "./components/Academic";
 import Certificate from "./components/Certificate";
@@ -24,6 +20,7 @@ import Remuneration from "./components/Remuneration";
 import PersonalInformationForm from "./components/PersonalInformationForm";
 import { formatDate, formatName } from "utils/format";
 import CommentItem from "components/ShareComponents/CommentItem";
+import SkillsAndIndustry from "./components/SkillsAndIndustry";
 
 export default function Candidates() {
   const { id } = useParams();
@@ -37,16 +34,7 @@ export default function Candidates() {
   } = useQuery({
     queryKey: ["candidate", id],
     queryFn: async () =>
-      await candidateApi.getOneCandidate(id as string).then((res) => {
-        // console.log(!res.data.addresses[0].city);
-        return {
-          ...res.data,
-          business_line: res.data.business_line.map((item: any) => ({
-            ...item,
-            id: uuidv4(),
-          })),
-        };
-      }),
+      await candidateApi.getOneCandidate(id as string).then((res) => res.data),
   });
 
   const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
@@ -71,62 +59,6 @@ export default function Candidates() {
   const [address, setAddress] = useState<any[]>();
   const [form] = Form.useForm();
   const [currency, setCurrency] = useState<number>();
-
-  const addIndustry = (data: any) => {
-    const newData: any = {};
-    if (data.industry) newData.industry_id = data.industry.value;
-    if (data.sector) newData.sector_id = data.sector.value;
-    if (data.category) newData.category_id = data.category.value;
-    newData.primary = -1;
-
-    const transformedData = candidateData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.primary,
-      };
-
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
-
-      return transformedItem;
-    });
-
-    updateMutation.mutate({ business_line: [...transformedData, newData] });
-  };
-
-  const deleteIndustry = (id: string) => {
-    const transformedData = candidateData?.business_line
-      .filter((item: any) => item.id !== id)
-      .map((item: any) => {
-        const transformedItem: any = {
-          industry_id: item.industry.id,
-          primary: item.primary,
-        };
-
-        if (item.sector) transformedItem.sector_id = item.sector.id;
-        if (item.category) transformedItem.category_id = item.category.id;
-
-        return transformedItem;
-      });
-
-    updateMutation.mutate({ business_line: transformedData });
-  };
-
-  const primaryIndustry = (id: string) => {
-    const transformedData = candidateData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.id === id ? item.primary * -1 : item.primary,
-      };
-
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
-
-      return transformedItem;
-    });
-
-    updateMutation.mutate({ business_line: transformedData });
-  };
 
   const fileUpload = (id: string) => {
     if (id) {
@@ -598,12 +530,10 @@ export default function Candidates() {
             </div>
             <div id="part-3" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
-              <FormIndustry saveData={addIndustry} />
-              <IndustryTable
+              <SkillsAndIndustry
+                updateFn={updateMutation.mutate}
                 loading={loading}
-                deleteItem={deleteIndustry}
-                primaryItem={primaryIndustry}
-                data={candidateData?.business_line}
+                data={candidateData}
               />
             </div>
             <div id="part-4" className="p-4 bg-white rounded-lg">

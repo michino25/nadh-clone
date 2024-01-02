@@ -4,7 +4,8 @@ import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CkeditorInput from "components/DataEntry/CkeditorInput";
 
 export default function ModelWorking({
   closeModal,
@@ -24,6 +25,19 @@ export default function ModelWorking({
   const defaultData = data?.filter((item: any) => item.id === id)[0];
   console.log(defaultData);
   const [checkbox, setCheckbox] = useState(defaultData?.status === 1);
+
+  const [responsibility, setResponsibility] = useState("");
+  const [achievement, setAchievement] = useState("");
+  const [references, setReferences] = useState("");
+  const [pushPullFactor, setPushPullFactor] = useState("");
+  useEffect(() => {
+    if (defaultData) {
+      setResponsibility(defaultData?.responsibility);
+      setAchievement(defaultData?.achievement);
+      setReferences(defaultData?.references);
+      setPushPullFactor(defaultData?.push_pull_factor);
+    }
+  }, [defaultData]);
 
   const { data: companyData } = useQuery({
     queryKey: ["company"],
@@ -54,16 +68,21 @@ export default function ModelWorking({
         ? { end_time: values.End_year + "-" + values.End_month + "-01" }
         : {}),
 
-      organization: {
+      organization: values?.company && {
         key: values.company.split("_")[0],
         label: values.company.split("_")[1],
       },
-      title: {
+      title: values?.position && {
         key: values.position.split("_")[0],
         label: values.position.split("_")[1],
       },
       type: 2,
       status: values.current_job ? 1 : -1,
+
+      push_pull_factor: pushPullFactor,
+      references,
+      responsibility,
+      achievement,
     };
     edit ? execute(outputData, defaultData.id) : execute(outputData);
     console.log("Received values of form: ", outputData);
@@ -115,7 +134,7 @@ export default function ModelWorking({
             placeholder="End month"
             label="End year"
             name="End_month"
-            required
+            required={!checkbox}
             disable={checkbox}
             defaultValue={
               defaultData?.end_time !== "Present"
@@ -130,7 +149,7 @@ export default function ModelWorking({
             placeholder="End year"
             label=""
             name="End_year"
-            required
+            required={!checkbox}
             disable={checkbox}
             defaultValue={
               defaultData?.end_time !== "Present"
@@ -169,6 +188,50 @@ export default function ModelWorking({
               defaultData &&
               defaultData.position.key + "_" + defaultData.position.label
             }
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            value={responsibility}
+            setValue={setResponsibility}
+            label="Duties"
+            defaultValue={defaultData?.responsibility}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            value={achievement}
+            setValue={setAchievement}
+            label="Work Achievement"
+            defaultValue={defaultData?.achievement}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            value={references}
+            setValue={setReferences}
+            label="References"
+            defaultValue={defaultData?.references}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <CkeditorInput
+            value={pushPullFactor}
+            setValue={setPushPullFactor}
+            label="Pull/Push Factor"
+            defaultValue={defaultData?.push_pull_factor}
           />
         </Col>
       </Row>

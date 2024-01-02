@@ -38,6 +38,7 @@ export default function WorkingHistory({
   const workingHistory = data
     ?.filter((item: any) => item.type === 2)
     .map((item: any) => ({
+      ...item,
       id: item.id.toString(),
       status: item.status,
       end_time: item.end_time || "Present",
