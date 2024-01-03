@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Tag as TagAntd } from "antd";
 import { iIndustry, iJob, iUser } from "utils/models";
-import { formatDate, formatName, formatPrice } from "utils/format";
+import { formatDate, formatName } from "utils/format";
 import { useNavigate } from "react-router-dom";
 import { clientApi, jobApi, userApi } from "apis/index";
 import {
@@ -17,6 +17,7 @@ import {
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
 import type { ColumnsType } from "antd/es/table";
+import numeral from "numeral";
 
 const customColumns: ColumnsType = jobColumns;
 customColumns[5] = {
@@ -100,7 +101,9 @@ customColumns[14] = {
         <span>
           {value[1] &&
             value[2] &&
-            formatPrice(value[1]) + " - " + formatPrice(value[2])}
+            numeral(value[1]).format("0,0") +
+              " - " +
+              numeral(value[2]).format("0,0")}
         </span>
       </>
     );

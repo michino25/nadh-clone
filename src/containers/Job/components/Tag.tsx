@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import type { InputRef } from "antd";
-import { Input, Space, Tag as TagAnt, Tooltip } from "antd";
+import { Input, Space, Tag as TagAnt, Tooltip, notification } from "antd";
 
 export default function Tag({ tags, setTags }: any) {
   const [inputVisible, setInputVisible] = useState(false);
@@ -34,8 +34,22 @@ export default function Tag({ tags, setTags }: any) {
     setInputValue(e.target.value);
   };
 
+  function isValidUrl(string: string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   const handleInputConfirm = () => {
-    if (inputValue && !tags.includes(inputValue)) {
+    if (!isValidUrl(inputValue))
+      notification.error({
+        message: "Add Display On",
+        description: "Text must be URL. Please try again.",
+      });
+    else if (inputValue && !tags.includes(inputValue)) {
       setTags([...tags, inputValue]);
     }
     setInputVisible(false);
@@ -130,6 +144,7 @@ export default function Tag({ tags, setTags }: any) {
           style={tagPlusStyle}
           icon={<PlusOutlined />}
           onClick={showInput}
+          className="cursor-pointer"
         >
           New Tag
         </TagAnt>

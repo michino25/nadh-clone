@@ -21,45 +21,47 @@ import JobDescription from "./components/JobDescription";
 import JobRequirements from "./components/JobRequirements";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
+import dayjs from "dayjs";
+
 const anchorItems = [
   {
-    key: "part-1",
-    href: "#part-1",
+    key: "information",
+    href: "#information",
     title: "Information",
   },
   {
-    key: "part-2",
-    href: "#part-2",
+    key: "requirements",
+    href: "#requirements",
     title: "Job Requirements",
   },
   {
-    key: "part-3",
-    href: "#part-3",
+    key: "description",
+    href: "#description",
     title: "Job Description",
   },
   {
-    key: "part-4",
-    href: "#part-4",
+    key: "remuneration",
+    href: "#remuneration",
     title: "Remuneration",
   },
   {
-    key: "part-5",
-    href: "#part-5",
+    key: "candidateslist",
+    href: "#candidateslist",
     title: "Candidates List",
   },
   {
-    key: "part-6",
-    href: "#part-6",
+    key: "notes",
+    href: "#notes",
     title: "Notes",
   },
   {
-    key: "part-7",
-    href: "#part-7",
+    key: "attachments",
+    href: "#attachments",
     title: "Attachments",
   },
   {
-    key: "part-8",
-    href: "#part-8",
+    key: "logs",
+    href: "#logs",
     title: "Activity Logs",
   },
 ];
@@ -93,6 +95,21 @@ export default function JobDetail() {
       setEditable(jobData?.status === 12);
     }
   }, [jobData?.status]);
+
+  useEffect(() => {
+    if (isPending && window.location.hash !== "") {
+      setTimeout(() => {
+        const id = window.location.hash.replace("#", "");
+        const yOffset = -200;
+        const element = document.getElementById(id)!;
+
+        const y =
+          element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }, 300);
+    }
+  }, [isPending]);
 
   const addFlow = async (data: any) => {
     setLoading(true);
@@ -274,6 +291,28 @@ export default function JobDetail() {
     "/CV?download=true&token=" +
     getUser().token;
 
+  const [pdfLoading, setPdfLoading] = useState("");
+  const pdfHandler = async (link: string, type: "download" | "view") => {
+    setPdfLoading(type);
+    try {
+      const data = await fetch(link).then((r) => r.blob());
+      const fileURL = window.URL.createObjectURL(data);
+
+      if (type === "view") window.open(fileURL);
+      else {
+        const a = document.createElement("a");
+        a.href = fileURL;
+        a.setAttribute(
+          "download",
+          "Job-" + id + "-" + dayjs().format("DDMMYY_HHmmss")
+        );
+        a.click();
+      }
+    } finally {
+      setPdfLoading("");
+    }
+  };
+
   if (isPending || !id) return <Skeleton className="p-12" active />;
 
   return (
@@ -290,16 +329,17 @@ export default function JobDetail() {
           </div>
 
           <div className="flex gap-3">
-            <Button href={linkPDF} icon={<DownloadOutlined />}>
+            <Button
+              loading={pdfLoading === "download"}
+              onClick={() => pdfHandler(linkPDF, "download")}
+              icon={<DownloadOutlined />}
+            >
               Download File PDF
             </Button>
 
             <Button
-              onClick={async () => {
-                const data = await fetch(linkPDF).then((r) => r.blob());
-                const fileURL = window.URL.createObjectURL(data);
-                window.open(fileURL);
-              }}
+              loading={pdfLoading === "view"}
+              onClick={() => pdfHandler(linkPDF, "view")}
               type="primary"
               icon={<FilePdfOutlined />}
             >
@@ -308,23 +348,24 @@ export default function JobDetail() {
           </div>
         </div>
         <Anchor
-          className=""
           direction="horizontal"
           items={anchorItems}
-          offsetTop={130}
+          affix={false}
+          offsetTop={200}
         />
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
+
       <div className="px-8 my-5">
         <div className="flex-col space-y-4">
-          <div id="part-1" className="p-4 bg-white rounded-lg">
+          <div className="p-4 bg-white rounded-lg">
             <ButtonFilter
               candidate_flows={jobData?.candidate_flows}
               setFilterStatus={setFilterStatus}
             />
           </div>
 
-          <div id="part-1" className="p-4 bg-white rounded-lg">
+          <div id="information" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Job Information</p>
             <JobInformation
               data={jobData}
@@ -334,7 +375,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-1" className="p-4 bg-white rounded-lg">
+          <div className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Industry</p>
             <IndustryAPI
               data={jobData?.business_line}
@@ -347,7 +388,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-2" className="p-4 bg-white rounded-lg">
+          <div id="requirements" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Job Requirements</p>
             <JobRequirements
               data={jobData}
@@ -356,7 +397,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-3" className="p-4 bg-white rounded-lg">
+          <div id="description" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Job Description</p>
             <JobDescription
               data={jobData}
@@ -366,7 +407,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-4" className="p-4 bg-white rounded-lg">
+          <div id="remuneration" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Remuneration</p>
             <Remuneration
               data={jobData?.remuneration}
@@ -374,7 +415,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-5" className="p-4 bg-white rounded-lg">
+          <div id="candidateslist" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Candidates List</p>
             <CandidatesList
               data={jobData}
@@ -384,7 +425,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-6" className="p-4 bg-white rounded-lg">
+          <div id="notes" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Notes</p>
             <Notes
               data={jobData.detail_comments}
@@ -394,7 +435,7 @@ export default function JobDetail() {
             />
           </div>
 
-          <div id="part-7" className="p-4 bg-white rounded-lg">
+          <div id="attachments" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Attachments</p>
             <div className="flex space-x-2">
               <DataUpload
@@ -407,11 +448,12 @@ export default function JobDetail() {
                   obj_uid: jobData.id,
                   uploadedByUserId: getUser().user_sent.user_id,
                 }}
+                loading={loading}
               />
             </div>
           </div>
 
-          <div id="part-8" className="p-4 bg-white rounded-lg">
+          <div id="logs" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Activity Logs</p>
             <div className="flex space-x-2">
               <ActivityLogsTable data={jobData.logs} />

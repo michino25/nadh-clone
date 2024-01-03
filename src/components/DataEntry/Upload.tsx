@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Modal, Upload, Form, Descriptions } from "antd";
 import type { RcFile } from "antd/es/upload";
 
@@ -24,6 +24,7 @@ export default function DataUpload({
   onDelete,
   data,
   imgList,
+  loading,
 }: any) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -31,6 +32,8 @@ export default function DataUpload({
   const [previewCreateAt, setPreviewCreateAt] = useState("");
 
   const [fileList, setFileList] = useState<any[]>(imgList);
+
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     setFileList(imgList);
@@ -94,13 +97,14 @@ export default function DataUpload({
   };
 
   const handleChange = ({ file, fileList }: any) => {
+    if (file.status === "uploading") setUploading(true);
+
     if (file.status === "error") {
       console.error("Upload error");
     } else {
-      console.log(file.response?.id);
-      onChange(file.response?.id);
-
       setFileList(fileList);
+      if (file.status === "done") setUploading(false);
+      onChange(file.response?.id);
     }
   };
 
@@ -109,12 +113,9 @@ export default function DataUpload({
     onDelete(file.uid);
   };
 
-  // const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
-  //   setFileList(newFileList);
-
   const uploadButton = (
     <div>
-      <PlusOutlined />
+      {loading || uploading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
@@ -144,6 +145,7 @@ export default function DataUpload({
           onChange={handleChange}
           onRemove={handleDelete}
           multiple
+          disabled={loading || uploading}
         >
           {uploadButton}
         </Upload>

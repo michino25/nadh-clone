@@ -26,23 +26,6 @@ export const experiences = [
   { label: "Executive", value: "6" },
 ];
 
-export const statusData: StatusData[] = [
-  { 1: "Raw" },
-  { 2: "Screening Call" },
-  { "-4": "Client Canceled" },
-  { 3: "Interview with NADH" },
-  { 4: "Shortlisting" },
-  { 5: "Submit to Client" },
-  { 6: "Interview with Client" },
-  { 7: "Reference Check" },
-  { 8: "Negotiation" },
-  { 9: "Offer Accepted" },
-  { 10: "Placement" },
-  { 11: "Follow-up" },
-  { "-2": "Rejected by NADH" },
-  { "-1": "Candidate Declined" },
-];
-
 export const statusData2 = [
   { label: "Raw", value: "1" },
   { label: "Screening Call", value: "2" },
@@ -55,6 +38,7 @@ export const statusData2 = [
   { label: "Offer Accepted", value: "9" },
   { label: "Placement", value: "10" },
   { label: "Follow-up", value: "11" },
+  { label: "Replacement", value: "12" },
   { label: "Candidate Declined", value: "-1" },
   { label: "Rejected by NADH", value: "-2" },
   { label: "Rejected by Client", value: "-3" },
@@ -105,13 +89,6 @@ export const roleData = [
   { label: "Principal", value: "7" },
   { label: "Partner", value: "8" },
 ];
-
-export const getStatusDataByKey = (key: number): string | undefined => {
-  const statusObject = statusData.find((status) =>
-    Object.keys(status).includes(key.toString())
-  );
-  return statusObject ? statusObject[key] : undefined;
-};
 
 export const primaryStatus = [
   { label: "Active", value: "1" },
@@ -277,14 +254,14 @@ export const candidateColumns = [
     key: "location",
     search: "city",
     type: "address",
-    width: "50%",
+    ellipsis: true,
   },
   {
     title: "Industry",
     key: "industry",
     search: "industry_id",
     type: "industry",
-    width: "50%",
+    ellipsis: true,
   },
   {
     title: "YOB",
@@ -297,6 +274,7 @@ export const candidateColumns = [
     key: "flow_status",
     search: "flow_status",
     type: "multiple_select",
+    ellipsis: true,
   },
   {
     title: "Recent companies",
@@ -338,6 +316,7 @@ export const clientColumns = [
     key: "location",
     search: "city",
     type: "address",
+    ellipsis: true,
   },
   {
     title: "Lead Consultant",
@@ -367,6 +346,7 @@ export const clientColumns = [
     key: "industry",
     search: "industry_id",
     type: "industry",
+    ellipsis: true,
   },
   {
     title: "Job(s)",
@@ -390,11 +370,13 @@ export const clientColumns = [
     title: "Contact Person's Name",
     key: "contact_person_name",
     search: "contact_person_name",
+    width: "7%",
   },
   {
     title: "Contact Person's Title",
     key: "contact_person_title",
     search: "contact_person_title",
+    width: "7%",
   },
   {
     title: "Updated by",
@@ -474,6 +456,7 @@ export const jobColumns = [
     key: "mapping_by",
     search: "mapping_by",
     type: "multiple_select",
+    width: "8%",
   },
   {
     title: "City",
@@ -492,6 +475,7 @@ export const jobColumns = [
     key: "industry_year",
     search: "industry_year",
     type: "number",
+    width: "3%",
   },
   {
     title: "Salary Range",

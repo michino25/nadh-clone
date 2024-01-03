@@ -20,33 +20,38 @@ import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 const anchorItems = [
   {
-    key: "part-1",
-    href: "#part-1",
+    key: "information",
+    href: "#information",
     title: "Information",
   },
   {
-    key: "part-2",
-    href: "#part-2",
+    key: "industry",
+    href: "#industry",
     title: "Industry & Contact Person & Account Development",
   },
   {
-    key: "part-3",
-    href: "#part-3",
+    key: "description",
+    href: "#description",
+    title: "Client Description",
+  },
+  {
+    key: "notes",
+    href: "#notes",
     title: "Notes",
   },
   {
-    key: "part-4",
-    href: "#part-4",
+    key: "relatedjob",
+    href: "#relatedjob",
     title: "Related Job Codes",
   },
   {
-    key: "part-5",
-    href: "#part-5",
+    key: "attachments",
+    href: "#attachments",
     title: "Attachments",
   },
   {
-    key: "part-6",
-    href: "#part-6",
+    key: "logs",
+    href: "#logs",
     title: "Activity Logs",
   },
 ];
@@ -83,6 +88,21 @@ export default function Clients() {
       setEditable(clientData?.status === 12);
     }
   }, [clientData?.status]);
+
+  useEffect(() => {
+    if (isPending && window.location.hash !== "") {
+      setTimeout(() => {
+        const id = window.location.hash.replace("#", "");
+        const yOffset = -200;
+        const element = document.getElementById(id)!;
+
+        const y =
+          element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }, 300);
+    }
+  }, [isPending]);
 
   const updateClient = async (data: any) => {
     setLoading(true);
@@ -202,12 +222,18 @@ export default function Clients() {
             / {id} | {clientData.name}
           </span>
         </div>
-        <Anchor className="" direction="horizontal" items={anchorItems} />
+        <Anchor
+          affix={false}
+          offsetTop={200}
+          direction="horizontal"
+          items={anchorItems}
+        />
       </div>
+
       <div className="flex w-full p-5">Detail {id}</div>
       <div className="px-8 my-5">
         <div className="flex-col space-y-4">
-          <div id="part-1" className="p-6 bg-white rounded-lg">
+          <div id="information" className="p-6 bg-white rounded-lg">
             <ClientInformation
               clientData={clientData}
               editable={editable}
@@ -217,7 +243,7 @@ export default function Clients() {
             />
           </div>
 
-          <div id="part-2" className="flex">
+          <div id="industry" className="flex">
             <div className="w-2/3">
               <div className="bg-white rounded-lg p-6 mb-5">
                 <p className="mb-4 font-bold text-lg">Industry</p>
@@ -254,7 +280,7 @@ export default function Clients() {
             </div>
           </div>
 
-          <div id="part-3" className="p-4 bg-white rounded-lg">
+          <div id="description" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Client Description</p>
             <ClientDescription
               data={clientData}
@@ -264,7 +290,7 @@ export default function Clients() {
             />
           </div>
 
-          <div id="part-3" className="p-4 bg-white rounded-lg">
+          <div id="notes" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Notes</p>
             <Notes
               data={clientData.detail_comments}
@@ -273,7 +299,7 @@ export default function Clients() {
             />
           </div>
 
-          <div id="part-4" className="p-4 bg-white rounded-lg">
+          <div id="relatedjob" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Related Job Codes</p>
             <div className="flex space-x-2">
               <RelatedJob
@@ -284,7 +310,7 @@ export default function Clients() {
             </div>
           </div>
 
-          <div id="part-5" className="p-4 bg-white rounded-lg">
+          <div id="attachments" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Attachments</p>
             <div className="flex space-x-2">
               <DataUpload
@@ -297,11 +323,12 @@ export default function Clients() {
                   obj_uid: clientData.id,
                   uploadedByUserId: getUser().user_sent.user_id,
                 }}
+                loading={loading}
               />
             </div>
           </div>
 
-          <div id="part-6" className="p-4 bg-white rounded-lg">
+          <div id="logs" className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Activity Logs</p>
             <div className="flex space-x-2">
               <ActivityLogsTable data={clientData.logs} />

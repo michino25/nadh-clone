@@ -10,10 +10,6 @@ export function formatName(name: string | undefined): string | undefined {
   );
 }
 
-export function formatPrice(price: string | undefined): string | undefined {
-  return price && price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 export function formatDate(
   date: string | number | undefined,
   convertFrom: "timestamp" | "ISOdate",

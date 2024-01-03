@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   HomeOutlined,
@@ -13,33 +13,60 @@ import type { MenuProps } from "antd";
 const items: MenuProps["items"] = [
   {
     label: <Link to={"/dashboard"}>Dashboard</Link>,
-    key: "/dashboard",
+    key: "dashboard",
     icon: <HomeOutlined />,
   },
   {
     label: <Link to={"/candidates"}>Candidates</Link>,
-    key: "/candidates",
+    key: "candidates",
     icon: <SolutionOutlined />,
   },
   {
     label: <Link to={"/clients"}>Clients</Link>,
-    key: "/clients",
+    key: "clients",
     icon: <TeamOutlined />,
   },
   {
     label: <Link to={"/jobs"}>Jobs</Link>,
-    key: "/jobs",
+    key: "jobs",
     icon: <ScheduleOutlined />,
   },
 ];
 
 const Navmenu = () => {
   const location = useLocation();
-  const [current, setCurrent] = useState(
-    location.pathname === "/" || location.pathname === ""
-      ? "/dashboard"
-      : location.pathname
-  );
+
+  const [current, setCurrent] = useState("");
+
+  useEffect(() => {
+    const path = location.pathname;
+
+    switch (path.split("/")[1]) {
+      case "candidates":
+      case "candidate-add":
+      case "candidate-detail":
+        setCurrent("candidates");
+        break;
+
+      case "clients":
+      case "client-add":
+      case "client-detail":
+        setCurrent("clients");
+        break;
+
+      case "jobs":
+      case "job-add":
+      case "job-detail":
+        setCurrent("jobs");
+        break;
+
+      case "":
+      case "dashboard":
+      default:
+        setCurrent("dashboard");
+        break;
+    }
+  }, [location.pathname]);
 
   const onClick: MenuProps["onClick"] = (e) => {
     // console.log("click ", e);

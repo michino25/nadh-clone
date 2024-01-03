@@ -1,6 +1,7 @@
-import { Button, Form, Col, Row, InputNumber } from "antd";
+import { Button, Form, Col, Row } from "antd";
 import { useState } from "react";
-import { formatPrice } from "utils/format";
+import numeral from "numeral";
+import DataInputNumber from "components/DataEntry/InputNumber";
 
 interface iDataInput {
   label?: string;
@@ -8,8 +9,8 @@ interface iDataInput {
   className?: string;
   value: string;
   onSubmit: (value: any, onSuccess: () => void) => void;
-  editing: any;
-  setEditing: (value: any) => void;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
 }
 
 export default function EditableForm({
@@ -39,7 +40,7 @@ export default function EditableForm({
             setEditing(true);
           }}
         >
-          {(value && formatPrice(value.toString())) || "-"}
+          {(value && numeral(value).format("0,0")) || "-"}
         </button>
       ) : (
         <Form
@@ -56,26 +57,12 @@ export default function EditableForm({
         >
           <Row gutter={16}>
             <Col span={24}>
-              <Form.Item
+              <DataInputNumber
+                label=""
+                defaultValue={value}
+                placeholder={label || name}
                 name={name}
-                initialValue={value}
-                rules={[
-                  {
-                    required: false,
-                    message: label
-                      ? `Please input your ${label}!`
-                      : "Missing this field",
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder={label}
-                  style={{ width: "100%" }}
-                  formatter={(value: any) =>
-                    value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                />
-              </Form.Item>
+              />
             </Col>
           </Row>
 

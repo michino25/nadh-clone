@@ -1,6 +1,7 @@
 import { getLabelByValue, statusData4 } from "_constants/index";
 import {
   Timeline,
+  Button,
   Modal,
   Row,
   Col,
@@ -34,6 +35,8 @@ export default function AccountDevelopment({
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentFlowItem, setCurrentFlowItem] = useState<any>();
   const [flowItemData, setFlowItemData] = useState<any>();
+
+  const [saveBtn, setSaveBtn] = useState(false);
 
   const { data: userData } = useQuery({
     queryKey: ["userData"],
@@ -136,6 +139,7 @@ export default function AccountDevelopment({
 
   const handleDetailCancel = () => {
     setIsDetailModalOpen(false);
+    setSaveBtn(false);
   };
 
   const handleDetailOk = () => {
@@ -212,7 +216,7 @@ export default function AccountDevelopment({
                               },
                               option: "status",
                             },
-                            { onSuccess: () => formAction.resetFields() }
+                            { onSuccess: handleDetailCancel }
                           ),
                         () => formAction.resetFields()
                       );
@@ -340,6 +344,7 @@ export default function AccountDevelopment({
                     preserve={false}
                     layout="horizontal"
                     form={formUser}
+                    onFinish={() => {}}
                   >
                     <Form.Item
                       name="internal"
@@ -348,21 +353,34 @@ export default function AccountDevelopment({
                       initialValue={flowItemData?.info?.internal}
                     >
                       <Select
-                        onChange={() =>
-                          updateFlowMutation.mutate({
-                            params: {
-                              process: {
-                                id: flowItemData.id,
-                                ...formUser.getFieldsValue(),
-                              },
-                            },
-                          })
-                        }
+                        onChange={() => setSaveBtn(true)}
                         mode="multiple"
                         placeholder="Select user"
                         options={userData}
                       />
                     </Form.Item>
+
+                    <div className="flex justify-end">
+                      <Button
+                        hidden={!saveBtn}
+                        type="primary"
+                        onClick={() =>
+                          updateFlowMutation.mutate(
+                            {
+                              params: {
+                                process: {
+                                  id: flowItemData.id,
+                                  ...formUser.getFieldsValue(),
+                                },
+                              },
+                            },
+                            { onSuccess: () => setSaveBtn(false) }
+                          )
+                        }
+                      >
+                        Save
+                      </Button>
+                    </div>
                   </Form>
                 )}
             </div>

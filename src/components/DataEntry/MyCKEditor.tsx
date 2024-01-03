@@ -1,21 +1,118 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-// import { SimpleUploadAdapter } from "@ckeditor/ckeditor5-upload";
 
-// const editorConfiguration = {
-// toolbar: [
-//   "bold",
-//   "italic",
-//   "bulletedList",
-//   "numberedList",
-//   "blockQuote",
-//   "link",
-// ],
-// };
+// NOTE: Use the editor from source (not a build)!
+import { ClassicEditor } from "@ckeditor/ckeditor5-editor-classic";
 
-export default function MyCKEditor({ value, setValue }: any) {
-  const API_URl = "https://lubrytics.com:8443/nadh-mediafile/file";
+import { Essentials } from "@ckeditor/ckeditor5-essentials";
+import { Bold, Italic, Underline } from "@ckeditor/ckeditor5-basic-styles";
+import { Paragraph } from "@ckeditor/ckeditor5-paragraph";
+import { BlockQuote } from "@ckeditor/ckeditor5-block-quote";
+import { Heading } from "@ckeditor/ckeditor5-heading";
+import {
+  ImageResize,
+  ImageStyle,
+  ImageToolbar,
+  Image,
+  ImageResizeEditing,
+  ImageResizeHandles,
+  AutoImage,
+  ImageUpload,
+} from "@ckeditor/ckeditor5-image";
+import { AutoLink, Link, LinkImage } from "@ckeditor/ckeditor5-link";
+import { List } from "@ckeditor/ckeditor5-list";
+import { Indent, IndentBlock } from "@ckeditor/ckeditor5-indent";
+import { FileRepository } from "@ckeditor/ckeditor5-upload";
 
+const API_URl = "https://lubrytics.com:8443/nadh-mediafile/file";
+
+const editorConfiguration = {
+  plugins: [
+    Essentials,
+    Bold,
+    Italic,
+    Underline,
+    Paragraph,
+    BlockQuote,
+    Heading,
+    Image,
+    ImageResizeEditing,
+    ImageResizeHandles,
+    ImageResize,
+    AutoImage,
+    ImageToolbar,
+    ImageStyle,
+    ImageUpload,
+    LinkImage,
+    Link,
+    AutoLink,
+    List,
+    Indent,
+    IndentBlock,
+    FileRepository,
+  ],
+  toolbar: [
+    "heading",
+    "|",
+    "bold",
+    "italic",
+    "underline",
+    "|",
+    "blockQuote",
+    "link",
+    "insertImage",
+    "|",
+    "bulletedList",
+    "numberedList",
+    "outdent",
+    "indent",
+  ],
+  image: {
+    resizeOptions: [
+      {
+        name: "resizeImage:original",
+        value: null,
+        icon: "original",
+      },
+      {
+        name: "resizeImage:50",
+        value: "50",
+        icon: "medium",
+      },
+      {
+        name: "resizeImage:75",
+        value: "75",
+        icon: "large",
+      },
+    ],
+    toolbar: [
+      "resizeImage:50",
+      "resizeImage:75",
+      "resizeImage:original",
+      "|",
+      "imageStyle:alignLeft",
+      "imageStyle:alignRight",
+      "|",
+      "imageStyle:alignBlockLeft",
+      "imageStyle:alignCenter",
+      "imageStyle:alignBlockRight",
+      "|",
+      "imageTextAlternative",
+      "|",
+      "linkImage",
+    ],
+    insert: {
+      integrations: ["upload", "assetManager", "url"],
+    },
+  },
+};
+
+export default function MyCKEditor({
+  value,
+  setValue,
+}: {
+  value: string;
+  setValue: (value: string) => void;
+}) {
   function uploadAdapter(loader: any) {
     return {
       upload: () => {
@@ -60,17 +157,10 @@ export default function MyCKEditor({ value, setValue }: any) {
         editor.focus();
       }}
       config={{
+        ...editorConfiguration,
         extraPlugins: [uploadPlugin],
         placeholder: "Add content",
       }}
-
-      // config={editorConfiguration}
-      // onBlur={(event, editor) => {
-      //   console.log("Blur.", editor.getData());
-      // }}
-      // onFocus={(event, editor) => {
-      //   console.log("Focus.", editor);
-      // }}
     />
   );
 }

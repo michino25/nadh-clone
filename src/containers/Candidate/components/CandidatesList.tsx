@@ -9,8 +9,8 @@ import { candidateApi, otherApi } from "apis/index";
 import {
   candidateColumns,
   candidateTable,
+  getLabelByValue,
   getSelectByValue,
-  getStatusDataByKey,
   highest_education,
   primaryStatus,
   statusData2,
@@ -103,7 +103,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
             yob: user.dob ? user.dob.substring(0, 4) : "",
             industry: user.business_line.map((item: any) => item.sector?.name),
-            flow_status: getStatusDataByKey(user.flow_status),
+            flow_status: getLabelByValue(statusData2, user.flow_status),
 
             current_company: user.current_employments.map(
               (employment) => employment.organization.label

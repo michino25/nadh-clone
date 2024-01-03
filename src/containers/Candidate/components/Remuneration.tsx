@@ -204,7 +204,7 @@ export default function Remuneration({
             placeholder="Pension scheme"
             name="pension_scheme"
             defaultValue={data?.benefit?.pension_scheme.toString()}
-            suffix="%"
+            addonAfter="%"
           />
         </Col>
         <Col span={12}>
@@ -213,7 +213,7 @@ export default function Remuneration({
             placeholder="Annual leaves"
             name="no_holiday"
             defaultValue={data?.benefit?.no_holiday.toString()}
-            suffix="day(s)"
+            addonAfter="day(s)"
           />
         </Col>
       </Row>
@@ -224,7 +224,7 @@ export default function Remuneration({
             placeholder="Hours of work"
             name="working_hour"
             defaultValue={data?.benefit?.working_hour}
-            suffix="hours per day"
+            addonAfter="hours per day"
           />
         </Col>
         <Col span={12}>
@@ -233,7 +233,7 @@ export default function Remuneration({
             placeholder="Hours of overtime"
             name="overtime_hour"
             defaultValue={data?.benefit?.overtime_hour.toString()}
-            suffix="hours per week"
+            addonAfter="hours per week"
           />
         </Col>
       </Row>
@@ -244,7 +244,7 @@ export default function Remuneration({
             placeholder="Notice days"
             name="notice_days"
             defaultValue={data?.notice_days?.toString() || 0}
-            suffix="day(s)"
+            addonAfter="day(s)"
           />
         </Col>
       </Row>

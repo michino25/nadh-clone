@@ -1,4 +1,4 @@
-import Tag from "components/DataEntry/Tag";
+import Tag from "./Tag";
 
 export default function DisplayTag({ data, updateFn }: any) {
   console.log(data);

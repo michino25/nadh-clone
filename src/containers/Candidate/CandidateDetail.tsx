@@ -22,6 +22,46 @@ import { formatDate, formatName } from "utils/format";
 import CommentItem from "components/ShareComponents/CommentItem";
 import SkillsAndIndustry from "./components/SkillsAndIndustry";
 
+import dayjs from "dayjs";
+
+const anchorItems = [
+  {
+    key: "information",
+    href: "#information",
+    title: "Personal Information",
+  },
+  {
+    key: "industry",
+    href: "#industry",
+    title: "Skills and Industry",
+  },
+  {
+    key: "education",
+    href: "#education",
+    title: "Education",
+  },
+  {
+    key: "working",
+    href: "#working",
+    title: "Working History",
+  },
+  {
+    key: "remuneration",
+    href: "#remuneration",
+    title: "Remuneration And Rewards",
+  },
+  {
+    key: "attachments",
+    href: "#attachments",
+    title: "Attachments",
+  },
+  {
+    key: "note",
+    href: "#note",
+    title: "Note",
+  },
+];
+
 export default function Candidates() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
@@ -36,6 +76,21 @@ export default function Candidates() {
     queryFn: async () =>
       await candidateApi.getOneCandidate(id as string).then((res) => res.data),
   });
+
+  useEffect(() => {
+    if (isPending && window.location.hash !== "") {
+      setTimeout(() => {
+        const id = window.location.hash.replace("#", "");
+        const yOffset = -200;
+        const element = document.getElementById(id)!;
+
+        const y =
+          element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }, 300);
+    }
+  }, [isPending]);
 
   const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
     queryKey: ["files", candidateData?.id],
@@ -413,6 +468,28 @@ export default function Candidates() {
     "/CV?download=true&token=" +
     getUser().token;
 
+  const [pdfLoading, setPdfLoading] = useState("");
+  const pdfHandler = async (link: string, type: "download" | "view") => {
+    setPdfLoading(type);
+    try {
+      const data = await fetch(link).then((r) => r.blob());
+      const fileURL = window.URL.createObjectURL(data);
+
+      if (type === "view") window.open(fileURL);
+      else {
+        const a = document.createElement("a");
+        a.href = fileURL;
+        a.setAttribute(
+          "download",
+          "Candidate-" + id + "-" + dayjs().format("DDMMYY_HHmmss")
+        );
+        a.click();
+      }
+    } finally {
+      setPdfLoading("");
+    }
+  };
+
   if (isPending || !id) return <Skeleton className="p-12" active />;
 
   return (
@@ -429,16 +506,17 @@ export default function Candidates() {
             </span>
           </div>
           <div className="flex gap-3">
-            <Button href={linkPDF} icon={<DownloadOutlined />}>
+            <Button
+              loading={pdfLoading === "download"}
+              onClick={() => pdfHandler(linkPDF, "download")}
+              icon={<DownloadOutlined />}
+            >
               Download File PDF
             </Button>
 
             <Button
-              onClick={async () => {
-                const data = await fetch(linkPDF).then((r) => r.blob());
-                const fileURL = window.URL.createObjectURL(data);
-                window.open(fileURL);
-              }}
+              loading={pdfLoading === "view"}
+              onClick={() => pdfHandler(linkPDF, "view")}
               type="primary"
               icon={<FilePdfOutlined />}
             >
@@ -447,45 +525,10 @@ export default function Candidates() {
           </div>
         </div>
         <Anchor
-          className=""
+          affix={false}
+          offsetTop={200}
           direction="horizontal"
-          items={[
-            {
-              key: "part-1",
-              href: "#part-1",
-              title: "Personal Information",
-            },
-            {
-              key: "part-2",
-              href: "#part-2",
-              title: "Skills and Industry",
-            },
-            {
-              key: "part-3",
-              href: "#part-3",
-              title: "Education",
-            },
-            {
-              key: "part-4",
-              href: "#part-4",
-              title: "Working History",
-            },
-            {
-              key: "part-5",
-              href: "#part-5",
-              title: "Remuneration And Rewards",
-            },
-            {
-              key: "part-6",
-              href: "#part-6",
-              title: "Attachments",
-            },
-            {
-              key: "part-7",
-              href: "#part-7",
-              title: "Note",
-            },
-          ]}
+          items={anchorItems}
         />
       </div>
       <div className="flex w-full p-5">Detail {id}</div>
@@ -508,7 +551,7 @@ export default function Candidates() {
           }}
         >
           <div className="flex-col w-2/3 space-y-4 pb-12">
-            <div id="part-1" className="p-4 bg-white rounded-lg">
+            <div className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Overview</p>
               <TextArea
                 name="overview_text_new"
@@ -517,7 +560,8 @@ export default function Candidates() {
                 defaultValue={candidateData.overview_text_new}
               />
             </div>
-            <div id="part-2" className="p-4 bg-white rounded-lg">
+
+            <div id="information" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Personal Information</p>
 
               <PersonalInformationForm
@@ -528,7 +572,8 @@ export default function Candidates() {
                 setReset={setResetAddress}
               />
             </div>
-            <div id="part-3" className="p-4 bg-white rounded-lg">
+
+            <div id="industry" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Skills And Industry</p>
               <SkillsAndIndustry
                 updateFn={updateMutation.mutate}
@@ -536,7 +581,8 @@ export default function Candidates() {
                 data={candidateData}
               />
             </div>
-            <div id="part-4" className="p-4 bg-white rounded-lg">
+
+            <div id="education" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Education</p>
               <Academic
                 data={candidateData?.histories}
@@ -552,7 +598,8 @@ export default function Candidates() {
                 updateFn={(data, id) => updateCandidateHistories(data, id)}
               />
             </div>
-            <div id="part-5" className="p-4 bg-white rounded-lg">
+
+            <div className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Certificate</p>
               <TextArea
                 name="certificate_text"
@@ -561,7 +608,8 @@ export default function Candidates() {
                 defaultValue={candidateData.certificate_text}
               />
             </div>
-            <div id="part-5" className="p-4 bg-white rounded-lg">
+
+            <div id="working" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Working History</p>
               <WorkingHistory
                 data={candidateData?.histories}
@@ -571,7 +619,7 @@ export default function Candidates() {
               />
             </div>
 
-            <div id="part-6" className="p-4 bg-white rounded-lg">
+            <div id="remuneration" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Remuneration And Rewards</p>
 
               <Remuneration
@@ -582,7 +630,8 @@ export default function Candidates() {
                 updateFn={updateMutation.mutate}
               />
             </div>
-            <div id="part-7" className="p-4 bg-white rounded-lg">
+
+            <div id="attachments" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Attachments</p>
               <div className="flex space-x-2">
                 <DataUpload
@@ -595,10 +644,12 @@ export default function Candidates() {
                     obj_uid: candidateData.id,
                     uploadedByUserId: getUser().user_sent.user_id,
                   }}
+                  loading={loading}
                 />
               </div>
             </div>
-            <div id="part-8" className="p-4 bg-white rounded-lg">
+
+            <div id="note" className="p-4 bg-white rounded-lg">
               <p className="mb-4 font-bold text-lg">Note</p>
               <div className="max-h-[400px] overflow-y-auto px-2">
                 {candidateData?.notes.length > 0 ? (

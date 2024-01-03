@@ -1,7 +1,6 @@
 import {
   getIndustryString,
   getLabelByValue,
-  getStatusDataByKey,
   statusData2,
   statusData3,
 } from "_constants/index";
@@ -67,6 +66,8 @@ export default function InterviewLoop({
   const [formAction] = Form.useForm();
   const [formDate] = Form.useForm();
   const [formConsultant] = Form.useForm();
+
+  const [saveBtn, setSaveBtn] = useState(false);
 
   useEffect(() => {
     setFlowData(data.find((item: any) => item.id === currentFlow));
@@ -191,6 +192,7 @@ export default function InterviewLoop({
 
   const handleDetailCancel = () => {
     setIsDetailModalOpen(false);
+    setSaveBtn(false);
   };
 
   const handleDetailOk = () => {
@@ -249,7 +251,9 @@ export default function InterviewLoop({
                 }}
                 className="text-left"
               >
-                <strong>{getStatusDataByKey(flow.current_status)}</strong>
+                <strong>
+                  {getLabelByValue(statusData2, flow.current_status)}
+                </strong>
                 <p>{formatDate(flow.createdAt, "ISOdate", "date&hour")}</p>
                 <p>{flow.comments.length} comments</p>
               </button>
@@ -359,7 +363,7 @@ export default function InterviewLoop({
       <Modal
         title={
           flowItemData?.current_status &&
-          getStatusDataByKey(flowItemData?.current_status) +
+          getLabelByValue(statusData2, flowItemData?.current_status) +
             " - " +
             formatDate(flowItemData?.createdAt, "ISOdate", "date&hour")
         }
@@ -416,22 +420,23 @@ export default function InterviewLoop({
                           )} ?`,
                           "",
                           () =>
-                            updateFlowMutation.mutate({
-                              params: formAction.getFieldsValue(),
-                              option: "status",
-                            }),
+                            updateFlowMutation.mutate(
+                              {
+                                params: formAction.getFieldsValue(),
+                                option: "status",
+                              },
+                              { onSuccess: handleDetailCancel }
+                            ),
                           () => formAction.resetFields()
                         );
                       }}
                       placeholder="Select flow startus"
-                      options={statusData2.map((item) =>
-                        flowItemData?.current_status < parseInt(item.value)
-                          ? item
-                          : {
-                              ...item,
-                              disabled: true,
-                            }
-                      )}
+                      options={statusData2.map((item) => ({
+                        ...item,
+                        disabled:
+                          parseInt(item.value) > 0 &&
+                          flowItemData?.current_status >= parseInt(item.value),
+                      }))}
                     />
                   </Form.Item>
                 </Form>
@@ -493,6 +498,7 @@ export default function InterviewLoop({
                 preserve={false}
                 layout="horizontal"
                 form={formConsultant}
+                onFinish={() => {}}
               >
                 <Form.Item
                   name="interviewer"
@@ -503,22 +509,35 @@ export default function InterviewLoop({
                   )}
                 >
                   <Select
-                    onChange={() =>
-                      updateFlowMutation.mutate({
-                        params: {
-                          flow: {
-                            id: flowItemData.id,
-                            interviewer:
-                              formConsultant.getFieldsValue().interviewer,
-                          },
-                        },
-                      })
-                    }
+                    onChange={() => setSaveBtn(true)}
                     mode="multiple"
                     placeholder="Select interviewer"
                     options={userData}
                   />
                 </Form.Item>
+
+                <div className="flex justify-end">
+                  <Button
+                    hidden={!saveBtn}
+                    type="primary"
+                    onClick={() =>
+                      updateFlowMutation.mutate(
+                        {
+                          params: {
+                            flow: {
+                              id: flowItemData.id,
+                              interviewer:
+                                formConsultant.getFieldsValue().interviewer,
+                            },
+                          },
+                        },
+                        { onSuccess: () => setSaveBtn(false) }
+                      )
+                    }
+                  >
+                    Save
+                  </Button>
+                </div>
               </Form>
             </div>
           </Col>

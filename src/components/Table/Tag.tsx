@@ -8,7 +8,7 @@ import { Tag } from "antd";
 import { otherApi } from "apis/index";
 import useFilter from "src/hooks/useFilter";
 import { useQuery } from "@tanstack/react-query";
-import { formatPrice } from "utils/format";
+import numeral from "numeral";
 
 const pageCol = { title: "Page" };
 
@@ -89,13 +89,13 @@ const App = ({
     const valueNext = nextTagName
       ? " to " +
         (type === "number"
-          ? formatPrice(getAllParams()[nextTagName])
+          ? numeral(getAllParams()[nextTagName]).format("0,0")
           : getAllParams()[nextTagName])
       : "";
     return (
       (tagName.match(/_(from)$/) ? "from " : "to ") +
       (type === "number"
-        ? formatPrice(getAllParams()[tagName])
+        ? numeral(getAllParams()[tagName]).format("0,0")
         : getAllParams()[tagName]) +
       valueNext
     );
@@ -189,8 +189,11 @@ const App = ({
     const data = paramItem.split(",");
     const currency = " " + getSelectByValue(currencyData, data[2]).label;
     const from =
-      data[0] !== "-" ? "from " + formatPrice(data[0]) + currency : "";
-    const to = data[1] !== "-" ? "to " + formatPrice(data[1]) + currency : "";
+      data[0] !== "-"
+        ? "from " + numeral(data[0]).format("0,0") + currency
+        : "";
+    const to =
+      data[1] !== "-" ? "to " + numeral(data[1]).format("0,0") + currency : "";
     return from + " " + to;
   };
 

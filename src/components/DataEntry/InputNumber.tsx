@@ -1,4 +1,5 @@
 import { Form, InputNumber } from "antd";
+import numeral from "numeral";
 
 interface iDataInput {
   label: string;
@@ -8,7 +9,7 @@ interface iDataInput {
   placeholder: string;
   disabled?: boolean;
   noformat?: boolean;
-  suffix?: any;
+  addonAfter?: string;
 }
 
 export default function DataInputNumber({
@@ -19,7 +20,7 @@ export default function DataInputNumber({
   placeholder,
   disabled,
   noformat,
-  suffix,
+  addonAfter,
 }: iDataInput) {
   return (
     <Form.Item
@@ -37,13 +38,12 @@ export default function DataInputNumber({
         style={{ width: "100%" }}
         min={0}
         formatter={
-          !noformat
-            ? (value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            : undefined
+          !noformat ? (value: any) => numeral(value).format("0,0") : undefined
         }
+        parser={!noformat ? (value: any) => numeral(value).value() : undefined}
         placeholder={placeholder}
         disabled={disabled}
-        suffix={suffix}
+        addonAfter={addonAfter}
       />
     </Form.Item>
   );

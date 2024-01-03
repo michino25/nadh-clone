@@ -9,31 +9,33 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
   const [form] = Form.useForm();
 
   const onFinish = (value: any) => {
-    const data = {
-      requirement: {
-        industry_years: value.requirement.industry_years,
-        management_years: value.requirement.management_years,
-        major: value.requirement.major && {
-          key: value.requirement.major.split("_")[0],
-          label: value.requirement.major.split("_")[1],
-        },
-        soft_skills: value.requirement.soft_skills.map((item: string) => ({
-          key: item.split("_")[0],
-          label: item.split("_")[1],
-        })),
-        functions_skills: value.requirement.functions_skills.map(
-          (item: string) => ({
-            key: item.split("_")[0],
-            label: item.split("_")[1],
-          })
-        ),
-        languages: value.requirement.languages.map((item: string) => ({
-          key: item.split("_")[0],
-          label: item.split("_")[1],
-        })),
-      },
-    };
-    updateFn(data);
+    console.log(value);
+
+    // const data = {
+    //   requirement: {
+    //     industry_years: value.requirement.industry_years,
+    //     management_years: value.requirement.management_years,
+    //     major: value.requirement.major && {
+    //       key: value.requirement.major.split("_")[0],
+    //       label: value.requirement.major.split("_")[1],
+    //     },
+    //     soft_skills: value.requirement.soft_skills.map((item: string) => ({
+    //       key: item.split("_")[0],
+    //       label: item.split("_")[1],
+    //     })),
+    //     functions_skills: value.requirement.functions_skills.map(
+    //       (item: string) => ({
+    //         key: item.split("_")[0],
+    //         label: item.split("_")[1],
+    //       })
+    //     ),
+    //     languages: value.requirement.languages.map((item: string) => ({
+    //       key: item.split("_")[0],
+    //       label: item.split("_")[1],
+    //     })),
+    //   },
+    // };
+    // updateFn(data);
   };
 
   return (
@@ -42,7 +44,7 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
         layout="vertical"
         className="flex-col w-full"
         form={form}
-        onBlur={() => onFinish(form.getFieldsValue())}
+        onBlur={() => onFinish(form.getFieldsValue(true))}
       >
         <Row gutter={16}>
           <Col span={6}>
