@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import PersonalInformationForm from "./PersonalInformationForm";
 import { useState } from "react";
+import { AxiosError } from "axios";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -27,15 +28,16 @@ export default function CandidateAddStep1({
         nextStep();
         // navigate("/candidates");
       }, 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Candidate",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create Candidate",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -77,20 +79,20 @@ export default function CandidateAddStep1({
             label: values.highest_education.split("_")[1],
           }
         : null,
-      phones: values.phones.map((item: any) => ({
+      phones: values.phones.map((item: string) => ({
         number: item,
         current: -1,
         phone_code: { key: 1280 },
       })),
 
-      nationality: values.nationality.map((item: any) => ({
+      nationality: values.nationality.map((item: string) => ({
         key: item.split("_")[0],
         label: item.split("_")[1],
       })),
 
       prefer_position: values.prefer_position
         ? {
-            positions: values.prefer_position.map((item: any) => ({
+            positions: values.prefer_position.map((item: string) => ({
               key: item.split("_")[0],
               label: item.split("_")[1],
             })),

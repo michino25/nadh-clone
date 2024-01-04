@@ -8,7 +8,12 @@ import DynamicFormEmail from "components/DataEntry/DynamicFormEmail";
 import DynamicFormPhone from "components/DataEntry/DynamicFormPhone";
 import DynamicFormAddress from "components/DataEntry/DynamicFormAddress";
 import DataInputNumber from "components/DataEntry/InputNumber";
-import { createSelectData, gender, primaryStatus } from "_constants/index";
+import {
+  createSelectData,
+  gender,
+  iOption2,
+  primaryStatus,
+} from "_constants/index";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import { formatName } from "utils/format";
@@ -32,7 +37,7 @@ export default function PersonalInformationForm({
     queryKey: ["degree"],
     queryFn: async () =>
       await otherApi.getProperty("degree").then((res) => {
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }));

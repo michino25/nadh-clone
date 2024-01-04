@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { userApi } from "apis/index";
 import { getUser } from "utils/getUser";
+import { AxiosError } from "axios";
 
 export default function ChangePassword() {
   const [open, setOpen] = useState(false);
@@ -22,15 +23,16 @@ export default function ChangePassword() {
         description: "Update success.",
       });
       setOpen(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Password",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Password",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

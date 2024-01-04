@@ -48,18 +48,18 @@ export default function Address({
   const { data: countryData, isPending: countryIsPending } = useQuery({
     queryKey: ["countryData", "address2"],
     queryFn: async () =>
-      await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: any) => ({
+      await otherApi.getCountries().then((res) => {
+        return res.data.data.map((item: { key: number; label: string }) => ({
           value: item.key,
           label: item.label,
-        }))
-      ),
+        }));
+      }),
   });
 
   const getCity = async (id: any) => {
     try {
       return await otherApi.getLocation(1, id).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { key: number; label: string }) => ({
           value: item.key,
           label: item.label,
         }))
@@ -73,7 +73,7 @@ export default function Address({
   const getDistrict = async (id: any) => {
     try {
       return await otherApi.getLocation(2, id).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { key: number; label: string }) => ({
           value: item.key,
           label: item.label,
         }))
@@ -85,7 +85,7 @@ export default function Address({
   };
 
   const handleChangeCountry = async (value: number) => {
-    setCountry(countryData.filter((item: any) => item.value === value)[0]);
+    setCountry(countryData.filter((item: iOption) => item.value === value)[0]);
 
     if (value) setCityData(await getCity(value).then((res) => res));
     else setCityData(undefined);
@@ -96,7 +96,7 @@ export default function Address({
   };
 
   const handleChangeCity = async (value: number) => {
-    setCity(cityData?.filter((item: any) => item.value === value)[0]);
+    setCity(cityData?.filter((item: iOption) => item.value === value)[0]);
 
     if (value) setDistrictData(await getDistrict(value).then((res) => res));
     else setDistrictData(undefined);
@@ -105,7 +105,9 @@ export default function Address({
   };
 
   const handleChangeDistrict = (value: number) => {
-    setDistrict(districtData?.filter((item: any) => item.value === value)[0]);
+    setDistrict(
+      districtData?.filter((item: iOption) => item.value === value)[0]
+    );
   };
 
   useEffect(() => {

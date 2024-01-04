@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import Address from "components/DataEntry/Address";
 import Phone from "components/DataEntry/Phone";
+import { AxiosError } from "axios";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -110,15 +111,16 @@ export default function CandidateAddStep1({
       setTimeout(() => {
         nextStep();
       }, 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Client",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create Client",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

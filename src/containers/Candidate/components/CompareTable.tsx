@@ -1,6 +1,7 @@
 import { getIndustryString } from "_constants/index";
 import { Descriptions } from "antd";
 import type { DescriptionsProps } from "antd";
+import { iIndustry } from "utils/models";
 
 export default function CompareTable({
   dataCompare,
@@ -58,14 +59,14 @@ export default function CompareTable({
     {
       key: "7",
       label: "Industry",
-      children: dataCompare.candidate.industry.map((item: any) => (
+      children: dataCompare.candidate.industry.map((item: iIndustry) => (
         <p>{getIndustryString(item)}</p>
       )),
     },
     {
       key: "8",
       label: "Vs.",
-      children: dataCompare.job.industry.map((item: any) => (
+      children: dataCompare.job.industry.map((item: iIndustry) => (
         <p>{getIndustryString(item)}</p>
       )),
     },

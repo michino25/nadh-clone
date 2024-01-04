@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import ChangePassword from "./ChangePassword";
 import { otherApi, userApi } from "apis/index";
 import { createSelectData, gender } from "_constants/index";
+import { AxiosError } from "axios";
 
 export default function UserInfo() {
   const { data, isPending } = useQuery({
@@ -25,12 +26,14 @@ export default function UserInfo() {
     queryKey: ["roles"],
     queryFn: async () =>
       await otherApi.getRoles().then((res) => {
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: { name: string; id: string }) => ({
           label: item.name,
           value: item.id,
         }));
       }),
   });
+
+  console.log(roleData);
 
   const updateUser = async (userData: any) => {
     try {
@@ -42,15 +45,16 @@ export default function UserInfo() {
         message: "Update User",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update User",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update User",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

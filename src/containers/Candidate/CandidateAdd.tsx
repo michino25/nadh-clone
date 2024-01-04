@@ -15,6 +15,7 @@ import { candidateApi } from "apis/index";
 import { v4 as uuidv4 } from "uuid";
 import FormIndustry from "containers/Client/components/FormIndustry";
 import IndustryTable from "components/DataDisplay/IndustryTable";
+import { AxiosError } from "axios";
 
 const step = [
   "Personal Information",
@@ -92,15 +93,16 @@ export default function CadidateAdd() {
         description: "Update success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Candidate",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Candidate",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -175,15 +177,16 @@ export default function CadidateAdd() {
         description: "Create success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Histories",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create Histories",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -198,15 +201,16 @@ export default function CadidateAdd() {
         description: "Delete success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Delete failed", error);
-      notification.error({
-        message: "Delete Histories",
-        description: `Delete failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Delete Histories",
+          description: `Delete failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -221,15 +225,16 @@ export default function CadidateAdd() {
         description: "Update success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Histories",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Histories",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

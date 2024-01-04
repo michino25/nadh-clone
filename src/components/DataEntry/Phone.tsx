@@ -44,7 +44,7 @@ export default function Phone({
       <Select style={{ width: 110 }}>
         {countries &&
           countries.length > 0 &&
-          countries.map((item: any) => (
+          countries.map((item: { code: string; dial_code: string }) => (
             <Select.Option key={item.code} value={item.dial_code}>
               <div className="flex items-center">
                 <img

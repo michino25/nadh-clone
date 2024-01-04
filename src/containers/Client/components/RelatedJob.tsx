@@ -10,13 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import { clientApi, jobApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import IndustryState from "components/ShareComponents/IndustryState";
+import { iIndustry } from "utils/models";
+import { AxiosError } from "axios";
 
 interface DataType {
   key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  job_id: string;
 }
 
 const columns: ColumnsType<DataType> = [
@@ -24,7 +23,7 @@ const columns: ColumnsType<DataType> = [
     title: "ID",
     dataIndex: "job_id",
     key: "job_id",
-    render: (data: any, { job_id }: any) => (
+    render: (data: string, { job_id }: DataType) => (
       <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
         {data}
       </Link>
@@ -34,7 +33,7 @@ const columns: ColumnsType<DataType> = [
     title: "Title",
     dataIndex: "title",
     key: "title",
-    render: (data: any, { job_id }: any) => (
+    render: (data: { label: string }, { job_id }: DataType) => (
       <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
         {data.label}
       </Link>
@@ -49,31 +48,31 @@ const columns: ColumnsType<DataType> = [
     title: "Contact Person",
     dataIndex: "pic",
     key: "pic",
-    render: (data: any) => data[0]?.name,
+    render: (data: { name: string }[]) => data[0]?.name,
   },
   {
     title: "Expire Date",
     dataIndex: "end_date",
     key: "end_date",
-    render: (data: any) => formatDate(data, "ISOdate", "date"),
+    render: (data: string) => formatDate(data, "ISOdate", "date"),
   },
   {
     title: "Status",
     key: "status",
     dataIndex: "status",
-    render: (data: any) => getLabelByValue(statusData3, data.toString()),
+    render: (data: number) => getLabelByValue(statusData3, data.toString()),
   },
   {
     title: "Search Consultant",
     dataIndex: "recruiters",
     key: "recruiters",
-    render: (data: any) => formatName(data[0]?.full_name),
+    render: (data: { full_name: string }[]) => formatName(data[0]?.full_name),
   },
   {
     title: "Action",
     dataIndex: "id",
     key: "id",
-    render: (_: any, { job_id }: any) => (
+    render: (_: string, { job_id }: DataType) => (
       <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
         <EyeOutlined />
       </Link>
@@ -83,17 +82,17 @@ const columns: ColumnsType<DataType> = [
 
 export default function RelatedJob({ data, clientId, refetch }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [industry, setIndustry] = useState<any[]>([]);
+  const [industry, setIndustry] = useState<iIndustry[]>([]);
 
   useQuery({
     queryKey: ["clientData"],
     queryFn: async () =>
-      clientApi.getClients({}).then((res) =>
-        res.data.data.map((item: any) => ({
+      clientApi.getClients({}).then((res) => {
+        return res.data.data.map((item: { id: string; name: string }) => ({
           value: item.id,
           label: formatName(item.name),
-        }))
-      ),
+        }));
+      }),
   });
 
   const showModal = () => {
@@ -163,15 +162,16 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
 
       refetch();
       handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Job",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create Job",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

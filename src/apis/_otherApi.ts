@@ -29,7 +29,6 @@ const _otherApi = {
 
   getProperty(property_name: string, value?: string, OptGroup?: boolean) {
     const url = "api/property_values";
-    console.log(property_name, value, OptGroup);
 
     return axios().get(url, {
       params: {

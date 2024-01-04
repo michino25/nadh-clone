@@ -1,6 +1,6 @@
 import { InputNumber } from "components/DataEntry";
 import { Col, Row, Select } from "antd";
-import { YNquestion } from "_constants/index";
+import { YNquestion, iOption2 } from "_constants/index";
 import { useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +30,7 @@ export default function Remuneration({
     queryFn: async () =>
       await otherApi.getExchangeCurrencies().then((res) => {
         setCurrencyData(
-          res.data.map((item: any) => ({
+          res.data.map((item: iOption2) => ({
             value: item.key,
             label: item.label,
           }))

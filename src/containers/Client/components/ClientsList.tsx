@@ -150,7 +150,6 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         })
         .then((res) => {
           setTotal(res.data.count);
-          console.log(res.data);
 
           return res.data.data.map((client: iClient) => ({
             ...client,
@@ -191,7 +190,10 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
               ),
           }));
         })
-        .then((res) => setData(res)),
+        .then((res) => {
+          setData(res);
+          return res;
+        }),
     enabled: userDetail?.id !== undefined,
   });
 
@@ -211,7 +213,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
     queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; full_name: string }) => ({
           value: item.id,
           label: formatName(item.full_name),
         }))

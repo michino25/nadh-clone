@@ -30,7 +30,7 @@ export default function JobInformation({
           getAll: true,
         })
         .then((res) => {
-          return res.data.data.map((item: any) => ({
+          return res.data.data.map((item: { id: string; name: string }) => ({
             label: item.name,
             value: item.id,
           }));
@@ -41,7 +41,7 @@ export default function JobInformation({
     queryKey: ["user"],
     queryFn: async () =>
       await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: { id: string; full_name: string }) => ({
           label: formatName(item.full_name),
           value: item.id,
         }));
@@ -51,39 +51,39 @@ export default function JobInformation({
   const { data: positionData, isPending: positionIsPending } = useQuery({
     queryKey: ["position", "info"],
     queryFn: async () =>
-      await otherApi.getProperty("position").then((res) =>
-        res.data.data.map((item: any) => ({
+      await otherApi.getProperty("position").then((res) => {
+        return res.data.data.map((item: { key: number; label: string }) => ({
           label: item.label,
           value: item.key,
-        }))
-      ),
+        }));
+      }),
   });
 
   const { data: departmentData, isPending: departmentIsPending } = useQuery({
     queryKey: ["department", "info"],
     queryFn: async () =>
-      await otherApi.getProperty("department").then((res) =>
-        res.data.data.map((item: any) => ({
+      await otherApi.getProperty("department").then((res) => {
+        return res.data.data.map((item: { key: number; label: string }) => ({
           label: item.label,
           value: item.key,
-        }))
-      ),
+        }));
+      }),
   });
 
   const { data: contactPersonsData, isPending: contactPersonsIsPending } =
     useQuery({
       queryKey: ["contact_persons", data.client_id],
       queryFn: async () =>
-        await clientApi.getContactPersonsInClient(data.client_id).then((res) =>
-          res.data.data.map((item: any) => ({
-            label: item.name,
-            value: item.id,
-          }))
-        ),
+        await clientApi
+          .getContactPersonsInClient(data.client_id)
+          .then((res) => {
+            return res.data.data.map((item: { id: string; name: string }) => ({
+              label: item.name,
+              value: item.id,
+            }));
+          }),
       enabled: !!data?.client_id,
     });
-
-  console.log(contactPersonsData);
 
   const onFinish = (values: any, onSuccess: () => void) => {
     const data = {
@@ -319,7 +319,7 @@ export default function JobInformation({
             name="pic"
             value={
               data?.pic
-                ? data?.pic.map((item: any) => ({
+                ? data?.pic.map((item: { key: string; label: string }) => ({
                     value: item?.key,
                     label: item?.label,
                   }))
@@ -360,10 +360,12 @@ export default function JobInformation({
             name="related_users"
             value={
               data.related_users
-                ? data.related_users.map((item: any) => ({
-                    value: item?.key,
-                    label: item?.label,
-                  }))
+                ? data.related_users.map(
+                    (item: { key: string; label: string }) => ({
+                      value: item?.key,
+                      label: item?.label,
+                    })
+                  )
                 : {}
             }
             data={!userIsPending ? userData : []}

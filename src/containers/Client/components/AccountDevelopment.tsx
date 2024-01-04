@@ -19,6 +19,7 @@ import CkeditorData from "components/DataEntry/CkeditorData";
 import CommentItem from "components/ShareComponents/CommentItem";
 import dayjs from "dayjs";
 import { otherApi, userApi } from "apis/index";
+import { AxiosError } from "axios";
 
 export default function AccountDevelopment({
   data,
@@ -42,7 +43,7 @@ export default function AccountDevelopment({
     queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { id: string; full_name: string }) => ({
           value: item.id,
           label: formatName(item.full_name),
         }))
@@ -65,15 +66,16 @@ export default function AccountDevelopment({
         message: "Update Flow",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Flow",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Flow",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -93,15 +95,16 @@ export default function AccountDevelopment({
         message: "Add Comment",
         description: "Add success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Add failed", error);
-      notification.error({
-        message: "Add Comment",
-        description: `Add failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Add Comment",
+          description: `Add failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

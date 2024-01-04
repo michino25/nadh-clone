@@ -1,4 +1,4 @@
-import { iOption } from "_constants/index";
+import { iOption, iOption2 } from "_constants/index";
 import { Button, Col, Row, Form } from "antd";
 import { MultiSelect } from "components/DataEntry";
 import { useState } from "react";
@@ -10,8 +10,8 @@ interface iDataInput {
   value: any;
   data: iOption[];
   onSubmit: (value: any, onSuccess: () => void) => void;
-  editing: any;
-  setEditing: (value: any) => void;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
   prevent?: boolean;
 }
 
@@ -50,7 +50,7 @@ export default function EditableForm({
           disabled={editing && !prevent}
         >
           {value && value.length > 0
-            ? value.map((item: any) => formatName(item.label)).join(", ")
+            ? value.map((item: iOption2) => formatName(item.label)).join(", ")
             : "-"}
         </button>
       ) : (
@@ -71,7 +71,7 @@ export default function EditableForm({
                 placeholder={placeholder}
                 label=""
                 name={name}
-                defaultValue={value.map((item: any) => item.value)}
+                defaultValue={value.map((item: iOption) => item.value)}
                 options={data}
                 required={false}
               />

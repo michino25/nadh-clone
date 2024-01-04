@@ -2,6 +2,7 @@ import { clientApi } from "apis/index";
 import ContactPerson from "./ContactPerson";
 import { useMutation } from "@tanstack/react-query";
 import { notification } from "antd";
+import { AxiosError } from "axios";
 
 export default function ContactPersonWrapper({ data, clientId, refetch }: any) {
   const createClientContactPersonsApi = async (userData: any) => {
@@ -15,15 +16,16 @@ export default function ContactPersonWrapper({ data, clientId, refetch }: any) {
         description: "Create success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create ContactPersons",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create ContactPersons",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -38,15 +40,16 @@ export default function ContactPersonWrapper({ data, clientId, refetch }: any) {
         description: "Delete success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Delete failed", error);
-      notification.error({
-        message: "Delete ContactPersons",
-        description: `Delete failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Delete ContactPersons",
+          description: `Delete failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -61,15 +64,16 @@ export default function ContactPersonWrapper({ data, clientId, refetch }: any) {
         description: "Update success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update ContactPersons",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update ContactPersons",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 

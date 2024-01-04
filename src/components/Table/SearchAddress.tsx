@@ -3,7 +3,7 @@ import useFilter from "src/hooks/useFilter";
 import { Select, Button, Form } from "antd";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
-import { iOption } from "_constants/index";
+import { iOption, iOption2 } from "_constants/index";
 
 const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
@@ -39,7 +39,7 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
     queryKey: ["countries"],
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           value: item.key,
           label: item.label,
         }))
@@ -50,7 +50,7 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
     queryKey: ["cityVN"],
     queryFn: async () =>
       await otherApi.getLocation(1, "1280").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           value: item.key,
           label: item.label,
         }))

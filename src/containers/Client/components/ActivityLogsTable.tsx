@@ -49,12 +49,11 @@ const columns: ColumnsType<DataType> = [
 export default function ActivityLogsTable({ data }: any) {
   const customData = data.map((item: any) => ({
     ...item,
+    key: item.id,
     time: formatDate(item.time, "timestamp", "date&hour"),
     action: formatName(item.action),
     editBy: formatName(item.user.full_name),
   }));
-
-  console.log(customData[0]);
 
   return (
     <Table

@@ -35,6 +35,8 @@ import { jobApi, otherApi, userApi } from "apis/index";
 import CompareTable from "./CompareTable";
 import CommentItem from "components/ShareComponents/CommentItem";
 import CkeditorData from "components/DataEntry/CkeditorData";
+import { AxiosError } from "axios";
+import { iNote } from "utils/models";
 
 export default function InterviewLoop({
   allData,
@@ -48,8 +50,7 @@ export default function InterviewLoop({
   addCandidateFlow: (data: any, option?: any) => void;
 }) {
   const data = allData?.flows;
-  const currentNote = allData.notes.map((item: any) => item.id);
-  console.log(data);
+  const currentNote = allData.notes.map((item: { id: string }) => item.id);
 
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [jobCode, setJobCode] = useState("");
@@ -80,14 +81,11 @@ export default function InterviewLoop({
     );
   }, [currentFlowItem, flowData]);
 
-  console.log(currentFlow);
-  console.log(currentFlowItem);
-
   const { data: userData } = useQuery({
     queryKey: ["userData"],
     queryFn: async () =>
       userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: { user_id: string; full_name: string }) => ({
           value: item.user_id,
           label: formatName(item.full_name),
         }))
@@ -115,15 +113,16 @@ export default function InterviewLoop({
         message: "Add Comment",
         description: "Add success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Add failed", error);
-      notification.error({
-        message: "Add Comment",
-        description: `Add failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Add Comment",
+          description: `Add failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -147,15 +146,16 @@ export default function InterviewLoop({
         message: "Update Flow",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Flow",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Flow",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -301,8 +301,8 @@ export default function InterviewLoop({
                     </div>
                     <div>
                       <span className="font-bold">Industry: </span>
-                      {item.business_line.map((item: any) => (
-                        <p>{getIndustryString(item)}</p>
+                      {item.business_line.map((item: any, index: number) => (
+                        <p key={index}>{getIndustryString(item)}</p>
                       ))}
                     </div>
                   </div>
@@ -310,6 +310,8 @@ export default function InterviewLoop({
                 value: item.id,
               }))
           );
+
+          return res;
         }),
   });
 
@@ -328,9 +330,6 @@ export default function InterviewLoop({
     setIsModalOpen(false);
     setSelectedItems([]);
   };
-
-  console.log(flowData);
-  console.log(flowItemData);
 
   return (
     <>
@@ -565,7 +564,7 @@ export default function InterviewLoop({
 
             <p className="pb-2">{flowItemData?.comments.length} comments</p>
             {flowItemData?.comments.length > 0 &&
-              flowItemData?.comments.map((item: any) => (
+              flowItemData?.comments.map((item: iNote) => (
                 <div key={item.createdAt}>
                   <CommentItem
                     name={formatName(item.user.full_name) as string}
@@ -616,13 +615,13 @@ export default function InterviewLoop({
           </Descriptions.Item>
           <Descriptions.Item label="Position Applied">
             {allData?.prefer_position.positions
-              .map((item: any) => item.label)
+              .map((item: { label: string }) => item.label)
               .join(", ")}
           </Descriptions.Item>
           <Descriptions.Item label="Industry">
             <div className="flex-col">
-              {allData?.business_line.map((item: any) => (
-                <p>{getIndustryString(item)}</p>
+              {allData?.business_line.map((item: any, index: number) => (
+                <p key={index}>{getIndustryString(item)}</p>
               ))}
             </div>
           </Descriptions.Item>
@@ -640,7 +639,9 @@ export default function InterviewLoop({
                   ...item,
                   disabled:
                     selectedItems.includes(item.value) ||
-                    data.map((item: any) => item.job_id).includes(item.value),
+                    data
+                      .map((item: { job_id: string }) => item.job_id)
+                      .includes(item.value),
                 }))
               : []
           }

@@ -121,8 +121,6 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
     pageChange(getAllParams(), page);
   };
 
-  console.log(customColumns);
-
   const pageSize = 10;
 
   const paginationOption = {

@@ -12,6 +12,7 @@ import {
   getLabelByValue,
   getSelectByValue,
   highest_education,
+  iOption2,
   primaryStatus,
   statusData2,
 } from "_constants/index";
@@ -113,7 +114,10 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
             ),
           }));
         })
-        .then((res) => setData(res)),
+        .then((res) => {
+          setData(res);
+          return res;
+        }),
     enabled: userDetail?.id !== undefined,
   });
 
@@ -145,7 +149,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       otherApi.getOneProperty().then((res) =>
         res.data
           .filter((item: any) => item.name === "language")[0]
-          .values.map((item: any) => ({
+          .values.map((item: iOption2) => ({
             label: item.label,
             value: item.key.toString(),
           }))

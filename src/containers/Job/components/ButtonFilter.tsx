@@ -1,8 +1,11 @@
+import { iRecruitmentFlows } from "utils/models";
+import { scrollTo } from "utils/others";
+
 export default function ButtonFilter({
   candidate_flows,
   setFilterStatus,
 }: {
-  candidate_flows: any;
+  candidate_flows: iRecruitmentFlows[];
   setFilterStatus: (value: string) => void;
 }) {
   const rawData = candidate_flows.map(
@@ -29,14 +32,17 @@ export default function ButtonFilter({
 
   return (
     <div className="flex-col space-y-5">
-      {data.map((dataBlock) => (
-        <div className="flex justify-start flex-wrap border border-gray-200 rounded-lg p-5">
+      {data.map((dataBlock, index) => (
+        <div
+          key={index}
+          className="flex justify-start flex-wrap border border-gray-200 rounded-lg p-5"
+        >
           {dataBlock.map((item) => (
             <button
               key={item.key}
               onClick={() => {
                 setFilterStatus(item.key);
-                window.location.href = "#part-5";
+                scrollTo("candidateslist");
               }}
               className="xl:w-1/6 w-1/3 hover:text-blue-500 rounded-lg py-3 hover:bg-blue-200/10 border border-transparent hover:border-blue-300 duration-500"
             >

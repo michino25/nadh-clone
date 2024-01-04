@@ -70,8 +70,6 @@ export default function DashboardUserList() {
     ],
   };
 
-  console.log(filterSelectData.type);
-
   if (error) return <p>An error has occurred: {error.message}</p>;
 
   return (

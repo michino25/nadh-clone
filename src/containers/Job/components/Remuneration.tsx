@@ -7,6 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import DataRadioNote from "components/DataEntry/RadioNote";
 import CkeditorData from "components/DataEntry/CkeditorData";
 
+interface iExchangeCurrencies {
+  from: number;
+  to: number;
+  rate: number;
+}
+
 export default function Remuneration({
   data,
   updateFn,
@@ -17,7 +23,8 @@ export default function Remuneration({
   const [form] = Form.useForm();
   const [currencySelect, setCurrencySelect] = useState<number>();
 
-  const [currencyData, setCurrencyData] = useState<any[]>();
+  const [currencyData, setCurrencyData] =
+    useState<{ value: number; label: string }[]>();
   const [salary, setSalary] = useState(
     data.converted_salary[data.currency.name]
   );
@@ -27,47 +34,49 @@ export default function Remuneration({
     queryFn: async () =>
       await otherApi.getExchangeCurrencies().then((res) => {
         setCurrencyData(
-          res.data.map((item: any) => ({
+          res.data.map((item: { key: number; label: string }) => ({
             value: item.key,
             label: item.label,
           }))
         );
 
-        const result: any[] = [];
+        const result: iExchangeCurrencies[] = [];
 
         res.data.forEach((fromCurrency: any) => {
-          fromCurrency.rate.forEach((toCurrency: any) => {
-            result.push({
-              from: fromCurrency.key,
-              to: toCurrency.key,
-              rate: toCurrency.value,
-            });
-          });
+          fromCurrency.rate.forEach(
+            (toCurrency: { key: number; value: number }) => {
+              result.push({
+                from: fromCurrency.key,
+                to: toCurrency.key,
+                rate: toCurrency.value,
+              });
+            }
+          );
         });
 
         return result;
       }),
   });
 
-  // console.log(dataExchangeCurrencies);
-
-  const onCurrrencyChange = (value: any) => {
+  const onCurrrencyChange = (value: number) => {
     const rate = dataExchangeCurrencies?.find(
       (item) => item.from === (currencySelect || salary.id) && item.to === value
-    ).rate;
+    )?.rate;
 
     setCurrencySelect(value);
     const newSalary = {
       id: value,
       name:
         currencyData && currencyData?.length > 0
-          ? currencyData.find((item) => item.value === value).label
+          ? currencyData.find((item) => item.value === value)?.label
           : "",
       salary: {
-        to: (form.getFieldValue("salary_to") * rate).toFixed(0),
-        from: (form.getFieldValue("salary_from") * rate).toFixed(0),
+        to: (form.getFieldValue("salary_to") * (rate || 1)).toFixed(0),
+        from: (form.getFieldValue("salary_from") * (rate || 1)).toFixed(0),
       },
-      current_salary: (form.getFieldValue("current_salary") * rate).toFixed(0),
+      current_salary: (
+        form.getFieldValue("current_salary") * (rate || 1)
+      ).toFixed(0),
     };
 
     setSalary(newSalary);

@@ -1,10 +1,13 @@
 import Tag from "./Tag";
 
-export default function DisplayTag({ data, updateFn }: any) {
-  console.log(data);
+interface iTag {
+  platform: string;
+  url: string;
+}
 
+export default function DisplayTag({ data, updateFn }: any) {
   const setTags = (value: string[], option: string) => {
-    const remain = data.filter((item: any) => item.platform !== option);
+    const remain = data.filter((item: iTag) => item.platform !== option);
     const newData = [
       ...remain,
       ...value.map((item) => ({

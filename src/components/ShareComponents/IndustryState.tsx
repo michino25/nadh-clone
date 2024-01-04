@@ -1,5 +1,6 @@
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import FormIndustry from "containers/Client/components/FormIndustry";
+import { iIndustry } from "utils/models";
 
 export default function IndustryState({
   industry,
@@ -18,7 +19,7 @@ export default function IndustryState({
 
     if (industry)
       setIndustry(
-        industry.map((item: any) =>
+        industry.map((item: iIndustry) =>
           item.id === id
             ? {
                 ...item,

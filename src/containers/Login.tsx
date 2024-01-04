@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 import { userApi } from "apis/index";
 import { getUser } from "utils/getUser";
 import { useNavigate } from "react-router-dom";
-import { userTable } from "_constants/index";
-import { initFilter } from "utils/filter";
+import { AxiosError } from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -39,14 +38,15 @@ export default function Login() {
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1000);
-    } catch (error: any) {
-      console.error(error);
-      notification.error({
-        message: "Login Failed",
-        description: `Login failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+    } catch (error: unknown) {
+      // console.error(error);
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Login Failed",
+          description: `Login failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -67,9 +67,6 @@ export default function Login() {
     if (loggedInUser?.token) {
       navigate("/");
     }
-
-    // init filter
-    initFilter(userTable);
   }, []);
 
   return (

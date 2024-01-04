@@ -23,6 +23,9 @@ import CommentItem from "components/ShareComponents/CommentItem";
 import SkillsAndIndustry from "./components/SkillsAndIndustry";
 
 import dayjs from "dayjs";
+import { scrollTo } from "utils/others";
+import { AxiosError } from "axios";
+import { iFile, iNote } from "utils/models";
 
 const anchorItems = [
   {
@@ -78,19 +81,13 @@ export default function Candidates() {
   });
 
   useEffect(() => {
-    if (isPending && window.location.hash !== "") {
+    if (!(isPending || !id) && window.location.hash !== "") {
       setTimeout(() => {
         const id = window.location.hash.replace("#", "");
-        const yOffset = -200;
-        const element = document.getElementById(id)!;
-
-        const y =
-          element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-        window.scrollTo({ top: y, behavior: "smooth" });
+        scrollTo(id);
       }, 300);
     }
-  }, [isPending]);
+  }, [isPending, id]);
 
   const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
     queryKey: ["files", candidateData?.id],
@@ -98,7 +95,7 @@ export default function Candidates() {
       otherApi.getFile(candidateData?.id, "candidates").then((res) => {
         console.log(res.data.data);
 
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: iFile) => ({
           uid: item.id,
           name: item.name,
           status: "done",
@@ -162,15 +159,16 @@ export default function Candidates() {
         description: "Update success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Candidate",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Candidate",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -325,15 +323,16 @@ export default function Candidates() {
           description: "Delete success.",
         });
         refetch();
-      } catch (error: any) {
+      } catch (error: unknown) {
         // error
         // console.error("Delete failed", error);
-        notification.error({
-          message: "Delete File",
-          description: `Delete failed. ${
-            error.response.data[0].message || "Please try again."
-          }`,
-        });
+        if (error instanceof AxiosError)
+          notification.error({
+            message: "Delete File",
+            description: `Delete failed. ${
+              error.response?.data[0].message || "Please try again."
+            }`,
+          });
       }
     },
   });
@@ -349,15 +348,16 @@ export default function Candidates() {
         description: "Create success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Create failed", error);
-      notification.error({
-        message: "Create Histories",
-        description: `Create failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Create Histories",
+          description: `Create failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -372,15 +372,16 @@ export default function Candidates() {
         description: "Delete success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Delete failed", error);
-      notification.error({
-        message: "Delete Histories",
-        description: `Delete failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Delete Histories",
+          description: `Delete failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -395,15 +396,16 @@ export default function Candidates() {
         description: "Update success.",
       });
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Histories",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Histories",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -444,15 +446,16 @@ export default function Candidates() {
         message: "Update Candidate",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Candidate",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Candidate",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -653,31 +656,33 @@ export default function Candidates() {
               <p className="mb-4 font-bold text-lg">Note</p>
               <div className="max-h-[400px] overflow-y-auto px-2">
                 {candidateData?.notes.length > 0 ? (
-                  candidateData?.notes.map((item: any) => (
-                    <CommentItem
-                      name={formatName(item.user.full_name) as string}
-                      content={item.content}
-                      date={
-                        formatDate(
-                          item.createdAt,
-                          "ISOdate",
-                          "date&hour"
-                        ) as string
-                      }
-                      avtLink={
-                        item.user.mediafiles.avatar &&
-                        "https://lubrytics.com:8443/nadh-mediafile/file/" +
-                          item.user.mediafiles.avatar
-                      }
-                      optionFn={() =>
-                        updateMutation.mutate({
-                          note_comments: candidateData?.notes
-                            .map((item: any) => item.id)
-                            .filter((note: string) => note !== item.id),
-                        })
-                      }
-                      optionTitle="Remove from Note"
-                    />
+                  candidateData?.notes.map((item: iNote) => (
+                    <div key={item.createdAt}>
+                      <CommentItem
+                        name={formatName(item.user.full_name) as string}
+                        content={item.content}
+                        date={
+                          formatDate(
+                            item.createdAt,
+                            "ISOdate",
+                            "date&hour"
+                          ) as string
+                        }
+                        avtLink={
+                          item.user.mediafiles.avatar &&
+                          "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                            item.user.mediafiles.avatar
+                        }
+                        optionFn={() =>
+                          updateMutation.mutate({
+                            note_comments: candidateData?.notes
+                              .map((item: { id: string }) => item.id)
+                              .filter((note: string) => note !== item.id),
+                          })
+                        }
+                        optionTitle="Remove from Note"
+                      />
+                    </div>
                   ))
                 ) : (
                   <p className="text-gray-400">Can't find any note</p>

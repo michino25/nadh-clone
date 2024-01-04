@@ -3,7 +3,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import type { InputRef } from "antd";
 import { Input, Space, Tag as TagAnt, Tooltip, notification } from "antd";
 
-export default function Tag({ tags, setTags }: any) {
+export default function Tag({
+  tags,
+  setTags,
+}: {
+  tags: string[];
+  setTags: (value: string[]) => void;
+}) {
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [editInputIndex, setEditInputIndex] = useState(-1);
@@ -22,7 +28,7 @@ export default function Tag({ tags, setTags }: any) {
   }, [editInputValue]);
 
   const handleClose = (removedTag: string) => {
-    const newTags = tags.filter((tag: any) => tag !== removedTag);
+    const newTags = tags.filter((tag: string) => tag !== removedTag);
     setTags(newTags);
   };
 
@@ -82,7 +88,7 @@ export default function Tag({ tags, setTags }: any) {
 
   return (
     <Space size={[0, 8]} wrap>
-      {tags.map((tag: any, index: number) => {
+      {tags.map((tag: string, index: number) => {
         if (editInputIndex === index) {
           return (
             <Input

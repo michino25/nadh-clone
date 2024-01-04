@@ -7,8 +7,8 @@ interface iDataInput {
   name: string;
   value: any;
   onSubmit: (value: any, onSuccess: () => void) => void;
-  editing: any;
-  setEditing: (value: any) => void;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
   onlyCity?: boolean;
 }
 

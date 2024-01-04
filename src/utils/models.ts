@@ -529,18 +529,112 @@ export interface iIndustry {
     name: string;
     key: number;
     label: string;
+    value?: string;
   };
   sector?: {
     id: number;
     name: string;
     key: number;
     label: string;
+    value?: string;
   };
   category?: {
     id: number;
     name: string;
     key: number;
     label: string;
+    value?: string;
   };
   primary?: number;
+  id?: string;
+}
+
+interface iHistory {
+  title: {
+    key: number;
+    label: string;
+  };
+  status: number;
+  start_time: string;
+  end_time: string | null;
+}
+
+interface iCandidateDetail {
+  id: string;
+  candidate_id: string;
+  full_name: string;
+  histories: iHistory[];
+  highest_education: {
+    key: string;
+    label: string;
+  };
+}
+
+export interface iRecruitmentFlows {
+  id: string;
+  status: number;
+  previous_status: number[];
+  candidate_id: string;
+  createdAt: string;
+  candidate: iCandidateDetail;
+}
+
+export interface iFile {
+  id: string;
+  type: string;
+  mime_type: string;
+  ext: string;
+  name: string;
+  size: number;
+  created_at: string;
+}
+
+export interface iLocation {
+  country?: {
+    key: number;
+    label: string;
+  };
+  city?: {
+    key: number;
+    label: string;
+  };
+  district?: {
+    key: number;
+    label: string;
+  };
+  address?: string;
+  // id?: string;
+}
+
+export interface iNote {
+  id: string;
+  comment_id: number;
+  content: string;
+  user_id: number;
+  type: number;
+  status: number;
+  source: {
+    module: string;
+    section: string;
+  };
+  source_id: null | string;
+  source_uuid: string;
+  user_table: string;
+  user_uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: null | string;
+  user: {
+    id: string;
+    user_id: number;
+    full_name: string;
+    mediafiles: {
+      avatar: string;
+    };
+    user_name: string;
+    role: {
+      id: number;
+      name: string;
+    };
+  };
 }

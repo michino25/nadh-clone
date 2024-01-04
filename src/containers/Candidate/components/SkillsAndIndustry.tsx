@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Form, Row, Col } from "antd";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 import CkeditorData from "components/DataEntry/CkeditorData";
+import { iIndustry } from "utils/models";
 
 interface iData {
   updateFn: (data: any, option?: any) => void;
@@ -84,7 +85,7 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
       </Form>
 
       <IndustryAPI
-        data={data?.business_line.map((item: any) => ({
+        data={data?.business_line.map((item: iIndustry) => ({
           ...item,
           id: uuidv4(),
         }))}

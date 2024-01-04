@@ -9,7 +9,7 @@ import {
   Modal,
   Select,
 } from "antd";
-import type { ColumnsType, TableProps } from "antd/es/table";
+import type { ColumnsType } from "antd/es/table";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDate, formatName } from "utils/format";
 import { useState } from "react";
@@ -22,7 +22,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { DeleteOutlined } from "@ant-design/icons";
-import { iCandidate, iIndustry } from "utils/models";
+import { iCandidate, iIndustry, iRecruitmentFlows } from "utils/models";
 
 const rawColumns = [
   {
@@ -55,15 +55,19 @@ const rawColumns = [
         (item: { title: { label: string } }) => item.title.label
       );
 
-      return data.map((item: string) => <p>{item}</p>);
+      return data.map((item: string, index: number) => (
+        <p key={index}>{item}</p>
+      ));
     },
   },
   {
     title: "Previous Status",
     key: "previous_status",
     render: (value: number[]) =>
-      value.map((item: number) => (
-        <p>{"-> " + getLabelByValue(statusData2, item.toString())}</p>
+      value.map((item: number, index: number) => (
+        <p key={index}>
+          {"-> " + getLabelByValue(statusData2, item.toString())}
+        </p>
       )),
   },
   {
@@ -114,11 +118,11 @@ export default function CandidatesList({
                     </div>
                     <div>
                       <span className="font-bold">Industry: </span>
-                      {item.business_line.map((item: iIndustry) => (
-                        <p key={getIndustryString(item)}>
-                          {getIndustryString(item)}
-                        </p>
-                      ))}
+                      {item.business_line.map(
+                        (item: iIndustry, index: number) => (
+                          <p key={index}>{getIndustryString(item)}</p>
+                        )
+                      )}
                     </div>
                   </div>
                 ),
@@ -129,8 +133,6 @@ export default function CandidatesList({
           return res.data;
         }),
   });
-
-  console.log(searchData);
 
   const showDrawer = () => {
     setOpen(true);
@@ -165,7 +167,9 @@ export default function CandidatesList({
     </Flex>
   );
 
-  let columns: ColumnsType = [];
+  console.log(rawColumns);
+
+  let columns: ColumnsType<any> = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns.map((column: any) => ({
       ...column,
@@ -204,13 +208,7 @@ export default function CandidatesList({
     </Tag>
   );
 
-  const tableProps: TableProps<any> = {
-    bordered: false,
-    loading: false,
-    size: "middle",
-    scroll: undefined,
-    tableLayout: undefined,
-  };
+  console.log(candidate_flows);
 
   return (
     <div>
@@ -220,7 +218,10 @@ export default function CandidatesList({
           getLabelByValue(statusData2, filterStatus.toString())
         )}
       <Table
-        {...tableProps}
+        bordered={false}
+        loading={false}
+        size="middle"
+        tableLayout="auto"
         title={() => header}
         pagination={{
           position: ["none", "bottomRight"],
@@ -229,13 +230,11 @@ export default function CandidatesList({
         }}
         scroll={{ x: true }}
         columns={columns}
-        dataSource={
-          filterStatus
-            ? candidate_flows.filter(
-                (item: any) => item.status.toString() === filterStatus
-              )
-            : candidate_flows
-        }
+        dataSource={candidate_flows
+          ?.map((item: iRecruitmentFlows) => ({ ...item, key: item.id }))
+          .filter((item: iRecruitmentFlows) =>
+            filterStatus ? item.status.toString() === filterStatus : true
+          )}
       />
 
       <Drawer
@@ -318,8 +317,11 @@ export default function CandidatesList({
           {selectedItems.length} Candidates Picked
         </p>
         <div className="max-h-[400px] overflow-y-scroll mt-5">
-          {selectedItems.map((item) => (
-            <div className="mt-3 pb-3 flex justify-between border-b border-gray-200">
+          {selectedItems.map((item, index) => (
+            <div
+              key={index}
+              className="mt-3 pb-3 flex justify-between border-b border-gray-200"
+            >
               <div>
                 {searchData &&
                   searchData.length &&

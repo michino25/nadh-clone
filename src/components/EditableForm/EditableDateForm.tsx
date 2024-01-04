@@ -10,8 +10,8 @@ interface iDataInput {
   type?: string | undefined;
   value: string;
   onSubmit: (value: any, onSuccess: () => void) => void;
-  editing: any;
-  setEditing: (value: any) => void;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
 }
 
 export default function EditableForm({

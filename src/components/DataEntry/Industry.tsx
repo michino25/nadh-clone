@@ -1,7 +1,7 @@
 import { Select, Form } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
-import { iOption } from "_constants/index";
+import { iOption, iOption2 } from "_constants/index";
 import { useEffect } from "react";
 
 interface iData {
@@ -43,7 +43,7 @@ export default function Industry({
     queryKey: ["industry"],
     queryFn: async () =>
       await otherApi.getIndustry({ type: 1 }).then((res: any) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           value: item.key,
           label: item.label,
         }))
@@ -56,11 +56,13 @@ export default function Industry({
     queryKey: ["allindustry"],
     queryFn: async () =>
       await otherApi.getIndustry({ getAll: true }).then((res: any) =>
-        res.data.data.map((item: any) => ({
-          value: item.key,
-          label: item.label,
-          parent_id: item.parent_id,
-        }))
+        res.data.data.map(
+          (item: { key: number; label: string; parent_id: string }) => ({
+            value: item.key,
+            label: item.label,
+            parent_id: item.parent_id,
+          })
+        )
       ),
   });
 

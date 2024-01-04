@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { iOption2 } from "_constants/index";
 import { Form, Select } from "antd";
 import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
@@ -50,7 +51,7 @@ export default function MultiSelectWithSearchAPI({
             setSearchData(
               res.data.data.map((parent: any) => ({
                 label: parent.label,
-                options: parent.children.map((item: any) => ({
+                options: parent.children.map((item: iOption2) => ({
                   label: item.label,
                   value: item.key + "_" + item.label,
                 })),
@@ -58,7 +59,7 @@ export default function MultiSelectWithSearchAPI({
             );
           else
             setSearchData(
-              res.data.data.map((item: any) => ({
+              res.data.data.map((item: iOption2) => ({
                 label: item.label,
                 value: item.key + "_" + item.label,
               }))

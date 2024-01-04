@@ -112,7 +112,7 @@ export const cpa = [
   { label: "Lost", value: "5" },
 ];
 
-export const years: any = [];
+export const years: iOption[] = [];
 for (let year = 1960; year <= 2023; year++) {
   years.push({ label: year.toString(), value: year.toString() });
 }
@@ -132,7 +132,7 @@ export const months = [
   { label: "Dec", value: "12" },
 ];
 
-export const days: any = [];
+export const days: iOption[] = [];
 for (let day = 1; day <= 31; day++) {
   const value = day.toString().padStart(2, "0");
   days.push({ value, label: value });
@@ -157,6 +157,11 @@ export const gender = ["Male", "Female", "Complicated"];
 export interface iOption {
   label: string;
   value: string | number;
+}
+
+export interface iOption2 {
+  label: string;
+  key: number;
 }
 
 export const createSelectData = (data: string[]) => {

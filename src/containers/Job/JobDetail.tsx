@@ -22,6 +22,9 @@ import JobRequirements from "./components/JobRequirements";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 import dayjs from "dayjs";
+import { scrollTo } from "utils/others";
+import { iFile, iIndustry } from "utils/models";
+import { AxiosError } from "axios";
 
 const anchorItems = [
   {
@@ -81,7 +84,7 @@ export default function JobDetail() {
       await jobApi.getOneJob(id as string).then((res) => {
         return {
           ...res.data,
-          business_line: res.data.business_line.map((item: any) => ({
+          business_line: res.data.business_line.map((item: iIndustry) => ({
             ...item,
             id: uuidv4(),
           })),
@@ -97,19 +100,13 @@ export default function JobDetail() {
   }, [jobData?.status]);
 
   useEffect(() => {
-    if (isPending && window.location.hash !== "") {
+    if (!(isPending || !id) && window.location.hash !== "") {
       setTimeout(() => {
         const id = window.location.hash.replace("#", "");
-        const yOffset = -200;
-        const element = document.getElementById(id)!;
-
-        const y =
-          element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-        window.scrollTo({ top: y, behavior: "smooth" });
+        scrollTo(id);
       }, 300);
     }
-  }, [isPending]);
+  }, [isPending, id]);
 
   const addFlow = async (data: any) => {
     setLoading(true);
@@ -124,15 +121,16 @@ export default function JobDetail() {
         message: "Update Job",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Job",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Job",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -155,15 +153,16 @@ export default function JobDetail() {
         message: "Update Job",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Job",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Job",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -189,15 +188,16 @@ export default function JobDetail() {
         message: "Update Job",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Job",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Job",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -211,9 +211,7 @@ export default function JobDetail() {
     queryKey: ["files", jobData?.id],
     queryFn: () =>
       otherApi.getFile(jobData?.id, "job").then((res) => {
-        console.log(res.data.data);
-
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: iFile) => ({
           uid: item.id,
           name: item.name,
           status: "done",
@@ -223,8 +221,6 @@ export default function JobDetail() {
       }),
     enabled: !!jobData?.id,
   });
-
-  console.log(jobImage);
 
   const fileUpload = (id: string) => {
     if (id) {
@@ -272,15 +268,16 @@ export default function JobDetail() {
           description: "Delete success.",
         });
         refetch();
-      } catch (error: any) {
+      } catch (error: unknown) {
         // error
         // console.error("Delete failed", error);
-        notification.error({
-          message: "Delete File",
-          description: `Delete failed. ${
-            error.response.data[0].message || "Please try again."
-          }`,
-        });
+        if (error instanceof AxiosError)
+          notification.error({
+            message: "Delete File",
+            description: `Delete failed. ${
+              error.response?.data[0].message || "Please try again."
+            }`,
+          });
       }
     },
   });

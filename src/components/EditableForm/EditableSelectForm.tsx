@@ -9,8 +9,8 @@ interface iDataInput {
   value: any;
   data: iOption[];
   onSubmit: (value: any, onSuccess: () => void) => void;
-  editing: any;
-  setEditing: (value: any) => void;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
   prevent?: boolean;
   option?: "tag";
 }

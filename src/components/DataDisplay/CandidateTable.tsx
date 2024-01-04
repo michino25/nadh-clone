@@ -4,7 +4,7 @@ import { EditOutlined } from "@ant-design/icons";
 
 interface DataType {
   titleTable: string;
-  createBtn: any;
+  createBtn: { handler: () => void; title: string };
   rawColumns: any[];
   data: any;
   editClick: (id: string) => void;
@@ -74,7 +74,10 @@ export default function CandidateTable({
         }}
         scroll={{ x: true }}
         columns={tableColumns}
-        dataSource={data}
+        dataSource={data.map((item: any, index: number) => ({
+          ...item,
+          key: index,
+        }))}
       />
     </>
   );

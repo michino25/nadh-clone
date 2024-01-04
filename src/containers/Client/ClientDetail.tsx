@@ -17,6 +17,9 @@ import RelatedJob from "./components/RelatedJob";
 import ClientDescription from "./components/ClientDescription";
 import ClientInformation from "./components/ClientInformation";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
+import { scrollTo } from "utils/others";
+import { AxiosError } from "axios";
+import { iFile, iIndustry } from "utils/models";
 
 const anchorItems = [
   {
@@ -90,19 +93,13 @@ export default function Clients() {
   }, [clientData?.status]);
 
   useEffect(() => {
-    if (isPending && window.location.hash !== "") {
+    if (!(isPending || !id) && window.location.hash !== "") {
       setTimeout(() => {
         const id = window.location.hash.replace("#", "");
-        const yOffset = -200;
-        const element = document.getElementById(id)!;
-
-        const y =
-          element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-        window.scrollTo({ top: y, behavior: "smooth" });
+        scrollTo(id);
       }, 300);
     }
-  }, [isPending]);
+  }, [isPending, id]);
 
   const updateClient = async (data: any) => {
     setLoading(true);
@@ -117,15 +114,16 @@ export default function Clients() {
         message: "Update Client",
         description: "Update success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Update failed", error);
-      notification.error({
-        message: "Update Client",
-        description: `Update failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Update Client",
+          description: `Update failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     } finally {
       setLoading(false);
     }
@@ -139,7 +137,7 @@ export default function Clients() {
     queryKey: ["files", clientData?.id],
     queryFn: () =>
       otherApi.getFile(clientData?.id, "client").then((res) => {
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: iFile) => ({
           uid: item.id,
           name: item.name,
           status: "done",
@@ -196,15 +194,16 @@ export default function Clients() {
           description: "Delete success.",
         });
         refetch();
-      } catch (error: any) {
+      } catch (error: unknown) {
         // error
         // console.error("Delete failed", error);
-        notification.error({
-          message: "Delete File",
-          description: `Delete failed. ${
-            error.response.data[0].message || "Please try again."
-          }`,
-        });
+        if (error instanceof AxiosError)
+          notification.error({
+            message: "Delete File",
+            description: `Delete failed. ${
+              error.response?.data[0].message || "Please try again."
+            }`,
+          });
       }
     },
   });
@@ -248,7 +247,7 @@ export default function Clients() {
               <div className="bg-white rounded-lg p-6 mb-5">
                 <p className="mb-4 font-bold text-lg">Industry</p>
                 <IndustryAPI
-                  data={clientData?.business_line.map((item: any) => ({
+                  data={clientData?.business_line.map((item: iIndustry) => ({
                     ...item,
                     id: uuidv4(),
                   }))}

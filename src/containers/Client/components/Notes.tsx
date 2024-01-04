@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import CommentItem from "components/ShareComponents/CommentItem";
+import { AxiosError } from "axios";
+import { iNote } from "utils/models";
 
 export default function Notes({
   data,
@@ -27,15 +29,16 @@ export default function Notes({
         message: "Add Note",
         description: "Add success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
       // console.error("Add failed", error);
-      notification.error({
-        message: "Add Note",
-        description: `Add failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Add Note",
+          description: `Add failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
@@ -88,7 +91,7 @@ export default function Notes({
 
       <div className="max-h-[400px] overflow-y-scroll">
         {data.length > 0 &&
-          data.map((item: any) => (
+          data.map((item: iNote) => (
             <div key={item.createdAt}>
               <CommentItem
                 name={formatName(item.user.full_name) as string}

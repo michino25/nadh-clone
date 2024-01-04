@@ -43,7 +43,7 @@ export default function ClientInformation({
           getAll: true,
         })
         .then((res) => {
-          return res.data.data.map((item: any) => ({
+          return res.data.data.map((item: { id: string; name: string }) => ({
             label: item.name,
             value: item.id,
           }));
@@ -54,7 +54,7 @@ export default function ClientInformation({
     queryKey: ["user"],
     queryFn: async () =>
       await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
-        return res.data.data.map((item: any) => ({
+        return res.data.data.map((item: { id: string; full_name: string }) => ({
           label: formatName(item.full_name),
           value: item.id,
         }));

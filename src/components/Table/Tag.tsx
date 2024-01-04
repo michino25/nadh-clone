@@ -2,6 +2,7 @@ import {
   currencyData,
   getColByParam,
   getSelectByValue,
+  iOption2,
   rawColumnsByTable,
 } from "_constants/index";
 import { Tag } from "antd";
@@ -148,7 +149,7 @@ const App = ({
     queryKey: ["city"],
     queryFn: async () =>
       await otherApi.getLocation(1, "1280").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           value: item.key.toString(),
           label: item.label,
         }))
@@ -159,7 +160,7 @@ const App = ({
     queryKey: ["country"],
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           value: item.key.toString(),
           label: item.label,
         }))

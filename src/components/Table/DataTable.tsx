@@ -26,6 +26,7 @@ import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import SearchCurrency from "./SearchCurrency";
+import { AxiosError } from "axios";
 
 type DataType = iUser;
 
@@ -151,8 +152,8 @@ const DataTable = ({
     try {
       const res = await otherApi.changeCol(getPathname().slice(1), data);
       setFilterCol(res.data.data);
-    } catch (error: any) {
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) console.error(error);
     }
   };
 
@@ -293,8 +294,6 @@ const DataTable = ({
     </Flex>
   );
 
-  console.log(getAllParams().page);
-
   const footer = paginationOption && (
     <div className="flex justify-end">
       <Pagination
@@ -306,6 +305,8 @@ const DataTable = ({
       />
     </div>
   );
+
+  const dataSource = data?.map((item, index) => ({ ...item, key: index }));
 
   return (
     <Card>
@@ -322,7 +323,7 @@ const DataTable = ({
         footer={() => footer}
         scroll={{ x: "max-content" }}
         columns={columns}
-        dataSource={data}
+        dataSource={dataSource}
         pagination={false}
       />
     </Card>

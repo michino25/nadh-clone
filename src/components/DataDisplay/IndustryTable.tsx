@@ -1,6 +1,7 @@
 import { Button, Table, Checkbox } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { DeleteOutlined } from "@ant-design/icons";
+import { iIndustry } from "utils/models";
 
 interface DataType {
   key: number;
@@ -61,8 +62,8 @@ export default function IndustryTable({
 
   const dataShow: DataType[] =
     data &&
-    data.map((item: any, value: any) => ({
-      key: value,
+    data.map((item: iIndustry) => ({
+      key: item.id,
       id: item.id,
       primary: item.primary,
       industry: item.industry?.label,

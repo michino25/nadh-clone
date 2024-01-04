@@ -4,6 +4,8 @@ import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
 import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
+import { AxiosError } from "axios";
+import { iOption2 } from "_constants/index";
 
 interface iData {
   label: string;
@@ -40,7 +42,7 @@ export default function SelectWithSearchAPI({
     queryFn: async () =>
       await otherApi.getProperty(propertyName, debouncedValue).then((res) => {
         setSearchData(
-          res.data.data.map((item: any) => ({
+          res.data.data.map((item: iOption2) => ({
             label: item.label,
             value: item.key + "_" + item.label,
           }))
@@ -59,14 +61,15 @@ export default function SelectWithSearchAPI({
         message: "Add " + label,
         description: "Add success.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // error
-      notification.error({
-        message: "Add " + label,
-        description: `Add failed. ${
-          error.response.data[0].message || "Please try again."
-        }`,
-      });
+      if (error instanceof AxiosError)
+        notification.error({
+          message: "Add " + label,
+          description: `Add failed. ${
+            error.response?.data[0].message || "Please try again."
+          }`,
+        });
     }
   };
 
