@@ -8,46 +8,22 @@ import { v4 as uuidv4 } from "uuid";
 export default function JobRequirements({ data, updateFn, loading }: any) {
   const [form] = Form.useForm();
 
-  const onFinish = (value: any) => {
-    console.log(value);
-
-    // const data = {
-    //   requirement: {
-    //     industry_years: value.requirement.industry_years,
-    //     management_years: value.requirement.management_years,
-    //     major: value.requirement.major && {
-    //       key: value.requirement.major.split("_")[0],
-    //       label: value.requirement.major.split("_")[1],
-    //     },
-    //     soft_skills: value.requirement.soft_skills.map((item: string) => ({
-    //       key: item.split("_")[0],
-    //       label: item.split("_")[1],
-    //     })),
-    //     functions_skills: value.requirement.functions_skills.map(
-    //       (item: string) => ({
-    //         key: item.split("_")[0],
-    //         label: item.split("_")[1],
-    //       })
-    //     ),
-    //     languages: value.requirement.languages.map((item: string) => ({
-    //       key: item.split("_")[0],
-    //       label: item.split("_")[1],
-    //     })),
-    //   },
-    // };
-    // updateFn(data);
-  };
-
   return (
     <>
-      <Form
-        layout="vertical"
-        className="flex-col w-full"
-        form={form}
-        onBlur={() => onFinish(form.getFieldsValue(true))}
-      >
-        <Row gutter={16}>
-          <Col span={6}>
+      <Row gutter={16}>
+        <Col span={6}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  industry_years:
+                    form.getFieldsValue().requirement.industry_years,
+                },
+              })
+            }
+          >
             <Form.Item
               label="Industry Year of Services"
               name={["requirement", "industry_years"]}
@@ -61,8 +37,21 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
                 }
               />
             </Form.Item>
-          </Col>
-          <Col span={6}>
+          </Form>
+        </Col>
+        <Col span={6}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  management_years:
+                    form.getFieldsValue().requirement.management_years,
+                },
+              })
+            }
+          >
             <Form.Item
               label="Year of Management"
               name={["requirement", "management_years"]}
@@ -76,8 +65,25 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
                 }
               />
             </Form.Item>
-          </Col>
-          <Col span={12}>
+          </Form>
+        </Col>
+        <Col span={12}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  major: form.getFieldsValue().requirement.major && {
+                    key: form.getFieldsValue().requirement.major.split("_")[0],
+                    label: form
+                      .getFieldsValue()
+                      .requirement.major.split("_")[1],
+                  },
+                },
+              })
+            }
+          >
             <SelectWithSearchAPI
               label="Major"
               placeholder="Select or add major"
@@ -90,11 +96,28 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
                 data.requirement.major.key + "_" + data.requirement.major.label
               }
             />
-          </Col>
-        </Row>
+          </Form>
+        </Col>
+      </Row>
 
-        <Row gutter={16}>
-          <Col span={12}>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  soft_skills: form
+                    .getFieldsValue()
+                    .requirement.soft_skills.map((item: string) => ({
+                      key: item.split("_")[0],
+                      label: item.split("_")[1],
+                    })),
+                },
+              })
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Soft skills"
               name={["requirement", "soft_skills"]}
@@ -105,8 +128,25 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               allowClear
               propertyName="soft_skills"
             />
-          </Col>
-          <Col span={12}>
+          </Form>
+        </Col>
+        <Col span={12}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  functions_skills: form
+                    .getFieldsValue()
+                    .requirement.functions_skills.map((item: string) => ({
+                      key: item.split("_")[0],
+                      label: item.split("_")[1],
+                    })),
+                },
+              })
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Job functions skills"
               name={["requirement", "functions_skills"]}
@@ -118,11 +158,28 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               propertyName="functions_skills"
               OptGroup
             />
-          </Col>
-        </Row>
+          </Form>
+        </Col>
+      </Row>
 
-        <Row gutter={16}>
-          <Col span={24}>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form
+            layout="vertical"
+            form={form}
+            onBlur={() =>
+              updateFn({
+                requirement: {
+                  languages: form
+                    .getFieldsValue()
+                    .requirement.languages.map((item: string) => ({
+                      key: item.split("_")[0],
+                      label: item.split("_")[1],
+                    })),
+                },
+              })
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Languages"
               name={["requirement", "languages"]}
@@ -133,9 +190,9 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               allowClear
               propertyName="language"
             />
-          </Col>
-        </Row>
-      </Form>
+          </Form>
+        </Col>
+      </Row>
 
       <Row gutter={16}>
         <Col span={24}>
