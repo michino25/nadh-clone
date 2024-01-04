@@ -1,11 +1,21 @@
-import { Col, Row, Form, InputNumber } from "antd";
+import { Col, Row, Form } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
+import DataInputNumber from "components/DataEntry/InputNumber";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
+import { iIndustry } from "utils/models";
 import { v4 as uuidv4 } from "uuid";
 
-export default function JobRequirements({ data, updateFn, loading }: any) {
+export default function JobRequirements({
+  data,
+  updateFn,
+  loading,
+}: {
+  data: any;
+  updateFn: (data: any, event?: { onSuccess: () => void }) => void;
+  loading: boolean;
+}) {
   const [form] = Form.useForm();
 
   return (
@@ -24,19 +34,12 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               })
             }
           >
-            <Form.Item
+            <DataInputNumber
+              placeholder="Industry Year of Services"
               label="Industry Year of Services"
               name={["requirement", "industry_years"]}
-              initialValue={data.requirement.industry_years}
-            >
-              <InputNumber
-                className="w-full"
-                placeholder="Industry Year of Services"
-                formatter={(value: any) =>
-                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-              />
-            </Form.Item>
+              defaultValue={data.requirement.industry_years}
+            />
           </Form>
         </Col>
         <Col span={6}>
@@ -52,19 +55,12 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               })
             }
           >
-            <Form.Item
+            <DataInputNumber
               label="Year of Management"
+              defaultValue={data.requirement.management_years}
+              placeholder="Year of Management"
               name={["requirement", "management_years"]}
-              initialValue={data.requirement.management_years}
-            >
-              <InputNumber
-                className="w-full"
-                placeholder="Year of Management"
-                formatter={(value: any) =>
-                  value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-              />
-            </Form.Item>
+            />
           </Form>
         </Col>
         <Col span={12}>
@@ -123,7 +119,8 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               name={["requirement", "soft_skills"]}
               required={false}
               defaultValue={data.requirement.soft_skills.map(
-                (item: any) => item.key + "_" + item.label
+                (item: { key: number; label: string }) =>
+                  item.key + "_" + item.label
               )}
               allowClear
               propertyName="soft_skills"
@@ -152,7 +149,8 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               name={["requirement", "functions_skills"]}
               required={false}
               defaultValue={data.requirement.functions_skills.map(
-                (item: any) => item.key + "_" + item.label
+                (item: { key: number; label: string }) =>
+                  item.key + "_" + item.label
               )}
               allowClear
               propertyName="functions_skills"
@@ -185,7 +183,8 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
               name={["requirement", "languages"]}
               required={false}
               defaultValue={data.requirement.languages.map(
-                (item: any) => item.key + "_" + item.label
+                (item: { key: number; label: string }) =>
+                  item.key + "_" + item.label
               )}
               allowClear
               propertyName="language"
@@ -198,7 +197,7 @@ export default function JobRequirements({ data, updateFn, loading }: any) {
         <Col span={24}>
           <h5 className="pb-4">Expected Candidate's Industries</h5>
           <IndustryAPI
-            data={data.requirement?.industry.map((item: any) => ({
+            data={data.requirement?.industry.map((item: iIndustry) => ({
               ...item,
               id: uuidv4(),
             }))}

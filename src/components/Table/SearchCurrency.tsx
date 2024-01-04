@@ -2,6 +2,7 @@ import { currencyData } from "_constants/index";
 import { Button, InputNumber, Select } from "antd";
 import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
+import numeral from "numeral";
 
 export default function SearchCurrency({
   columnKey,
@@ -67,7 +68,10 @@ export default function SearchCurrency({
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
-        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        formatter={(value: number | string) =>
+          value ? numeral(value).format("0,0") : ""
+        }
+        parser={(value?: string) => numeral(value).value()}
       />
 
       <InputNumber
@@ -79,7 +83,10 @@ export default function SearchCurrency({
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
-        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        formatter={(value: number | string) =>
+          value ? numeral(value).format("0,0") : ""
+        }
+        parser={(value?: string) => numeral(value).value()}
       />
 
       <Select

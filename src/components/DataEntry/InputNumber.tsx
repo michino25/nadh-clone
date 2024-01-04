@@ -3,7 +3,7 @@ import numeral from "numeral";
 
 interface iDataInput {
   label: string;
-  name: string;
+  name: string | string[];
   required?: boolean;
   defaultValue?: string | number;
   placeholder: string;

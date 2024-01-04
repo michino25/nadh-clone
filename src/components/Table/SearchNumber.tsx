@@ -1,6 +1,7 @@
 import { Button, InputNumber } from "antd";
 import { useEffect, useState } from "react";
 import useFilter from "src/hooks/useFilter";
+import numeral from "numeral";
 
 export default function SearchNumber({
   columnKey,
@@ -59,7 +60,10 @@ export default function SearchNumber({
         onChange={setFrom}
         onPressEnter={submit}
         className="mt-3 block"
-        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        formatter={(value: number | string) =>
+          value ? numeral(value).format("0,0") : ""
+        }
+        parser={(value?: string) => numeral(value).value()}
       />
       <InputNumber
         min={0}
@@ -70,7 +74,10 @@ export default function SearchNumber({
         onChange={setTo}
         onPressEnter={submit}
         className="mt-3 block"
-        formatter={(value: any) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        formatter={(value: number | string) =>
+          value ? numeral(value).format("0,0") : ""
+        }
+        parser={(value?: string) => numeral(value).value()}
       />
 
       {(!!to || to === 0) && !!from && from > to && (
