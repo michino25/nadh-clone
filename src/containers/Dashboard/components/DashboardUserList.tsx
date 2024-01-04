@@ -1,6 +1,6 @@
 import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardDetail from "containers/Dashboard/DashboardDetail";
 import Tag from "components/Table/Tag";
 import { formatDate, formatName } from "utils/format";
@@ -8,6 +8,7 @@ import { iUser } from "utils/models";
 import { userApi } from "apis/index";
 import { roleData, userColumns, userTable } from "_constants/index";
 import useFilter from "src/hooks/useFilter";
+import { notification } from "antd";
 
 export default function DashboardUserList() {
   const [total, setTotal] = useState(0);
@@ -40,7 +41,7 @@ export default function DashboardUserList() {
     setOpen(false);
   };
 
-  const { isPending, error, data } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ["User", window.location.href],
     queryFn: async () =>
       await userApi
@@ -62,6 +63,17 @@ export default function DashboardUserList() {
         }),
   });
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!navigator.onLine)
+        notification.error({
+          message: "Get Users",
+          description: "No Internet",
+        });
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [window.location.href]);
+
   const filterSelectData = {
     type: roleData,
     status: [
@@ -80,7 +92,7 @@ export default function DashboardUserList() {
         titleTable={`System Users List`}
         tableName={userTable}
         filterSelectData={filterSelectData}
-        loading={isPending}
+        loading={isLoading}
         createBtn={undefined}
         data={data}
         rawColumns={userColumns}

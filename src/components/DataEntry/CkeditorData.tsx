@@ -1,6 +1,6 @@
 import { Button, Form } from "antd";
 import MyCKEditor from "components/DataEntry/MyCKEditor";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 export default function CkeditorData({
   label,
@@ -8,13 +8,21 @@ export default function CkeditorData({
   data,
   updateFn,
   resetSuccess,
-}: any) {
+  templateBtn,
+}: {
+  label: string;
+  sublabel?: string | ReactNode;
+  data?: string;
+  updateFn: (value: any, event: () => void) => void;
+  resetSuccess?: boolean;
+  templateBtn?: { title: string; content: string };
+}) {
   const [edit, setEdit] = useState(false);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setNote(data);
+    setNote(data || "");
   }, [data]);
 
   const addComment = () => {
@@ -38,19 +46,41 @@ export default function CkeditorData({
             {edit ? (
               <>
                 <MyCKEditor value={note} setValue={setNote} />
-                <div className="w-full flex justify-end gap-3 mt-3">
-                  <Button
-                    onClick={() => {
-                      setEdit(false);
-                      setNote("");
-                    }}
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="primary" onClick={addComment} loading={loading}>
-                    Save
-                  </Button>
+                <div
+                  className={
+                    "w-full flex mt-3 " +
+                    (templateBtn ? "justify-between" : "justify-end")
+                  }
+                >
+                  {templateBtn && (
+                    <Button
+                      onClick={() => {
+                        setNote(templateBtn.content);
+                      }}
+                      disabled={loading}
+                    >
+                      {templateBtn.title}
+                    </Button>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        setEdit(false);
+                        setNote("");
+                      }}
+                      disabled={loading}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={addComment}
+                      loading={loading}
+                    >
+                      Save
+                    </Button>
+                  </div>
                 </div>
               </>
             ) : (
@@ -58,7 +88,7 @@ export default function CkeditorData({
                 className="cursor-text w-full text-left border-gray-200 border rounded-lg p-3 hover:border-blue-500"
                 onClick={() => {
                   setEdit(true);
-                  setNote(data);
+                  setNote(data || "");
                 }}
               >
                 {data ? (

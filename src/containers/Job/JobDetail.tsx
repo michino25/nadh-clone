@@ -413,7 +413,6 @@ export default function JobDetail() {
           </div>
 
           <div id="candidateslist" className="p-4 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Candidates List</p>
             <CandidatesList
               data={jobData}
               filterStatus={filterStatus}

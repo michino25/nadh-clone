@@ -1,13 +1,14 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { ReactNode } from "react";
 import { formatDate, formatName } from "utils/format";
 
 interface DataType {
   key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  action: string;
+  previous_value: string;
+  current_value: string;
+  field: string;
 }
 
 const columns: ColumnsType<DataType> = [
@@ -20,24 +21,71 @@ const columns: ColumnsType<DataType> = [
     title: "Action",
     dataIndex: "action",
     key: "action",
+    render: (value: string) => value.split("_")[0],
   },
   {
     title: "Field",
     dataIndex: "field",
     key: "field",
+    render: (value: string) => <span className="font-semibold">{value}</span>,
   },
   {
     title: "Detail",
     key: "tags",
     dataIndex: "tags",
     width: "40%",
-    render: (_, { action, previous_value, current_value }: any) => (
-      <span>
-        {action} from:{" "}
-        <span className="line-through font-medium">"{previous_value}"</span> to{" "}
-        <span className="font-medium">"{current_value}"</span>
-      </span>
-    ),
+    render: (_, { action, previous_value, current_value, field }: DataType) => {
+      const type = action.split("_")[1];
+      let content: ReactNode = "";
+      switch (type) {
+        case "long":
+          content = (
+            <span>
+              content of{" "}
+              <span className="font-semibold text-gray-700">{field}</span>
+            </span>
+          );
+          break;
+        case "add":
+          content = (
+            <span>
+              add{" "}
+              <span className="font-semibold text-gray-700">
+                "{current_value}"
+              </span>
+            </span>
+          );
+          break;
+        case "remove":
+          content = (
+            <span>
+              remove{" "}
+              <span className="line-through font-semibold text-gray-700">
+                "{previous_value}"
+              </span>
+            </span>
+          );
+          break;
+        default:
+          content = (
+            <span>
+              from{" "}
+              <span className="line-through font-semibold text-gray-700">
+                "{previous_value}"
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-gray-700">
+                "{current_value}"
+              </span>
+            </span>
+          );
+      }
+      return (
+        <span>
+          {action.split("_")[0]}: {content}
+        </span>
+      );
+    },
   },
   {
     title: "By",

@@ -1,8 +1,18 @@
-import { Col, Row } from "antd";
+import { Col, Row, Popover, Button } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import DisplayTag from "./DisplayTag";
+import CompetenciesInstruction from "./CompetenciesInstruction";
 
 export default function JobDescription({ data, updateFn }: any) {
+  const templateContent = `<p>• Is the job and budget to be signed off? Yes or No</p>
+  <p>• Why is the position open?</p>
+  <p>• How long have you been looking?</p>
+  <p>• Internal applications?</p>
+  <p>• Adverts published where?</p>
+  <p>• Agencies used?</p>
+  <p>• Prior interviews - Names</p>
+  <p>• What stage with others</p>`;
+
   return (
     <>
       <Row gutter={16}>
@@ -95,7 +105,23 @@ export default function JobDescription({ data, updateFn }: any) {
                 onSuccess
               )
             }
-            sublabel="(The client is looking for vs candidate's competencies)"
+            sublabel={
+              <>
+                <p>The client is looking for vs candidate's competencies</p>
+                <Popover
+                  content={
+                    <div className="w-[500px] h-[300px]">
+                      <CompetenciesInstruction />
+                    </div>
+                  }
+                  title=""
+                >
+                  <Button className="p-0" type="link">
+                    Competencies Instruction
+                  </Button>
+                </Popover>
+              </>
+            }
           />
         </Col>
       </Row>
@@ -144,6 +170,10 @@ export default function JobDescription({ data, updateFn }: any) {
                 onSuccess
               )
             }
+            templateBtn={{
+              content: templateContent,
+              title: "Template",
+            }}
           />
         </Col>
       </Row>

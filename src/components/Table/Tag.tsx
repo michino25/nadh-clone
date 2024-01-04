@@ -205,9 +205,9 @@ const App = ({
           tag === "page"
             ? pageCol
             : getColByParam(tableCol, tag.replace(/_(from|to)$/, ""));
-        console.log(col);
-        console.log(tag);
-        console.log(col.type);
+        // console.log(col);
+        // console.log(tag);
+        // console.log(col.type);
 
         // console.log(
         //   col.type === "select" &&

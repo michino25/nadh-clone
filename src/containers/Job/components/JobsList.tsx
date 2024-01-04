@@ -1,7 +1,7 @@
 import DataTable from "components/Table/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Tag as TagAntd } from "antd";
+import { useEffect, useState } from "react";
+import { Tag as TagAntd, notification } from "antd";
 import { iIndustry, iJob, iUser } from "utils/models";
 import { formatDate, formatName } from "utils/format";
 import { useNavigate } from "react-router-dom";
@@ -114,7 +114,6 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const { getAllParams, pageChange } = useFilter();
-  const [data, setData] = useState<iJob[]>([]);
 
   const handlePageChange = (page: number) => {
     console.log("Page changed:", page);
@@ -151,7 +150,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   };
   delete allParams["salary"];
 
-  const { isPending } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["Jobs", window.location.href, userDetail.id],
     queryFn: async () =>
       await jobApi
@@ -208,11 +207,21 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
           }));
         })
         .then((res) => {
-          setData(res);
           return res;
         }),
     enabled: userDetail?.id !== undefined,
   });
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!navigator.onLine)
+        notification.error({
+          message: "Get Jobs",
+          description: "No Internet",
+        });
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [window.location.href]);
 
   const goDetail = (id: string) => {
     const jobs = data.filter((item: iJob) => item.id === id);
@@ -263,20 +272,18 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
         <Tag filterSelectData={filterSelectData} tableName={jobTable} />
       )}
 
-      {data && (
-        <DataTable
-          titleTable={`Jobs List`}
-          tableName={jobTable}
-          filterSelectData={filterSelectData}
-          loading={isPending}
-          createBtn={createBtn}
-          data={data}
-          showDetail={goDetail}
-          rawColumns={customColumns}
-          paginationOption={paginationOption}
-          noFilter={userDetail?.id !== ""}
-        />
-      )}
+      <DataTable
+        titleTable={`Jobs List`}
+        tableName={jobTable}
+        filterSelectData={filterSelectData}
+        loading={isLoading}
+        createBtn={createBtn}
+        data={data}
+        showDetail={goDetail}
+        rawColumns={customColumns}
+        paginationOption={paginationOption}
+        noFilter={userDetail?.id !== ""}
+      />
     </div>
   );
 }

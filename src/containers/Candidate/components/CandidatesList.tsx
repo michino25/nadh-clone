@@ -47,8 +47,6 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   const navigate = useNavigate();
   const { getAllParams, pageChange } = useFilter();
 
-  // console.log(getAllParams());
-
   const [total, setTotal] = useState(0);
 
   const handlePageChange = (page: number) => {
@@ -72,8 +70,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       }
     : getAllParams();
 
-  const [data, setData] = useState<any[]>([]);
-  const { isPending, isError, error } = useQuery({
+  const { data, isError, error, isLoading } = useQuery({
     queryKey: ["Candidates", window.location.href, userDetail.id],
     queryFn: async () =>
       await candidateApi
@@ -115,15 +112,24 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
           }));
         })
         .then((res) => {
-          setData(res);
           return res;
         }),
     enabled: userDetail?.id !== undefined,
   });
 
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!navigator.onLine)
+        notification.error({
+          message: "Get Candidates",
+          description: "No Internet",
+        });
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [window.location.href]);
+
+  useEffect(() => {
     if ((error as any)?.response?.status) {
-      setData([]);
       notification.error({
         message: "Get Candidate",
         description: "Not Found",
@@ -173,7 +179,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
       <DataTable
         titleTable={`Candidates List`}
-        loading={isPending}
+        loading={isLoading}
         filterSelectData={filterSelectData}
         tableName={candidateTable}
         data={data}

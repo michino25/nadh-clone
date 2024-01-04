@@ -2,10 +2,10 @@
 import DataTable from "components/Table/DataTable";
 import { formatName, formatDate } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { iClient, iUser } from "utils/models";
 import { useNavigate } from "react-router-dom";
-import { Tag as TagAntd } from "antd";
+import { Tag as TagAntd, notification } from "antd";
 import { clientApi, userApi } from "apis/index";
 import {
   clientColumns,
@@ -137,9 +137,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         }
     : getAllParams();
 
-  const [data, setData] = useState<any[]>([]);
-
-  const { isPending } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["Clients", window.location.href, userDetail.id],
     queryFn: async () =>
       await clientApi
@@ -191,11 +189,21 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
           }));
         })
         .then((res) => {
-          setData(res);
           return res;
         }),
     enabled: userDetail?.id !== undefined,
   });
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!navigator.onLine)
+        notification.error({
+          message: "Get Clients",
+          description: "No Internet",
+        });
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [window.location.href]);
 
   const goDetail = (id: string) => {
     const clients = data.filter((item: iClient) => item.id === id);
@@ -235,20 +243,18 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         <Tag filterSelectData={filterSelectData} tableName={clientTable} />
       )}
 
-      {data && (
-        <DataTable
-          titleTable={`Clients List`}
-          tableName={clientTable}
-          loading={isPending}
-          filterSelectData={filterSelectData}
-          createBtn={createBtn}
-          data={data}
-          showDetail={goDetail}
-          rawColumns={customColumns}
-          paginationOption={paginationOption}
-          noFilter={userDetail?.id !== ""}
-        />
-      )}
+      <DataTable
+        titleTable={`Clients List`}
+        tableName={clientTable}
+        loading={isLoading}
+        filterSelectData={filterSelectData}
+        createBtn={createBtn}
+        data={data}
+        showDetail={goDetail}
+        rawColumns={customColumns}
+        paginationOption={paginationOption}
+        noFilter={userDetail?.id !== ""}
+      />
     </div>
   );
 }

@@ -14,34 +14,23 @@ interface iData {
 export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
   const [form] = Form.useForm();
 
-  const onFinish = (value: any) => {
-    const data = {
-      soft_skills: value.soft_skills.map((item: string) => ({
-        key: item.split("_")[0],
-        label: item.split("_")[1],
-      })),
-      functions_skills: value.functions_skills.map((item: string) => ({
-        key: item.split("_")[0],
-        label: item.split("_")[1],
-      })),
-      languages: value.languages.map((item: string) => ({
-        key: item.split("_")[0],
-        label: item.split("_")[1],
-      })),
-    };
-    updateFn(data);
-  };
-
   return (
     <>
-      <Form
-        layout="vertical"
-        className="flex-col w-full"
-        form={form}
-        onBlur={() => onFinish(form.getFieldsValue())}
-      >
-        <Row gutter={16}>
-          <Col span={12}>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form
+            layout="vertical"
+            className="flex-col w-full"
+            form={form}
+            onValuesChange={(changeItems) =>
+              updateFn(
+                changeItems.soft_skills.map((item: string) => ({
+                  key: item.split("_")[0],
+                  label: item.split("_")[1],
+                }))
+              )
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Soft skills"
               name={"soft_skills"}
@@ -52,8 +41,22 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               allowClear
               propertyName="soft_skills"
             />
-          </Col>
-          <Col span={12}>
+          </Form>
+        </Col>
+        <Col span={12}>
+          <Form
+            layout="vertical"
+            className="flex-col w-full"
+            form={form}
+            onValuesChange={(changeItems) =>
+              updateFn(
+                changeItems.functions_skills.map((item: string) => ({
+                  key: item.split("_")[0],
+                  label: item.split("_")[1],
+                }))
+              )
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Job functions skills"
               name={"functions_skills"}
@@ -65,11 +68,25 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               propertyName="functions_skills"
               OptGroup
             />
-          </Col>
-        </Row>
+          </Form>
+        </Col>
+      </Row>
 
-        <Row gutter={16}>
-          <Col span={24}>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form
+            layout="vertical"
+            className="flex-col w-full"
+            form={form}
+            onValuesChange={(changeItems) =>
+              updateFn(
+                changeItems.languages.map((item: string) => ({
+                  key: item.split("_")[0],
+                  label: item.split("_")[1],
+                }))
+              )
+            }
+          >
             <MultiSelectWithSearchAPI
               label="Languages"
               name={"languages"}
@@ -80,9 +97,9 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               allowClear
               propertyName="language"
             />
-          </Col>
-        </Row>
-      </Form>
+          </Form>
+        </Col>
+      </Row>
 
       <IndustryAPI
         data={data?.business_line.map((item: iIndustry) => ({

@@ -157,9 +157,15 @@ export default function CandidatesList({
   };
 
   const header = (
-    <Flex justify="end">
+    <Flex justify="space-between">
+      <p className="mb-4 font-bold text-lg">Candidates List</p>
+
       <Flex gap="middle">
-        <Button onClick={showModal} className="flex items-center">
+        <Button
+          onClick={showModal}
+          className="flex items-center"
+          type="primary"
+        >
           <PlusOutlined />
           Pick Candidate
         </Button>

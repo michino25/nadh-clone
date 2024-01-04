@@ -99,7 +99,7 @@ img.ant-upload-list-item-image {
 
 .ck-content h2,
 .StyleInjectInnerHTML h2 {
-  font-size: 1.5em;
+  font-size: 1.8em;
   line-height: 1.5em;
   padding-top: 0.8em;
   margin-bottom: 0.4em;
@@ -109,22 +109,22 @@ img.ant-upload-list-item-image {
 
 .ck-content h3,
 .StyleInjectInnerHTML h3 {
-  font-size: 1.3em;
+  font-size: 1.5em;
   line-height: 1.5em;
   padding-top: 0.8em;
   margin-bottom: 0.2em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .ck-content h4,
 .StyleInjectInnerHTML h4 {
-  font-size: 1.2em;
+  font-size: 1.3em;
   line-height: 1.5em;
   padding-top: 0.8em;
   margin-bottom: 0.2em;
   margin-bottom: 0.2em;
   padding-top: 0.8em;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .ck-content p,
@@ -133,4 +133,9 @@ img.ant-upload-list-item-image {
   font-size: 1em;
   line-height: 1.6em;
   padding-top: 0.2em;
+}
+
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: rgb(75 85 99) !important;
 }

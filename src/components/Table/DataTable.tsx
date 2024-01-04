@@ -173,7 +173,11 @@ const DataTable = ({
     label: column.title,
   }));
 
-  const { isPending: colIsPending, data: colData } = useQuery({
+  const {
+    isPending: colIsPending,
+    isLoading: colIsLoading,
+    data: colData,
+  } = useQuery({
     queryKey: ["col", getPathname()],
     queryFn: async () =>
       await otherApi
@@ -318,7 +322,7 @@ const DataTable = ({
 
       <Table
         className="w-full"
-        loading={(colIsPending && getPathname() !== "/dashboard") || loading}
+        loading={(colIsLoading && getPathname() !== "/dashboard") || loading}
         title={() => header}
         footer={() => footer}
         scroll={{ x: "max-content" }}
