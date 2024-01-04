@@ -62,9 +62,9 @@ const Navmenu = () => {
 
       case "":
       case "dashboard":
-      default:
         setCurrent("dashboard");
         break;
+      default:
     }
   }, [location.pathname]);
 
