@@ -47,7 +47,8 @@ export default function App() {
           <Route key={path} path={path} element={element} />
         ))}
         <Route path="/500-error" element={<Page500 />} />
-        <Route path="*" element={<Page404 />} />
+        <Route path="/404-error" element={<Page404 />} />
+        <Route path="*" element={<Navigate to="/404-error" />} />
       </Route>
     </Routes>
   );
