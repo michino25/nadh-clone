@@ -19,69 +19,104 @@ export default function JobRequirements({
   loading: boolean;
 }) {
   const [form] = Form.useForm();
+  const [requirementForm] = Form.useForm();
+
+  const onBlur = (e: { target: { id: string } }) => {
+    const id = e.target.id;
+    const formValues = requirementForm.getFieldsValue().requirement;
+
+    const dataUpdate = {
+      requirement: {
+        ...(id === "requirement_industry_years" &&
+        data.requirement.industry_years !== formValues.industry_years
+          ? {
+              industry_years: formValues.industry_years,
+            }
+          : {}),
+
+        ...(id === "requirement_management_years" &&
+        data.requirement.management_years !== formValues.management_years
+          ? {
+              management_years: formValues.management_years,
+            }
+          : {}),
+      },
+    };
+
+    if (Object.keys(dataUpdate.requirement).length > 0) updateFn(dataUpdate);
+  };
+
+  const onValuesChange = (changeItems: {
+    requirement: {
+      major: string;
+      functions_skills: string[];
+      soft_skills: string[];
+    };
+  }) => {
+    const data = {
+      requirement: {
+        ...(changeItems.requirement.major
+          ? {
+              major: {
+                key: changeItems.requirement.major.split("_")[0],
+                label: changeItems.requirement.major.split("_")[1],
+              },
+            }
+          : {}),
+
+        ...(changeItems.requirement.functions_skills
+          ? {
+              functions_skills: changeItems.requirement.functions_skills.map(
+                (item: string) => ({
+                  key: item.split("_")[0],
+                  label: item.split("_")[1],
+                })
+              ),
+            }
+          : {}),
+
+        ...(changeItems.requirement.soft_skills
+          ? {
+              soft_skills: changeItems.requirement.soft_skills.map(
+                (item: string) => ({
+                  key: item.split("_")[0],
+                  label: item.split("_")[1],
+                })
+              ),
+            }
+          : {}),
+      },
+    };
+
+    if (Object.keys(data.requirement).length > 0) updateFn(data);
+  };
 
   return (
     <>
-      <Row gutter={16}>
-        <Col span={6}>
-          <Form
-            layout="vertical"
-            form={form}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  industry_years:
-                    form.getFieldsValue().requirement.industry_years,
-                },
-              })
-            }
-          >
+      <Form
+        layout="vertical"
+        form={requirementForm}
+        onBlur={onBlur}
+        onValuesChange={onValuesChange}
+      >
+        <Row gutter={16}>
+          <Col span={6}>
             <DataInputNumber
               placeholder="Industry Year of Services"
               label="Industry Year of Services"
               name={["requirement", "industry_years"]}
               defaultValue={data.requirement.industry_years}
             />
-          </Form>
-        </Col>
-        <Col span={6}>
-          <Form
-            layout="vertical"
-            form={form}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  management_years:
-                    form.getFieldsValue().requirement.management_years,
-                },
-              })
-            }
-          >
+          </Col>
+          <Col span={6}>
             <DataInputNumber
               label="Year of Management"
               defaultValue={data.requirement.management_years}
               placeholder="Year of Management"
               name={["requirement", "management_years"]}
             />
-          </Form>
-        </Col>
-        <Col span={12}>
-          <Form
-            layout="vertical"
-            form={form}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  major: form.getFieldsValue().requirement.major && {
-                    key: form.getFieldsValue().requirement.major.split("_")[0],
-                    label: form
-                      .getFieldsValue()
-                      .requirement.major.split("_")[1],
-                  },
-                },
-              })
-            }
-          >
+          </Col>
+          <Col span={12}>
             <SelectWithSearchAPI
               label="Major"
               placeholder="Select or add major"
@@ -94,29 +129,11 @@ export default function JobRequirements({
                 data.requirement.major.key + "_" + data.requirement.major.label
               }
             />
-          </Form>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
 
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form
-            layout="vertical"
-            form={form}
-            // onValuesChange={(changeItems) => {}}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  soft_skills: form
-                    .getFieldsValue()
-                    .requirement.soft_skills.map((item: string) => ({
-                      key: item.split("_")[0],
-                      label: item.split("_")[1],
-                    })),
-                },
-              })
-            }
-          >
+        <Row gutter={16}>
+          <Col span={12}>
             <MultiSelectWithSearchAPI
               label="Soft skills"
               name={["requirement", "soft_skills"]}
@@ -127,26 +144,10 @@ export default function JobRequirements({
               )}
               allowClear
               propertyName="soft_skills"
+              disableSelected
             />
-          </Form>
-        </Col>
-        <Col span={12}>
-          <Form
-            layout="vertical"
-            form={form}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  functions_skills: form
-                    .getFieldsValue()
-                    .requirement.functions_skills.map((item: string) => ({
-                      key: item.split("_")[0],
-                      label: item.split("_")[1],
-                    })),
-                },
-              })
-            }
-          >
+          </Col>
+          <Col span={12}>
             <MultiSelectWithSearchAPI
               label="Job functions skills"
               name={["requirement", "functions_skills"]}
@@ -159,9 +160,9 @@ export default function JobRequirements({
               propertyName="functions_skills"
               OptGroup
             />
-          </Form>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Form>
 
       <Row gutter={16}>
         <Col span={24}>

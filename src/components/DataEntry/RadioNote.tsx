@@ -1,15 +1,13 @@
-import { useState } from "react";
-import type { RadioChangeEvent } from "antd";
-import { Form, Radio } from "antd";
+import { Form, Radio, Input } from "antd";
 import { iOption } from "_constants/index";
-import DataInput from "./Input";
 
 interface iRadio {
   label: string;
   data: iOption[];
   name: string;
   required?: boolean;
-  defaultValue?: string | number | undefined;
+  defaultRadio?: string | undefined;
+  defaultInput?: string | undefined;
   disabled?: boolean;
 }
 
@@ -18,33 +16,25 @@ export default function DataRadioNote({
   data,
   name,
   required,
-  defaultValue,
+  defaultRadio,
+  defaultInput,
   disabled,
 }: iRadio) {
-  const [value, setValue] = useState(
-    (defaultValue as any)[name].toString() || "-1"
-  );
-
-  const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
-  };
-
   return (
     <>
       <Form.Item
         label={label}
         name={name}
-        initialValue={value}
+        initialValue={defaultRadio}
         rules={[
           {
             required: required,
             message: `Please input your your ${label}!`,
           },
         ]}
-        className={value === "1" ? "mb-2" : ""}
+        className={defaultRadio === "1" ? "mb-2" : ""}
       >
-        <Radio.Group onChange={onChange} value={value} disabled={disabled}>
+        <Radio.Group disabled={disabled}>
           {data.map((item: iOption) => (
             <Radio key={item.value} value={item.value}>
               {item.label}
@@ -53,15 +43,25 @@ export default function DataRadioNote({
         </Radio.Group>
       </Form.Item>
 
-      {value === "1" && (
+      {defaultRadio === "1" && (
         <div className="lg:w-1/3 sm:w-1/2 w-full">
-          <DataInput
+          <Form.Item
             name={name + "_text"}
-            placeholder="Note"
-            defaultValue={
-              (defaultValue as any)[name + "_text"].toString() || ""
-            }
-          />
+            initialValue={defaultInput}
+            dependencies={[name]}
+            rules={[
+              ({ getFieldValue, setFieldValue }) => ({
+                validator() {
+                  if (getFieldValue([name]) === "-1") {
+                    setFieldValue(name + "_text", "");
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Input placeholder="Note" className="" />
+          </Form.Item>
         </div>
       )}
     </>

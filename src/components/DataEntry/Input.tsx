@@ -7,6 +7,7 @@ interface iDataInput {
   placeholder: string;
   required?: boolean;
   defaultValue?: string | number;
+  value?: string | number;
   disabled?: boolean;
 }
 
@@ -15,6 +16,7 @@ export default function DataInput({
   name,
   required,
   defaultValue,
+  value,
   type,
   placeholder,
   disabled,
@@ -35,7 +37,12 @@ export default function DataInput({
         },
       ]}
     >
-      <Input className="" placeholder={placeholder} disabled={disabled} />
+      <Input
+        className=""
+        placeholder={placeholder}
+        disabled={disabled}
+        value={value}
+      />
     </Form.Item>
   );
 }

@@ -13,7 +13,7 @@ export default function CkeditorData({
   label: string;
   sublabel?: string | ReactNode;
   data?: string;
-  updateFn: (value: any, event: () => void) => void;
+  updateFn: (value: string, event: () => void) => void;
   resetSuccess?: boolean;
   templateBtn?: { title: string; content: string };
 }) {
@@ -42,7 +42,7 @@ export default function CkeditorData({
       <div className="mb-3">
         <Form layout="vertical">
           <Form.Item label={label}>
-            {sublabel && <p className="text-gray-500 pb-2">{sublabel}</p>}
+            {sublabel && <div className="text-gray-500 pb-2">{sublabel}</div>}
             {edit ? (
               <>
                 <MyCKEditor value={note} setValue={setNote} />

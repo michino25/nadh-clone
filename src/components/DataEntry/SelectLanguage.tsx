@@ -75,8 +75,6 @@ export default function SelectLanguage({
     createMutation.mutate(value);
   };
 
-  console.log(defaultValue);
-
   return (
     <>
       <div className="ant-form-item-label">

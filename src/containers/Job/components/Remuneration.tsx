@@ -1,5 +1,5 @@
 import { Input, InputNumber } from "components/DataEntry";
-import { Col, Row, Select, Form } from "antd";
+import { Col, Row, Select, Form, notification } from "antd";
 import { YNquestion } from "_constants/index";
 import { useState } from "react";
 import { otherApi } from "apis/index";
@@ -18,7 +18,7 @@ export default function Remuneration({
   updateFn,
 }: {
   data: any;
-  updateFn: (value: any) => void;
+  updateFn: (value: any, event?: { onSuccess: () => void }) => void;
 }) {
   const [form] = Form.useForm();
   const [currencySelect, setCurrencySelect] = useState<number>();
@@ -84,64 +84,118 @@ export default function Remuneration({
     form.setFieldValue("current_salary", newSalary.current_salary);
     form.setFieldValue("salary_to", newSalary.salary.to);
     form.setFieldValue("salary_from", newSalary.salary.from);
-  };
 
-  const onFinish = (values: any) => {
-    const remunerationObject = {
+    const data = {
       remuneration: {
-        benefit: {
-          over_thirteen: parseInt(values.over_thirteen),
-          lunch_check: parseInt(values.lunch_check),
-          car_parking: parseInt(values.car_parking),
-          car_allowance: parseInt(values.car_allowance),
-          phone: parseInt(values.phone),
-          laptop: parseInt(values.laptop),
-          share_option: parseInt(values.share_option),
-          health_cover: parseInt(values.health_cover),
-
-          ...(values.over_thirteen === "1"
-            ? { over_thirteen_text: values.over_thirteen_text }
-            : {}),
-          ...(values.lunch_check === "1"
-            ? { lunch_check_text: values.lunch_check_text }
-            : {}),
-          ...(values.car_parking === "1"
-            ? { car_parking_text: values.car_parking_text }
-            : {}),
-          ...(values.car_allowance === "1"
-            ? { car_allowance_text: values.car_allowance_text }
-            : {}),
-          ...(values.phone === "1" ? { phone_text: values.phone_text } : {}),
-          ...(values.laptop === "1" ? { laptop_text: values.laptop_text } : {}),
-          ...(values.share_option === "1"
-            ? { share_option_text: values.share_option_text }
-            : {}),
-          ...(values.health_cover === "1"
-            ? { health_cover_text: values.health_cover_text }
-            : {}),
-
-          pension_scheme: parseInt(values.pension_scheme),
-          no_holiday: parseInt(values.no_holiday),
-          working_hour: parseInt(values.working_hour),
-          overtime_hour: parseInt(values.overtime_hour),
-
-          extra: values.extra,
-        },
-        review_date: values.review_date,
-        currency: currencySelect,
-        current_salary: values.current_salary,
+        currency: value,
         salary: {
-          from: values.salary_from,
-          to: values.salary_to,
+          from: newSalary.salary.to,
+          to: newSalary.salary.from,
         },
-        expectations: null,
-        future_prospects: null,
       },
-      notice_days: parseInt(values.notice_days),
     };
 
-    updateFn(remunerationObject);
-    console.log("Received values of form: ", remunerationObject);
+    updateFn(data);
+  };
+
+  const key = [
+    "over_thirteen",
+    "lunch_check",
+    "car_parking",
+    "car_allowance",
+    "phone",
+    "laptop",
+    "share_option",
+    "health_cover",
+  ];
+
+  const key1 = [
+    "pension_scheme",
+    "no_holiday",
+    "working_hour",
+    "overtime_hour",
+    "extra",
+  ];
+
+  const onBlur = (e: { target: { id: string } }) => {
+    const formValues = form.getFieldsValue();
+    const id = e.target.id;
+
+    if (formValues.salary_from > formValues.salary_to) {
+      notification.error({
+        message: "Update Salary Range",
+        description: "To must be higher than from",
+      });
+
+      return;
+    }
+
+    const dataUpdate: any = {
+      remuneration: {
+        benefit: {
+          ...(key.includes(id.replace("_text", "")) &&
+          data.benefit[id] !== formValues[id]
+            ? {
+                [id]: formValues[id],
+              }
+            : {}),
+
+          ...(key1.includes(id) && data.benefit[id] !== formValues[id]
+            ? {
+                [id]: formValues[id],
+              }
+            : {}),
+        },
+        ...((id === "notice_days" || id === "review_date") &&
+        data[id] !== formValues[id]
+          ? {
+              [id]: formValues[id],
+            }
+          : {}),
+
+        ...(id === "salary_from" && data.salary.from !== formValues.salary_from
+          ? {
+              salary: {
+                from: formValues.salary_from,
+              },
+            }
+          : {}),
+
+        ...(id === "salary_to" && data.salary.to !== formValues.salary_to
+          ? {
+              salary: {
+                to: formValues.salary_to,
+              },
+            }
+          : {}),
+      },
+    };
+
+    if (
+      Object.keys(dataUpdate.remuneration?.benefit).length > 0 ||
+      Object.keys(dataUpdate.remuneration).length > 1
+    ) {
+      if (Object.keys(dataUpdate.remuneration.benefit).length === 0) {
+        delete dataUpdate.remuneration.benefit;
+      }
+
+      // console.log("Received values of form: ", dataUpdate);
+      updateFn(dataUpdate);
+    }
+  };
+
+  const onValuesChange = (changeItems: any) => {
+    console.log(changeItems);
+
+    const data = {
+      remuneration: {
+        benefit: {
+          ...(key.includes(Object.keys(changeItems)[0]) ? changeItems : {}),
+        },
+      },
+    };
+
+    if (Object.keys(data.remuneration.benefit).length > 0) updateFn(data);
   };
 
   return (
@@ -150,7 +204,8 @@ export default function Remuneration({
         layout="vertical"
         className="flex-col w-full"
         form={form}
-        onBlur={() => onFinish(form.getFieldsValue())}
+        onValuesChange={onValuesChange}
+        onBlur={onBlur}
       >
         <Row gutter={16} align={"middle"}>
           <Col span={12}>
@@ -210,17 +265,19 @@ export default function Remuneration({
           <Col span={12}>
             <DataRadioNote
               data={YNquestion}
-              defaultValue={data?.benefit}
               label="Over x month"
               name="over_thirteen"
+              defaultRadio={data?.benefit.over_thirteen}
+              defaultInput={data?.benefit.over_thirteen_text}
             />
           </Col>
           <Col span={12}>
             <DataRadioNote
               data={YNquestion}
-              defaultValue={data?.benefit}
               label="Lunch check"
               name="lunch_check"
+              defaultRadio={data?.benefit.lunch_check}
+              defaultInput={data?.benefit.lunch_check_text}
             />
           </Col>
         </Row>
@@ -229,16 +286,18 @@ export default function Remuneration({
             <DataRadioNote
               data={YNquestion}
               label="Parking check"
-              defaultValue={data?.benefit}
               name="car_parking"
+              defaultRadio={data?.benefit.car_parking}
+              defaultInput={data?.benefit.car_parking_text}
             />
           </Col>
           <Col span={12}>
             <DataRadioNote
               data={YNquestion}
               label="Car allowance"
-              defaultValue={data?.benefit}
               name="car_allowance"
+              defaultRadio={data?.benefit.car_allowance}
+              defaultInput={data?.benefit.car_allowance_text}
             />
           </Col>
         </Row>
@@ -247,16 +306,18 @@ export default function Remuneration({
             <DataRadioNote
               data={YNquestion}
               label="Phone allowance"
-              defaultValue={data?.benefit}
               name="phone"
+              defaultRadio={data?.benefit.phone}
+              defaultInput={data?.benefit.phone_text}
             />
           </Col>
           <Col span={12}>
             <DataRadioNote
               data={YNquestion}
               label="Laptop"
-              defaultValue={data?.benefit}
               name="laptop"
+              defaultRadio={data?.benefit.laptop}
+              defaultInput={data?.benefit.laptop_text}
             />
           </Col>
         </Row>
@@ -265,16 +326,18 @@ export default function Remuneration({
             <DataRadioNote
               data={YNquestion}
               label="Share options"
-              defaultValue={data?.benefit}
               name="share_option"
+              defaultRadio={data?.benefit.share_option}
+              defaultInput={data?.benefit.share_option_text}
             />
           </Col>
           <Col span={12}>
             <DataRadioNote
               data={YNquestion}
               label="Health cover"
-              defaultValue={data?.benefit}
               name="health_cover"
+              defaultRadio={data?.benefit.health_cover}
+              defaultInput={data?.benefit.health_cover_text}
             />
           </Col>
         </Row>
@@ -337,12 +400,15 @@ export default function Remuneration({
           <CkeditorData
             data={data?.future_prospect}
             label="Development / training opportunities / future prospects"
-            updateFn={(value: string) =>
-              updateFn({
-                remuneration: {
-                  future_prospect: value,
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  remuneration: {
+                    future_prospect: value,
+                  },
                 },
-              })
+                { onSuccess }
+              )
             }
           />
         </Col>
@@ -353,12 +419,15 @@ export default function Remuneration({
           <CkeditorData
             data={data?.extra}
             label="Anything else"
-            updateFn={(value: string) =>
-              updateFn({
-                remuneration: {
-                  extra: value,
+            updateFn={(value: string, onSuccess: () => void) =>
+              updateFn(
+                {
+                  remuneration: {
+                    extra: value,
+                  },
                 },
-              })
+                { onSuccess }
+              )
             }
           />
         </Col>

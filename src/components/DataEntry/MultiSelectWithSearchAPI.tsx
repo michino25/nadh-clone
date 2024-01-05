@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { iOption2 } from "_constants/index";
+import { iOption, iOption2 } from "_constants/index";
 import { Form, Select } from "antd";
 import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
@@ -11,8 +11,9 @@ interface iData {
   required: boolean;
   allowClear?: boolean;
   OptGroup?: boolean;
+  disableSelected?: boolean;
   placeholder?: string;
-  defaultValue?: string | number;
+  defaultValue?: string[];
   value?: string[];
   setValue?: (data: string[]) => void;
   propertyName: string;
@@ -26,6 +27,7 @@ export default function MultiSelectWithSearchAPI({
   placeholder,
   allowClear = false,
   OptGroup = false,
+  disableSelected = false,
   value,
   setValue,
   propertyName,
@@ -73,12 +75,17 @@ export default function MultiSelectWithSearchAPI({
     mode: "multiple",
     style: { width: "100%" },
     value: value,
-    options: searchData,
+    options: disableSelected
+      ? (searchData || []).map((item: iOption) =>
+          defaultValue?.includes(item.value as string)
+            ? { ...item, disabled: true }
+            : item
+        )
+      : searchData,
     onChange: (newValue: string[]) => {
       setValue && setValue(newValue);
     },
     placeholder: placeholder || "Select Item...",
-    // maxTagCount: "responsive",
     onBlur: () => setSearchValue(""),
     onSearch: setSearchValue,
     filterOption: false,

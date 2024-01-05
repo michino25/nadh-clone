@@ -30,7 +30,7 @@ const rawColumns = [
     key: ["candidate", "candidate_id"],
     render: (
       value: string,
-      { candidate: { candidate_id } }: { candidate: { candidate_id: string } }
+      { candidate: { candidate_id } }: iRecruitmentFlows
     ) => <Link to={"/candidate-detail/" + candidate_id}>{value}</Link>,
   },
   {
@@ -38,7 +38,7 @@ const rawColumns = [
     key: ["candidate", "full_name"],
     render: (
       value: string,
-      { candidate: { candidate_id } }: { candidate: { candidate_id: string } }
+      { candidate: { candidate_id } }: iRecruitmentFlows
     ) => (
       <Link to={"/candidate-detail/" + candidate_id}>{formatName(value)}</Link>
     ),
@@ -50,7 +50,7 @@ const rawColumns = [
   {
     title: "Recent Position",
     key: ["candidate", "histories"],
-    render: (_: string, { candidate }: any) => {
+    render: (_: string, { candidate }: iRecruitmentFlows) => {
       const data = candidate.histories.map(
         (item: { title: { label: string } }) => item.title.label
       );
@@ -83,7 +83,7 @@ export default function CandidatesList({
   setFilterStatus,
   addCandidateFlow,
 }: any) {
-  const [viewProfile, setViewProfile] = useState<any>();
+  const [viewProfile, setViewProfile] = useState<iRecruitmentFlows>();
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const candidate_flows = data.candidate_flows;
@@ -174,9 +174,7 @@ export default function CandidatesList({
     </Flex>
   );
 
-  console.log(rawColumns);
-
-  let columns: ColumnsType<any> = [];
+  let columns: ColumnsType<iRecruitmentFlows> = [];
   if (Array.isArray(rawColumns)) {
     columns = rawColumns.map((column: any) => ({
       ...column,
@@ -214,8 +212,6 @@ export default function CandidatesList({
       {tagName}: {tagContent}
     </Tag>
   );
-
-  console.log(candidate_flows);
 
   return (
     <div>
@@ -262,7 +258,10 @@ export default function CandidatesList({
             {formatDate(viewProfile?.createdAt, "ISOdate", "date&hour")}
           </Descriptions.Item>
           <Descriptions.Item label="Status">
-            {getLabelByValue(statusData2, viewProfile?.status.toString())}
+            {getLabelByValue(
+              statusData2,
+              viewProfile?.status?.toString() ?? ""
+            )}
           </Descriptions.Item>
           <Descriptions.Item label="Highest Education">
             {viewProfile?.candidate.highest_education.label}
