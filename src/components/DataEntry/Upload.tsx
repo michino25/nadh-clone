@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Modal, Upload, Form, Descriptions } from "antd";
-import type { RcFile } from "antd/es/upload";
+import type { RcFile, UploadFile } from "antd/es/upload";
+
+interface iCustomUploadFile extends UploadFile {
+  created_at?: string;
+}
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -11,7 +15,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-const normFile = (e: any) => {
+const normFile = (e: { fileList: UploadFile[] }) => {
   if (Array.isArray(e)) {
     return e;
   }
@@ -31,7 +35,7 @@ export default function DataUpload({
   const [previewTitle, setPreviewTitle] = useState("");
   const [previewCreateAt, setPreviewCreateAt] = useState("");
 
-  const [fileList, setFileList] = useState<any[]>(imgList);
+  const [fileList, setFileList] = useState<UploadFile[]>(imgList);
 
   const [uploading, setUploading] = useState(false);
 
@@ -52,7 +56,7 @@ export default function DataUpload({
 
   const handleCancel = () => setPreviewOpen(false);
 
-  const handlePreview = async (file: any) => {
+  const handlePreview = async (file: iCustomUploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as RcFile);
     }
@@ -65,7 +69,7 @@ export default function DataUpload({
     setPreviewCreateAt(file.created_at || "");
   };
 
-  const getBlob = (url: string, cb: any) => {
+  const getBlob = (url: string, cb: (blob: Blob) => void) => {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.responseType = "blob";
@@ -77,7 +81,7 @@ export default function DataUpload({
     xhr.send();
   };
 
-  const saveAs = (blob: any, filename: string) => {
+  const saveAs = (blob: Blob | MediaSource, filename: string) => {
     const link = document.createElement("a");
     const body = document.querySelector("body");
     link.href = window.URL.createObjectURL(blob);
@@ -90,13 +94,19 @@ export default function DataUpload({
     window.URL.revokeObjectURL(link.href);
   };
 
-  const handleDownload = (file: any) => {
-    getBlob(file.url, function (blob: any) {
+  const handleDownload = (file: UploadFile) => {
+    getBlob(file.url as string, function (blob: Blob | MediaSource) {
       saveAs(blob, file.name);
     });
   };
 
-  const handleChange = ({ file, fileList }: any) => {
+  const handleChange = ({
+    file,
+    fileList,
+  }: {
+    file: UploadFile;
+    fileList: UploadFile[];
+  }) => {
     if (file.status === "uploading") setUploading(true);
 
     if (file.status === "error") {
@@ -108,7 +118,7 @@ export default function DataUpload({
     }
   };
 
-  const handleDelete = (file: any) => {
+  const handleDelete = (file: { uid: string }) => {
     console.log(file.uid);
     onDelete(file.uid);
   };

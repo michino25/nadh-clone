@@ -113,12 +113,12 @@ export default function MyCKEditor({
   value: string;
   setValue: (value: string) => void;
 }) {
-  function uploadAdapter(loader: any) {
+  function uploadAdapter(loader: { file: Promise<string | Blob> }) {
     return {
       upload: () => {
         return new Promise((resolve, reject) => {
           const body = new FormData();
-          loader.file.then((file: any) => {
+          loader.file.then((file: string | Blob) => {
             body.append("upload", file);
             fetch(API_URl, {
               method: "post",
@@ -139,9 +139,9 @@ export default function MyCKEditor({
   }
 
   function uploadPlugin(editor: any) {
-    editor.plugins.get("FileRepository").createUploadAdapter = (
-      loader: any
-    ) => {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader: {
+      file: Promise<string | Blob>;
+    }) => {
       return uploadAdapter(loader);
     };
   }

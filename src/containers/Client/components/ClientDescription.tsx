@@ -1,7 +1,14 @@
 import { Col, Row } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
+import { iDynamicObject } from "utils/models";
 
-export default function ClientDescription({ data, updateFn }: any) {
+export default function ClientDescription({
+  data,
+  updateFn,
+}: {
+  data: iDynamicObject;
+  updateFn: (value: iDynamicObject, event: () => void) => void;
+}) {
   return (
     <>
       <Row gutter={16}>

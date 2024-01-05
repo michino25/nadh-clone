@@ -4,11 +4,12 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { iIndustry } from "utils/models";
 
 interface DataType {
-  key: number;
-  name: string;
-  age: number;
-  address: string;
-  description: string;
+  key: string;
+  id: string;
+  primary: number;
+  industry: string;
+  sector: string;
+  category: string;
 }
 
 export default function IndustryTable({
@@ -27,7 +28,7 @@ export default function IndustryTable({
       title: "Primary",
       key: "primary",
       dataIndex: "primary",
-      render: (primary: any, data: any) => {
+      render: (primary: number, data: DataType) => {
         return (
           <Checkbox
             checked={primary === 1}

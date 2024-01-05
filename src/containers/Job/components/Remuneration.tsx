@@ -42,17 +42,22 @@ export default function Remuneration({
 
         const result: iExchangeCurrencies[] = [];
 
-        res.data.forEach((fromCurrency: any) => {
-          fromCurrency.rate.forEach(
-            (toCurrency: { key: number; value: number }) => {
-              result.push({
-                from: fromCurrency.key,
-                to: toCurrency.key,
-                rate: toCurrency.value,
-              });
-            }
-          );
-        });
+        res.data.forEach(
+          (fromCurrency: {
+            rate: { key: number; value: number }[];
+            key: number;
+          }) => {
+            fromCurrency.rate.forEach(
+              (toCurrency: { key: number; value: number }) => {
+                result.push({
+                  from: fromCurrency.key,
+                  to: toCurrency.key,
+                  rate: toCurrency.value,
+                });
+              }
+            );
+          }
+        );
 
         return result;
       }),

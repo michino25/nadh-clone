@@ -14,7 +14,6 @@ interface iDataInput {
   placeholder?: string;
 }
 
-/** Manually entering any of the following formats will perform date parsing */
 const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
 const App = ({

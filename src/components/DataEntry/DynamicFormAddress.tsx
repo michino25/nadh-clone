@@ -3,17 +3,18 @@ import { Button, Form } from "antd";
 import Address from "./Address";
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { iAddress, iLocation } from "utils/models";
 
 interface iDataInput {
-  defaultValue?: string[];
-  setAddress: (data: any) => void;
-  address: any;
+  defaultValue?: iAddress[];
+  setAddress: (data: iLocation[]) => void;
+  address: iLocation[];
   reset?: boolean;
-  setReset: (data: any) => void;
+  setReset: (data: boolean) => void;
 }
 
 const App = ({
-  defaultValue = [""],
+  defaultValue = [{}],
   setAddress,
   address,
   reset,
@@ -24,7 +25,7 @@ const App = ({
   const init = () => {
     if (defaultValue[0])
       setAddress(
-        defaultValue.map((item: any) => ({
+        defaultValue.map((item: iAddress) => ({
           id: uuidv4(),
           address: {
             ...{
@@ -51,6 +52,8 @@ const App = ({
       );
   };
 
+  console.log(defaultValue);
+
   useEffect(() => {
     if (reset === true) {
       init();
@@ -62,8 +65,8 @@ const App = ({
     init();
   }, []);
 
-  const remove = (key: any) => {
-    setAddress(address.filter((item: any) => item.id !== key));
+  const remove = (key: string) => {
+    setAddress(address.filter((item: iLocation) => item.id !== key));
   };
 
   const add = () => {
@@ -76,9 +79,9 @@ const App = ({
     ]);
   };
 
-  const update = (id: string, data: any) => {
+  const update = (id: string, data: iAddress) => {
     setAddress(
-      address.map((item: any) =>
+      address.map((item: iLocation) =>
         item.id === id ? { id, address: data } : item
       )
     );
@@ -88,14 +91,14 @@ const App = ({
 
   return (
     <Form.Item label="Address" className="mb-0">
-      {address?.map((item: any) => {
+      {address?.map((item: iLocation) => {
         console.log(item.address);
 
         return (
           <div className="flex space-x-4" key={item.id}>
             <Address
               defaultValue={item.address}
-              onChange={(data: any) => update(item.id, data)}
+              onChange={(data: iAddress) => update(item.id, data)}
             />
 
             {address.length > 0 && (

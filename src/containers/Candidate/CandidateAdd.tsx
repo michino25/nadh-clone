@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { v4 as uuidv4 } from "uuid";
 import { AxiosError } from "axios";
-import { iIndustry } from "utils/models";
+import { iAddress, iIndustry } from "utils/models";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 const step = [
@@ -53,7 +53,7 @@ export default function CadidateAdd() {
       await candidateApi.getOneCandidate(candidateId as string).then((res) => {
         return {
           ...res.data,
-          addresses: res.data.addresses.map((addressItem: any) => ({
+          addresses: res.data.addresses.map((addressItem: iAddress) => ({
             address: addressItem.address,
             country: addressItem.country
               ? addressItem.country.key + "_" + addressItem.country.label

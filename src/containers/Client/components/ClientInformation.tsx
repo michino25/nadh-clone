@@ -15,6 +15,7 @@ import {
 import { clientApi, otherApi, userApi } from "apis/index";
 import { formatDate, formatName } from "utils/format";
 import { getUser } from "utils/getUser";
+import { iCountry } from "utils/models";
 
 export default function ClientInformation({
   clientData,
@@ -91,7 +92,7 @@ export default function ClientInformation({
     const countryCode = values[option].phone_code.extra.dial_code;
 
     const countryInfo = countries.find(
-      (country: any) => country.extra.dial_code === countryCode
+      (country: iCountry) => country.extra.dial_code === countryCode
     );
 
     if (countryInfo) {

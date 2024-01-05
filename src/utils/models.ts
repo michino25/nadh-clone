@@ -589,21 +589,28 @@ export interface iFile {
   created_at: string;
 }
 
-export interface iLocation {
+export interface iAddress {
   country?: {
-    key: number;
+    key?: number;
+    value?: number;
     label: string;
   };
   city?: {
-    key: number;
+    key?: number;
+    value?: number;
     label: string;
   };
   district?: {
-    key: number;
+    key?: number;
+    value?: number;
     label: string;
   };
   address?: string;
-  // id?: string;
+}
+
+export interface iLocation {
+  address: iAddress;
+  id: string;
 }
 
 export interface iNote {
@@ -637,4 +644,22 @@ export interface iNote {
       name: string;
     };
   };
+}
+
+export interface iCountry {
+  key: number;
+  label: string;
+  extra: {
+    code: string;
+    dial_code: string;
+  };
+}
+
+export interface iPhone {
+  code: string;
+  dial_code: string;
+}
+
+export interface iDynamicObject {
+  [key: string]: string | undefined;
 }

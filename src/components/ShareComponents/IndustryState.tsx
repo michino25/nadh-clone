@@ -6,11 +6,12 @@ export default function IndustryState({
   industry,
   setIndustry,
 }: {
-  industry: any[];
-  setIndustry: (value: any[]) => void;
+  industry: iIndustry[];
+  setIndustry: (value: iIndustry[]) => void;
 }) {
   const deleteItem = (id: string) => {
-    if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
+    if (industry)
+      setIndustry(industry.filter((item: iIndustry) => item.id !== id));
   };
 
   const primaryItem = (id: string) => {
@@ -33,7 +34,7 @@ export default function IndustryState({
   return (
     <>
       <FormIndustry
-        saveData={(data) => setIndustry([...(industry as any[]), data])}
+        saveData={(data) => setIndustry([...(industry as iIndustry[]), data])}
       />
       <IndustryTable
         data={industry}

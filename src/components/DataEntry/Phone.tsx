@@ -1,6 +1,7 @@
 import { Select, Form, Input } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
+import { iCountry, iPhone } from "utils/models";
 
 export default function Phone({
   disabled,
@@ -20,10 +21,10 @@ export default function Phone({
     queryFn: async () =>
       await otherApi.getCountries().then((res) =>
         res.data.data
-          .map((item: any) => ({
+          .map((item: iCountry) => ({
             ...item.extra,
           }))
-          .sort((a: any, b: any) => {
+          .sort((a: iPhone, b: iPhone) => {
             if (a.dial_code < b.dial_code) {
               return -1;
             }

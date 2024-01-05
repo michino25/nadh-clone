@@ -3,7 +3,7 @@ import { Form, Input } from "antd";
 interface iDataInput {
   label?: string;
   name: string;
-  type?: string | undefined;
+  type?: "email";
   placeholder: string;
   required?: boolean;
   defaultValue?: string | number;
@@ -26,7 +26,7 @@ export default function TextArea({
       initialValue={defaultValue}
       rules={[
         {
-          type: type as any,
+          type: type,
           message: `The input is not valid ${label}!`,
         },
         {

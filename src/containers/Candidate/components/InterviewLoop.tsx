@@ -1,6 +1,7 @@
 import {
   getIndustryString,
   getLabelByValue,
+  iOption,
   statusData2,
   statusData3,
 } from "_constants/index";
@@ -36,7 +37,7 @@ import CompareTable from "./CompareTable";
 import CommentItem from "components/ShareComponents/CommentItem";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import { AxiosError } from "axios";
-import { iNote } from "utils/models";
+import { iIndustry, iJob, iNote } from "utils/models";
 
 export default function InterviewLoop({
   allData,
@@ -58,8 +59,8 @@ export default function InterviewLoop({
   const [jobName, setJobName] = useState("");
 
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [currentFlow, setCurrentFlow] = useState<any>();
-  const [currentFlowItem, setCurrentFlowItem] = useState<any>();
+  const [currentFlow, setCurrentFlow] = useState<string>();
+  const [currentFlowItem, setCurrentFlowItem] = useState<number>();
 
   const [flowData, setFlowData] = useState<any>();
   const [flowItemData, setFlowItemData] = useState<any>();
@@ -69,6 +70,10 @@ export default function InterviewLoop({
   const [formConsultant] = Form.useForm();
 
   const [saveBtn, setSaveBtn] = useState(false);
+
+  console.log(currentFlow, currentFlowItem);
+  console.log(flowData);
+  console.log(flowItemData);
 
   useEffect(() => {
     setFlowData(data.find((item: any) => item.id === currentFlow));
@@ -133,7 +138,7 @@ export default function InterviewLoop({
   const updateFlow = async (data: any) => {
     try {
       await otherApi.updateCandidateFlows(
-        currentFlow,
+        currentFlow as string,
         data.params,
         data.option
       );
@@ -269,7 +274,7 @@ export default function InterviewLoop({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState<any[]>();
+  const [searchData, setSearchData] = useState<iOption[]>();
 
   useQuery({
     queryKey: ["job", searchValue],
@@ -286,10 +291,10 @@ export default function InterviewLoop({
               }
         )
         .then((res) => {
-          // setSearchData(res.data.data);
+          console.log(res.data.data);
           setSearchData(
             res.data.data.length &&
-              res.data.data.map((item: any) => ({
+              res.data.data.map((item: iJob) => ({
                 label: (
                   <div key={item.job_id}>
                     <p className="font-bold">
@@ -301,9 +306,11 @@ export default function InterviewLoop({
                     </div>
                     <div>
                       <span className="font-bold">Industry: </span>
-                      {item.business_line.map((item: any, index: number) => (
-                        <p key={index}>{getIndustryString(item)}</p>
-                      ))}
+                      {item.business_line.map(
+                        (item: iIndustry, index: number) => (
+                          <p key={index}>{getIndustryString(item)}</p>
+                        )
+                      )}
                     </div>
                   </div>
                 ),
@@ -620,7 +627,7 @@ export default function InterviewLoop({
           </Descriptions.Item>
           <Descriptions.Item label="Industry">
             <div className="flex-col">
-              {allData?.business_line.map((item: any, index: number) => (
+              {allData?.business_line.map((item: iIndustry, index: number) => (
                 <p key={index}>{getIndustryString(item)}</p>
               ))}
             </div>
@@ -638,7 +645,7 @@ export default function InterviewLoop({
               ? searchData?.map((item) => ({
                   ...item,
                   disabled:
-                    selectedItems.includes(item.value) ||
+                    selectedItems.includes(item.value as string) ||
                     data
                       .map((item: { job_id: string }) => item.job_id)
                       .includes(item.value),
@@ -658,7 +665,7 @@ export default function InterviewLoop({
                 {searchData &&
                   searchData.length &&
                   searchData.find((candidate) => candidate.value === item)
-                    .label}
+                    ?.label}
               </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"

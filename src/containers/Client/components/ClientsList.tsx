@@ -18,16 +18,17 @@ import {
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
+import type { ColumnsType } from "antd/es/table";
 
-const customColumns: any[] = clientColumns;
+const customColumns: ColumnsType = clientColumns;
 customColumns[3] = {
   ...customColumns[3],
-  render: (value: any) => <TagAntd color="geekblue">{value}</TagAntd>,
+  render: (value: string) => <TagAntd color="geekblue">{value}</TagAntd>,
 };
 customColumns[4] = {
   ...customColumns[4],
 
-  render: (value: any) => {
+  render: (value: string) => {
     let color;
     switch (value) {
       case "Create Client":
@@ -58,7 +59,7 @@ customColumns[4] = {
 customColumns[6] = {
   ...customColumns[6],
 
-  render: (value: any) => {
+  render: (value: string) => {
     let color;
     switch (value) {
       case "Retained Plus":
@@ -83,7 +84,7 @@ customColumns[6] = {
 customColumns[10] = {
   ...customColumns[10],
 
-  render: (value: any) => {
+  render: (value: string) => {
     let color;
     switch (value) {
       case "Active":
@@ -104,7 +105,7 @@ customColumns[10] = {
 };
 customColumns[13] = {
   ...customColumns[13],
-  render: (value: any) => value && <TagAntd color="purple">{value}</TagAntd>,
+  render: (value: string) => value && <TagAntd color="purple">{value}</TagAntd>,
 };
 
 export default function ClientsList({ userDetail }: { userDetail: iUser }) {

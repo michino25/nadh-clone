@@ -2,6 +2,7 @@ import {
   currencyData,
   getColByParam,
   getSelectByValue,
+  iOption,
   iOption2,
   rawColumnsByTable,
 } from "_constants/index";
@@ -77,7 +78,8 @@ const App = ({
     return paramItem
       .split(",")
       .map(
-        (item: any) => getSelectByValue(filterSelectData[tagName], item).label
+        (item: string) =>
+          getSelectByValue(filterSelectData[tagName], item).label
       )
       .join(", ");
   };
@@ -105,7 +107,7 @@ const App = ({
   const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
     queryKey: ["allindustry"],
     queryFn: async () =>
-      await otherApi.getIndustry({ getAll: true }).then((res: any) =>
+      await otherApi.getIndustry({ getAll: true }).then((res) =>
         res.data.data.map(
           (item: { key: number; label: string; parent_id: string }) => ({
             value: item.key,
@@ -178,12 +180,12 @@ const App = ({
       if (data[0] === "1280") {
         const city = data[1]
           ? " / " +
-            cityData.filter((item: any) => item.value === data[1])[0].label
+            cityData.filter((item: iOption) => item.value === data[1])[0].label
           : "";
         return "Viet Nam" + city;
       } else {
         const country = countryData.filter(
-          (item: any) => item.value === data[0]
+          (item: iOption) => item.value === data[0]
         )[0].label;
         return country;
       }

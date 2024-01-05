@@ -1,3 +1,5 @@
+import { iIndustry } from "utils/models";
+
 export interface StatusData {
   [key: number]: string;
 }
@@ -556,7 +558,7 @@ export const convertValuetoKey = (data: any, toString?: boolean) => {
 export const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
-export const getIndustryString = (data: any) => {
+export const getIndustryString = (data: iIndustry) => {
   if (!data) return undefined;
   let industry = "";
   if (data.industry?.label) industry += data.industry.label;

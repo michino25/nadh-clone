@@ -5,7 +5,7 @@ interface iDataInput {
   label?: string;
   name: string;
   className?: string;
-  type?: string | undefined;
+  type?: "email";
   value: string;
   onSubmit: (value: any, onSuccess: () => void) => void;
   editing: boolean;
@@ -62,7 +62,7 @@ export default function EditableForm({
                 initialValue={value}
                 rules={[
                   {
-                    type: type as any,
+                    type: type,
                     message: `The input is not valid ${label}!`,
                   },
                   {

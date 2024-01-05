@@ -17,6 +17,7 @@ import Address from "components/DataEntry/Address";
 import Phone from "components/DataEntry/Phone";
 import { AxiosError } from "axios";
 import IndustryState from "components/ShareComponents/IndustryState";
+import { iIndustry } from "utils/models";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -25,7 +26,7 @@ export default function CandidateAddStep1({
   nextStep: () => void;
   setData: (value: any) => void;
 }) {
-  const [industry, setIndustry] = useState<any[]>([]);
+  const [industry, setIndustry] = useState<iIndustry[]>([]);
   const [address, setAddress] = useState<any>();
   const [taxCheckContent, setTaxCheckContent] = useState("");
 
@@ -35,7 +36,7 @@ export default function CandidateAddStep1({
     queryKey: ["User"],
     queryFn: async () =>
       await userApi.getUsers({}).then((res: any) =>
-        res.data.data.map((user: any) => ({
+        res.data.data.map((user: { id: string; full_name: string }) => ({
           label: formatName(user.full_name),
           value: user.id,
         }))

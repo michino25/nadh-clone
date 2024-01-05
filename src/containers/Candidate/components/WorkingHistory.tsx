@@ -61,7 +61,7 @@ export default function WorkingHistory({
   return (
     <>
       <CandidateTable
-        editClick={(id: any) => {
+        editClick={(id: string) => {
           setEditId(id);
           setIsEditOpen(true);
         }}

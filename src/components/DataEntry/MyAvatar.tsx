@@ -25,7 +25,7 @@ export const MyAvatar = ({ data, onChange, img, editing }: any) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>(img);
 
-  const handleChange = ({ file }: any) => {
+  const handleChange = ({ file }: { file: any }) => {
     if (file.status === "uploading") {
       setLoading(true);
       return;

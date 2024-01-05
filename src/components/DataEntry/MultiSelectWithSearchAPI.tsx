@@ -51,13 +51,15 @@ export default function MultiSelectWithSearchAPI({
         .then((res) => {
           if (OptGroup)
             setSearchData(
-              res.data.data.map((parent: any) => ({
-                label: parent.label,
-                options: parent.children.map((item: iOption2) => ({
-                  label: item.label,
-                  value: item.key + "_" + item.label,
-                })),
-              }))
+              res.data.data.map(
+                (parent: { label: string; children: iOption2[] }) => ({
+                  label: parent.label,
+                  options: parent.children.map((item: iOption2) => ({
+                    label: item.label,
+                    value: item.key + "_" + item.label,
+                  })),
+                })
+              )
             );
           else
             setSearchData(

@@ -9,7 +9,7 @@ export default function CandidateAddStep1({
   // prevStep,
   step1Data,
 }: {
-  step1Data: any;
+  step1Data: { data: { id: string } };
   nextStep: () => void;
   prevStep: () => void;
 }) {

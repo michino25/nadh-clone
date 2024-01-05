@@ -19,8 +19,9 @@ import {
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
 import { AxiosError } from "axios";
+import type { ColumnsType } from "antd/es/table";
 
-const customColumns: any[] = candidateColumns;
+const customColumns: ColumnsType = candidateColumns;
 customColumns[2] = {
   ...customColumns[2],
 
