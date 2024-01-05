@@ -221,7 +221,7 @@ export default function PersonalInformationForm({
             name="prefer_position"
             required={false}
             defaultValue={candidateData?.prefer_position.positions.map(
-              (item: any) => item.key + "_" + item.label
+              (item: iOption2) => item.key + "_" + item.label
             )}
             allowClear
             propertyName="position"
@@ -233,7 +233,7 @@ export default function PersonalInformationForm({
             name="nationality"
             required={false}
             defaultValue={candidateData?.nationality.map(
-              (item: any) => item.key + "_" + item.label
+              (item: iOption2) => item.key + "_" + item.label
             )}
             allowClear
             propertyName="nationality"

@@ -504,7 +504,7 @@ export default function InterviewLoop({
                   label="Consultant"
                   className="mb-2"
                   initialValue={flowItemData?.info?.interviewer.map(
-                    (item: any) => item.user_id
+                    (item: { user_id: string }) => item.user_id
                   )}
                 >
                   <Select

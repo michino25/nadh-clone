@@ -4,6 +4,7 @@ import { Form, Row, Col } from "antd";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import { iIndustry } from "utils/models";
+import { iOption2 } from "_constants/index";
 
 interface iData {
   updateFn: (data: any, option?: any) => void;
@@ -36,7 +37,7 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               name={"soft_skills"}
               required={false}
               defaultValue={data.soft_skills.map(
-                (item: any) => item.key + "_" + item.label
+                (item: iOption2) => item.key + "_" + item.label
               )}
               allowClear
               propertyName="soft_skills"
@@ -62,7 +63,7 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               name={"functions_skills"}
               required={false}
               defaultValue={data.functions_skills.map(
-                (item: any) => item.key + "_" + item.label
+                (item: iOption2) => item.key + "_" + item.label
               )}
               allowClear
               propertyName="functions_skills"
@@ -92,7 +93,7 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               name={"languages"}
               required={false}
               defaultValue={data.languages.map(
-                (item: any) => item.key + "_" + item.label
+                (item: iOption2) => item.key + "_" + item.label
               )}
               allowClear
               propertyName="language"
