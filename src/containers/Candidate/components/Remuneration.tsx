@@ -107,7 +107,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultValue={data?.benefit}
+            defaultInput={data?.benefit.over_thirteen}
+            defaultRadio={data?.benefit.over_thirteen_text}
             label="Over x month"
             name="over_thirteen"
           />
@@ -115,7 +116,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultValue={data?.benefit}
+            defaultInput={data?.benefit.lunch_check}
+            defaultRadio={data?.benefit.lunch_check_text}
             label="Lunch check"
             name="lunch_check"
           />
@@ -125,16 +127,18 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.car_parking}
+            defaultRadio={data?.benefit.car_parking_text}
             label="Parking check"
-            defaultValue={data?.benefit}
             name="car_parking"
           />
         </Col>
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.car_allowance}
+            defaultRadio={data?.benefit.car_allowance_text}
             label="Car allowance"
-            defaultValue={data?.benefit}
             name="car_allowance"
           />
         </Col>
@@ -143,16 +147,18 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.phone}
+            defaultRadio={data?.benefit.phone_text}
             label="Phone allowance"
-            defaultValue={data?.benefit}
             name="phone"
           />
         </Col>
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.laptop}
+            defaultRadio={data?.benefit.laptop_text}
             label="Laptop"
-            defaultValue={data?.benefit}
             name="laptop"
           />
         </Col>
@@ -161,16 +167,18 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.share_option}
+            defaultRadio={data?.benefit.share_option_text}
             label="Share options"
-            defaultValue={data?.benefit}
             name="share_option"
           />
         </Col>
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
+            defaultInput={data?.benefit.health_cover}
+            defaultRadio={data?.benefit.health_cover_text}
             label="Health cover"
-            defaultValue={data?.benefit}
             name="health_cover"
           />
         </Col>

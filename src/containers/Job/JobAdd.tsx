@@ -5,19 +5,11 @@ import CreateJobForm from "./components/CreateJobForm";
 import { useState } from "react";
 import { jobApi } from "apis/index";
 import { AxiosError } from "axios";
-import { iOption } from "_constants/index";
 import IndustryState from "components/ShareComponents/IndustryState";
-
-interface iIndustryForm {
-  id?: string;
-  industry: iOption;
-  sector: iOption;
-  category: iOption;
-  primary: number;
-}
+import { iIndustry } from "utils/models";
 
 export default function JobAdd() {
-  const [industry, setIndustry] = useState<iIndustryForm[]>([]);
+  const [industry, setIndustry] = useState<iIndustry[]>([]);
   const [, setAddress] = useState<any>();
 
   console.log(industry);
