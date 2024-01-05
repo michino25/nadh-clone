@@ -78,7 +78,7 @@ export default function MultiSelectWithSearchAPI({
       setValue && setValue(newValue);
     },
     placeholder: placeholder || "Select Item...",
-    maxTagCount: "responsive",
+    // maxTagCount: "responsive",
     onBlur: () => setSearchValue(""),
     onSearch: setSearchValue,
     filterOption: false,

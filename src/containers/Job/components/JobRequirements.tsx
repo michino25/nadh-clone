@@ -1,7 +1,9 @@
+import { iOption2 } from "_constants/index";
 import { Col, Row, Form } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import DataInputNumber from "components/DataEntry/InputNumber";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
+import SelectLanguage from "components/DataEntry/SelectLanguage";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
 import { iIndustry } from "utils/models";
@@ -101,6 +103,7 @@ export default function JobRequirements({
           <Form
             layout="vertical"
             form={form}
+            // onValuesChange={(changeItems) => {}}
             onBlur={() =>
               updateFn({
                 requirement: {
@@ -162,32 +165,23 @@ export default function JobRequirements({
 
       <Row gutter={16}>
         <Col span={24}>
-          <Form
-            layout="vertical"
-            form={form}
-            onBlur={() =>
-              updateFn({
-                requirement: {
-                  languages: form
-                    .getFieldsValue()
-                    .requirement.languages.map((item: string) => ({
+          <Form layout="vertical" form={form}>
+            <SelectLanguage
+              label="Languages"
+              defaultValue={data.requirement.languages.map(
+                (item: iOption2) => item.key + "_" + item.label
+              )}
+              allowClear
+              updateFn={(value) =>
+                updateFn({
+                  requirement: {
+                    languages: value.map((item: string) => ({
                       key: item.split("_")[0],
                       label: item.split("_")[1],
                     })),
-                },
-              })
-            }
-          >
-            <MultiSelectWithSearchAPI
-              label="Languages"
-              name={["requirement", "languages"]}
-              required={false}
-              defaultValue={data.requirement.languages.map(
-                (item: { key: number; label: string }) =>
-                  item.key + "_" + item.label
-              )}
-              allowClear
-              propertyName="language"
+                  },
+                })
+              }
             />
           </Form>
         </Col>

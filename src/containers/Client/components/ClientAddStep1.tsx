@@ -8,16 +8,15 @@ import {
   cpa,
   primaryStatus2,
 } from "_constants/index";
-import FormIndustry from "./FormIndustry";
 import { clientApi, otherApi, userApi } from "apis/index";
 import { formatName } from "utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import IndustryTable from "components/DataDisplay/IndustryTable";
 import Address from "components/DataEntry/Address";
 import Phone from "components/DataEntry/Phone";
 import { AxiosError } from "axios";
+import IndustryState from "components/ShareComponents/IndustryState";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -29,28 +28,8 @@ export default function CandidateAddStep1({
   const [industry, setIndustry] = useState<any[]>([]);
   const [address, setAddress] = useState<any>();
   const [taxCheckContent, setTaxCheckContent] = useState("");
-  // const taxCheck = useRef(false);
 
-  const deleteItem = (id: string) => {
-    if (industry) setIndustry(industry.filter((item: any) => item.id !== id));
-  };
-
-  const primaryItem = (id: string) => {
-    console.log(id);
-    console.log(industry);
-
-    if (industry)
-      setIndustry(
-        industry.map((item: any) =>
-          item.id === id
-            ? {
-                ...item,
-                primary: item.primary ? item.primary * -1 : 1,
-              }
-            : item
-        )
-      );
-  };
+  console.log(industry);
 
   const { data: userData } = useQuery({
     queryKey: ["User"],
@@ -92,8 +71,6 @@ export default function CandidateAddStep1({
     },
     enabled: taxCheckContent !== "",
   });
-
-  console.log(taxCheck);
 
   const createClient = async (userData: any) => {
     try {
@@ -308,14 +285,7 @@ export default function CandidateAddStep1({
 
       <Row gutter={16}>
         <Col span={24}>
-          <FormIndustry
-            saveData={(data) => setIndustry([...(industry as any[]), data])}
-          />
-          <IndustryTable
-            data={industry}
-            deleteItem={deleteItem}
-            primaryItem={primaryItem}
-          />
+          <IndustryState industry={industry} setIndustry={setIndustry} />
         </Col>
       </Row>
 

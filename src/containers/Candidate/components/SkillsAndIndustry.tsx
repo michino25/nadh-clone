@@ -5,6 +5,7 @@ import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearch
 import CkeditorData from "components/DataEntry/CkeditorData";
 import { iIndustry } from "utils/models";
 import { iOption2 } from "_constants/index";
+import SelectLanguage from "components/DataEntry/SelectLanguage";
 
 interface iData {
   updateFn: (data: any, option?: any) => void;
@@ -15,23 +16,43 @@ interface iData {
 export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
   const [form] = Form.useForm();
 
+  const onValuesChange = (changeItems: any) => {
+    console.log(changeItems);
+    const data = {
+      ...(changeItems.soft_skills
+        ? {
+            soft_skills: changeItems.soft_skills?.map((item: string) => ({
+              key: item.split("_")[0],
+              label: item.split("_")[1],
+            })),
+          }
+        : {}),
+
+      ...(changeItems.functions_skills
+        ? {
+            functions_skills: changeItems.functions_skills?.map(
+              (item: string) => ({
+                key: item.split("_")[0],
+                label: item.split("_")[1],
+              })
+            ),
+          }
+        : {}),
+    };
+
+    updateFn(data);
+  };
+
   return (
     <>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form
-            layout="vertical"
-            className="flex-col w-full"
-            form={form}
-            onValuesChange={(changeItems) =>
-              updateFn(
-                changeItems.soft_skills.map((item: string) => ({
-                  key: item.split("_")[0],
-                  label: item.split("_")[1],
-                }))
-              )
-            }
-          >
+      <Form
+        layout="vertical"
+        className="flex-col w-full"
+        form={form}
+        onValuesChange={onValuesChange}
+      >
+        <Row gutter={16}>
+          <Col span={12}>
             <MultiSelectWithSearchAPI
               label="Soft skills"
               name={"soft_skills"}
@@ -42,22 +63,8 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               allowClear
               propertyName="soft_skills"
             />
-          </Form>
-        </Col>
-        <Col span={12}>
-          <Form
-            layout="vertical"
-            className="flex-col w-full"
-            form={form}
-            onValuesChange={(changeItems) =>
-              updateFn(
-                changeItems.functions_skills.map((item: string) => ({
-                  key: item.split("_")[0],
-                  label: item.split("_")[1],
-                }))
-              )
-            }
-          >
+          </Col>
+          <Col span={12}>
             <MultiSelectWithSearchAPI
               label="Job functions skills"
               name={"functions_skills"}
@@ -69,36 +76,27 @@ export default function SkillsAndIndustry({ updateFn, loading, data }: iData) {
               propertyName="functions_skills"
               OptGroup
             />
-          </Form>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Form>
 
       <Row gutter={16}>
         <Col span={24}>
-          <Form
-            layout="vertical"
-            className="flex-col w-full"
-            form={form}
-            onValuesChange={(changeItems) =>
-              updateFn(
-                changeItems.languages.map((item: string) => ({
+          <SelectLanguage
+            label="Languages"
+            defaultValue={data.languages.map(
+              (item: iOption2) => item.key + "_" + item.label
+            )}
+            allowClear
+            updateFn={(value) =>
+              updateFn({
+                languages: value.map((item: string) => ({
                   key: item.split("_")[0],
                   label: item.split("_")[1],
-                }))
-              )
+                })),
+              })
             }
-          >
-            <MultiSelectWithSearchAPI
-              label="Languages"
-              name={"languages"}
-              required={false}
-              defaultValue={data.languages.map(
-                (item: iOption2) => item.key + "_" + item.label
-              )}
-              allowClear
-              propertyName="language"
-            />
-          </Form>
+          />
         </Col>
       </Row>
 

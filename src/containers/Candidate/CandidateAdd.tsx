@@ -13,10 +13,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { v4 as uuidv4 } from "uuid";
-import FormIndustry from "containers/Client/components/FormIndustry";
-import IndustryTable from "components/DataDisplay/IndustryTable";
 import { AxiosError } from "axios";
 import { iIndustry } from "utils/models";
+import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 const step = [
   "Personal Information",
@@ -28,8 +27,9 @@ const step = [
 ];
 
 export default function CadidateAdd() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     refetch();
@@ -65,10 +65,6 @@ export default function CadidateAdd() {
               ? addressItem.district.key + "_" + addressItem.district.label
               : null,
           })),
-          business_line: res.data.business_line.map((item: iIndustry) => ({
-            ...item,
-            id: uuidv4(),
-          })),
         };
       }),
   });
@@ -84,6 +80,7 @@ export default function CadidateAdd() {
   });
 
   const updateCandidate = async (userData: any) => {
+    setLoading(true);
     try {
       await candidateApi.updateCandidate(candidateData.id, userData);
 
@@ -104,71 +101,9 @@ export default function CadidateAdd() {
             error.response?.data[0].message || "Please try again."
           }`,
         });
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const addIndustry = (data: any) => {
-    const newData: any = {};
-    if (data.industry) newData.industry_id = data.industry.value;
-    if (data.sector) newData.sector_id = data.sector.value;
-    if (data.category) newData.category_id = data.category.value;
-    newData.primary = -1;
-
-    const transformedData = candidateData?.business_line.map(
-      (item: iIndustry) => {
-        const transformedItem: any = {
-          industry_id: item.industry?.id,
-          primary: item.primary,
-        };
-
-        if (item.sector) transformedItem.sector_id = item.sector.id;
-        if (item.category) transformedItem.category_id = item.category.id;
-
-        return transformedItem;
-      }
-    );
-
-    if (transformedData)
-      updateMutation.mutate({ business_line: [...transformedData, newData] });
-    else updateMutation.mutate({ business_line: [newData] });
-  };
-
-  console.log(candidateData);
-
-  const deleteIndustry = (id: string) => {
-    const transformedData = candidateData?.business_line
-      .filter((item: iIndustry) => item.id !== id)
-      .map((item: iIndustry) => {
-        const transformedItem: any = {
-          industry_id: item.industry?.id,
-          primary: item.primary,
-        };
-
-        if (item.sector) transformedItem.sector_id = item.sector.id;
-        if (item.category) transformedItem.category_id = item.category.id;
-
-        return transformedItem;
-      });
-
-    updateMutation.mutate({ business_line: transformedData });
-  };
-
-  const primaryIndustry = (id: string) => {
-    const transformedData = candidateData?.business_line.map(
-      (item: iIndustry) => {
-        const transformedItem: any = {
-          industry_id: item.industry?.id,
-          primary: item.id === id ? (item.primary || -1) * -1 : item.primary,
-        };
-
-        if (item.sector) transformedItem.sector_id = item.sector.id;
-        if (item.category) transformedItem.category_id = item.category.id;
-
-        return transformedItem;
-      }
-    );
-
-    updateMutation.mutate({ business_line: transformedData });
   };
 
   const createCandidateHistoriesApi = async (userData: any) => {
@@ -345,14 +280,18 @@ export default function CadidateAdd() {
         )}
 
         {currentStep === 1 && (
-          <>
-            <FormIndustry saveData={addIndustry} />
-            <IndustryTable
-              deleteItem={deleteIndustry}
-              primaryItem={primaryIndustry}
-              data={candidateData?.business_line}
-            />
-          </>
+          <IndustryAPI
+            data={candidateData?.business_line.map((item: iIndustry) => ({
+              ...item,
+              id: uuidv4(),
+            }))}
+            updateFn={(value: any) =>
+              updateMutation.mutate({
+                business_line: value,
+              })
+            }
+            loading={loading}
+          />
         )}
 
         {currentStep === 2 && (

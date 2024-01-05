@@ -2,12 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Col, Row, Button, Form, Modal, notification, Result } from "antd";
 import CreateJobForm from "./components/CreateJobForm";
-import FormIndustry from "containers/Client/components/FormIndustry";
-import IndustryTable from "components/DataDisplay/IndustryTable";
 import { useState } from "react";
 import { jobApi } from "apis/index";
 import { AxiosError } from "axios";
 import { iOption } from "_constants/index";
+import IndustryState from "components/ShareComponents/IndustryState";
 
 interface iIndustryForm {
   id?: string;
@@ -21,27 +20,7 @@ export default function JobAdd() {
   const [industry, setIndustry] = useState<iIndustryForm[]>([]);
   const [, setAddress] = useState<any>();
 
-  const deleteItem = (id: string) => {
-    if (industry)
-      setIndustry(industry.filter((item: iIndustryForm) => item.id !== id));
-  };
-
-  const primaryItem = (id: string) => {
-    console.log(id);
-    console.log(industry);
-
-    if (industry)
-      setIndustry(
-        industry.map((item: iIndustryForm) =>
-          item.id === id
-            ? {
-                ...item,
-                primary: item.primary ? item.primary * -1 : 1,
-              }
-            : item
-        )
-      );
-  };
+  console.log(industry);
 
   const showConfirmSubmit = (values: any) => {
     Modal.confirm({
@@ -164,16 +143,7 @@ export default function JobAdd() {
           <CreateJobForm setAddress={setAddress} />
           <Row gutter={16}>
             <Col span={24}>
-              <FormIndustry
-                saveData={(data) =>
-                  setIndustry([...(industry as iIndustryForm[]), data])
-                }
-              />
-              <IndustryTable
-                data={industry}
-                deleteItem={deleteItem}
-                primaryItem={primaryItem}
-              />
+              <IndustryState industry={industry} setIndustry={setIndustry} />
             </Col>
           </Row>
 

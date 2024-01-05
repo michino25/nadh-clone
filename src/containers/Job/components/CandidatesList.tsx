@@ -305,7 +305,6 @@ export default function CandidatesList({
           mode="multiple"
           placeholder="Select Candidate"
           value={[]}
-          // value={selectedItems}
           onChange={(value) => setSelectedItems([...value, ...selectedItems])}
           style={{ width: "100%" }}
           options={searchData?.map((item) => ({
@@ -318,7 +317,6 @@ export default function CandidatesList({
           }))}
           onSearch={setSearchValue}
           onBlur={() => setSearchValue("")}
-          // tagRender={() => undefined}
         />
         <p className="font-semibold my-5 text-base">
           {selectedItems.length} Candidates Picked
