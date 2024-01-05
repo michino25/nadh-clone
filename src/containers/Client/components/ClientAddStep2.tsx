@@ -3,27 +3,28 @@ import { Modal, Button, Skeleton } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { clientApi } from "apis/index";
 import ContactPersonWrapper from "./ContactPersonWrapper";
+import { iClient } from "utils/models";
 
 export default function CandidateAddStep1({
   nextStep,
   // prevStep,
   step1Data,
 }: {
-  step1Data: { data: { id: string } };
+  step1Data: iClient | undefined;
   nextStep: () => void;
   prevStep: () => void;
 }) {
   // client_id: step1Data.data.id,
-  console.log(step1Data.data.id);
+  console.log(step1Data?.id);
 
   const {
     data: clientData,
     isPending,
     refetch,
   } = useQuery({
-    queryKey: ["client", step1Data.data.id],
+    queryKey: ["client", step1Data?.id],
     queryFn: async () =>
-      await clientApi.getOneClient(step1Data.data.id as string).then((res) => {
+      await clientApi.getOneClient(step1Data?.id as string).then((res) => {
         return {
           ...res.data,
         };

@@ -17,14 +17,14 @@ import Address from "components/DataEntry/Address";
 import Phone from "components/DataEntry/Phone";
 import { AxiosError } from "axios";
 import IndustryState from "components/ShareComponents/IndustryState";
-import { iIndustry } from "utils/models";
+import { iClient, iCountry, iIndustry } from "utils/models";
 
 export default function CandidateAddStep1({
   nextStep,
   setData,
 }: {
   nextStep: () => void;
-  setData: (value: any) => void;
+  setData: (value: iClient) => void;
 }) {
   const [industry, setIndustry] = useState<iIndustry[]>([]);
   const [address, setAddress] = useState<any>();
@@ -35,7 +35,7 @@ export default function CandidateAddStep1({
   const { data: userData } = useQuery({
     queryKey: ["User"],
     queryFn: async () =>
-      await userApi.getUsers({}).then((res: any) =>
+      await userApi.getUsers({}).then((res) =>
         res.data.data.map((user: { id: string; full_name: string }) => ({
           label: formatName(user.full_name),
           value: user.id,
@@ -46,8 +46,8 @@ export default function CandidateAddStep1({
   const { data: clientData } = useQuery({
     queryKey: ["Client"],
     queryFn: async () =>
-      await clientApi.getClients({}).then((res: any) =>
-        res.data.data.map((clients: any) => ({
+      await clientApi.getClients({}).then((res) =>
+        res.data.data.map((clients: { name: string; id: string }) => ({
           label: formatName(clients.name),
           value: clients.id,
         }))
@@ -84,7 +84,7 @@ export default function CandidateAddStep1({
         description: "Create success.",
       });
 
-      setData(data);
+      setData(data.data);
 
       setTimeout(() => {
         nextStep();
@@ -106,11 +106,14 @@ export default function CandidateAddStep1({
     mutationFn: (formData: any) => createClient(formData),
   });
 
-  const phoneData = (input: any, countryData: any[]) => {
+  const phoneData = (
+    input: { phone_code: iCountry; number: string },
+    countryData: iCountry[]
+  ) => {
     const countryCode = input.phone_code.extra.dial_code;
 
     const countryInfo = countryData.find(
-      (country: any) => country.extra.dial_code === countryCode
+      (country: iCountry) => country.extra.dial_code === countryCode
     );
 
     if (countryInfo) {

@@ -5,12 +5,13 @@ import { useState } from "react";
 import ClientAddStep1 from "./components/ClientAddStep1";
 import ClientAddStep2 from "./components/ClientAddStep2";
 import ClientAddFinish from "./components/ClientAddFinish";
+import { iClient } from "utils/models";
 
 const step = ["Client Information", "Contact Person", "Finish"];
 
 export default function ClientAdd() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [step1Data, setStep1Data] = useState();
+  const [step1Data, setStep1Data] = useState<iClient>();
 
   return (
     <div className="px-12 pb-2">
