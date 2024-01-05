@@ -1,4 +1,4 @@
-import { months, years } from "_constants/index";
+import { iOption2, months, years } from "_constants/index";
 import { Button, Form, Row, Col } from "antd";
 import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
@@ -43,7 +43,7 @@ export default function ModelWorking({
     queryKey: ["company"],
     queryFn: () =>
       otherApi.getProperty("company").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }))
@@ -54,7 +54,7 @@ export default function ModelWorking({
     queryKey: ["position"],
     queryFn: () =>
       otherApi.getProperty("position").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }))

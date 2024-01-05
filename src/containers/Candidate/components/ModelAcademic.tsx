@@ -1,4 +1,4 @@
-import { filterOption, years } from "_constants/index";
+import { filterOption, iOption2, years } from "_constants/index";
 import { Button, Form, Row, Col, Select } from "antd";
 import { DataSelect } from "components/DataEntry";
 import CheckboxData from "components/DataEntry/Checkbox";
@@ -40,7 +40,7 @@ export default function ModelAcademic({
     queryKey: ["school"],
     queryFn: () =>
       otherApi.getProperty("school").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }))
@@ -51,7 +51,7 @@ export default function ModelAcademic({
     queryKey: ["major"],
     queryFn: () =>
       otherApi.getProperty("major").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }))
@@ -62,7 +62,7 @@ export default function ModelAcademic({
     queryKey: ["degree"],
     queryFn: () =>
       otherApi.getProperty("degree").then((res) =>
-        res.data.data.map((item: any) => ({
+        res.data.data.map((item: iOption2) => ({
           label: item.label,
           value: item.key + "_" + item.label,
         }))

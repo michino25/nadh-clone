@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import FormIndustry from "containers/Client/components/FormIndustry";
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import { AxiosError } from "axios";
+import { iIndustry } from "utils/models";
 
 const step = [
   "Personal Information",
@@ -64,7 +65,7 @@ export default function CadidateAdd() {
               ? addressItem.district.key + "_" + addressItem.district.label
               : null,
           })),
-          business_line: res.data.business_line.map((item: any) => ({
+          business_line: res.data.business_line.map((item: iIndustry) => ({
             ...item,
             id: uuidv4(),
           })),
@@ -113,17 +114,19 @@ export default function CadidateAdd() {
     if (data.category) newData.category_id = data.category.value;
     newData.primary = -1;
 
-    const transformedData = candidateData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.primary,
-      };
+    const transformedData = candidateData?.business_line.map(
+      (item: iIndustry) => {
+        const transformedItem: any = {
+          industry_id: item.industry?.id,
+          primary: item.primary,
+        };
 
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
+        if (item.sector) transformedItem.sector_id = item.sector.id;
+        if (item.category) transformedItem.category_id = item.category.id;
 
-      return transformedItem;
-    });
+        return transformedItem;
+      }
+    );
 
     if (transformedData)
       updateMutation.mutate({ business_line: [...transformedData, newData] });
@@ -134,10 +137,10 @@ export default function CadidateAdd() {
 
   const deleteIndustry = (id: string) => {
     const transformedData = candidateData?.business_line
-      .filter((item: any) => item.id !== id)
-      .map((item: any) => {
+      .filter((item: iIndustry) => item.id !== id)
+      .map((item: iIndustry) => {
         const transformedItem: any = {
-          industry_id: item.industry.id,
+          industry_id: item.industry?.id,
           primary: item.primary,
         };
 
@@ -151,17 +154,19 @@ export default function CadidateAdd() {
   };
 
   const primaryIndustry = (id: string) => {
-    const transformedData = candidateData?.business_line.map((item: any) => {
-      const transformedItem: any = {
-        industry_id: item.industry.id,
-        primary: item.id === id ? item.primary * -1 : item.primary,
-      };
+    const transformedData = candidateData?.business_line.map(
+      (item: iIndustry) => {
+        const transformedItem: any = {
+          industry_id: item.industry?.id,
+          primary: item.id === id ? (item.primary || -1) * -1 : item.primary,
+        };
 
-      if (item.sector) transformedItem.sector_id = item.sector.id;
-      if (item.category) transformedItem.category_id = item.category.id;
+        if (item.sector) transformedItem.sector_id = item.sector.id;
+        if (item.category) transformedItem.category_id = item.category.id;
 
-      return transformedItem;
-    });
+        return transformedItem;
+      }
+    );
 
     updateMutation.mutate({ business_line: transformedData });
   };

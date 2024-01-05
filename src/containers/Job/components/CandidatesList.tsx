@@ -12,7 +12,7 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { formatDate, formatName } from "utils/format";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   experiences,
   getIndustryString,
@@ -90,7 +90,8 @@ export default function CandidatesList({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState<any[]>();
+  const [searchData, setSearchData] =
+    useState<{ label: ReactNode; value: string }[]>();
 
   useQuery({
     queryKey: ["candidate", searchValue],
@@ -332,7 +333,7 @@ export default function CandidatesList({
                 {searchData &&
                   searchData.length &&
                   searchData.find((candidate) => candidate.value === item)
-                    .label}
+                    ?.label}
               </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"

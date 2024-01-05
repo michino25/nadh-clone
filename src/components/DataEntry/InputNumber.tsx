@@ -22,6 +22,15 @@ export default function DataInputNumber({
   noformat,
   addonAfter,
 }: iDataInput) {
+  const handleParser = (value: string | undefined) => {
+    const numericValue = numeral(value).value();
+    return numericValue !== null ? numericValue : "";
+  };
+
+  const handleFormatter = (value: string | number | undefined) => {
+    return !noformat ? numeral(value).format("0,0") : `${value}`;
+  };
+
   return (
     <Form.Item
       label={label}
@@ -37,10 +46,8 @@ export default function DataInputNumber({
       <InputNumber
         style={{ width: "100%" }}
         min={0}
-        formatter={
-          !noformat ? (value: any) => numeral(value).format("0,0") : undefined
-        }
-        parser={!noformat ? (value: any) => numeral(value).value() : undefined}
+        formatter={handleFormatter}
+        parser={!noformat ? handleParser : undefined}
         placeholder={placeholder}
         disabled={disabled}
         addonAfter={addonAfter}

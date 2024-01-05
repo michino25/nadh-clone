@@ -272,19 +272,13 @@ export default function Candidates() {
           label: values.highest_education.split("_")[1],
         },
       }),
-      nationality: values.nationality.map((item: any) => ({
+      nationality: values.nationality.map((item: string) => ({
         key: item.split("_")[0],
         label: item.split("_")[1],
       })),
       phones: values.phones,
-      // phones: values.phones.map((item: any) => ({
-      //   number: item,
-      //   current: -1,
-      //   phone_code: { key: 1280 },
-      // })),
-
       prefer_position: {
-        positions: values.prefer_position.map((item: any) => ({
+        positions: values.prefer_position.map((item: string) => ({
           key: item.split("_")[0],
           label: item.split("_")[1],
         })),

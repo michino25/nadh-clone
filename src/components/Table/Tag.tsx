@@ -106,11 +106,13 @@ const App = ({
     queryKey: ["allindustry"],
     queryFn: async () =>
       await otherApi.getIndustry({ getAll: true }).then((res: any) =>
-        res.data.data.map((item: any) => ({
-          value: item.key,
-          label: item.label,
-          parent_id: item.parent_id,
-        }))
+        res.data.data.map(
+          (item: { key: number; label: string; parent_id: string }) => ({
+            value: item.key,
+            label: item.label,
+            parent_id: item.parent_id,
+          })
+        )
       ),
   });
 
@@ -120,20 +122,23 @@ const App = ({
       const init = parseInt(paramItem);
 
       const option = allIndustryData.filter(
-        (item: any) => item.value === init
+        (item: { value: number; label: string; parent_id: string }) =>
+          item.value === init
       )[0];
 
       data.push(option.label);
 
       if (option.parent_id) {
         const option2 = allIndustryData.filter(
-          (item: any) => item.value === option.parent_id
+          (item: { value: number; label: string; parent_id: string }) =>
+            item.value === option.parent_id
         )[0];
         data.push(option2.label);
 
         if (option2.parent_id) {
           const option3 = allIndustryData.filter(
-            (item: any) => item.value === option2.parent_id
+            (item: { value: number; label: string; parent_id: string }) =>
+              item.value === option2.parent_id
           )[0];
           data.push(option3.label);
         }

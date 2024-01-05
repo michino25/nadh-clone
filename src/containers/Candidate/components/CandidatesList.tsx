@@ -18,12 +18,13 @@ import {
 } from "_constants/index";
 import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
+import { AxiosError } from "axios";
 
 const customColumns: any[] = candidateColumns;
 customColumns[2] = {
   ...customColumns[2],
 
-  render: (value: any) => {
+  render: (value: string) => {
     let color;
     switch (value) {
       case "Active":
@@ -89,7 +90,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
               primaryStatus,
               user.priority_status.toString()
             ).label,
-            language: user.languages.map((lang: any) => lang.label),
+            language: user.languages.map((lang: iOption2) => lang.label),
             location:
               user.addresses.length > 0 &&
               Object.values(user.addresses[0]).map((location: any) =>
@@ -100,7 +101,9 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
             highest_education: user.highest_education.label,
 
             yob: user.dob ? user.dob.substring(0, 4) : "",
-            industry: user.business_line.map((item: any) => item.sector?.name),
+            industry: user.business_line.map(
+              (item: { sector?: { name: string } }) => item.sector?.name
+            ),
             flow_status: getLabelByValue(statusData2, user.flow_status),
 
             current_company: user.current_employments.map(
@@ -129,12 +132,13 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   }, [window.location.href]);
 
   useEffect(() => {
-    if ((error as any)?.response?.status) {
-      notification.error({
-        message: "Get Candidate",
-        description: "Not Found",
-      });
-    }
+    if (error instanceof AxiosError)
+      if (error?.response?.status) {
+        notification.error({
+          message: "Get Candidate",
+          description: "Not Found",
+        });
+      }
   }, [isError, error]);
 
   const goDetail = (id: string) => {

@@ -57,7 +57,7 @@ export default function Industry({
     queryFn: async () =>
       await otherApi.getIndustry({ getAll: true }).then((res: any) =>
         res.data.data.map(
-          (item: { key: number; label: string; parent_id: string }) => ({
+          (item: { key: number; label: string; parent_id: number }) => ({
             value: item.key,
             label: item.label,
             parent_id: item.parent_id,
@@ -72,20 +72,23 @@ export default function Industry({
       const init = parseInt(industry_id);
 
       const option = allIndustryData.filter(
-        (item: any) => item.value === init
+        (item: { value: number; label: string; parent_id: number }) =>
+          item.value === init
       )[0];
 
       data.push(option);
 
       if (option.parent_id) {
         const option2 = allIndustryData.filter(
-          (item: any) => item.value === option.parent_id
+          (item: { value: number; label: string; parent_id: number }) =>
+            item.value === option.parent_id
         )[0];
         data.push(option2);
 
         if (option2.parent_id) {
           const option3 = allIndustryData.filter(
-            (item: any) => item.value === option2.parent_id
+            (item: { value: number; label: string; parent_id: number }) =>
+              item.value === option2.parent_id
           )[0];
           data.push(option3);
         }
@@ -118,7 +121,10 @@ export default function Industry({
   }, [allIndustryIsPending, industry_id, window.location.href]);
 
   const getChildren = (key: number) =>
-    allIndustryData.filter((item: any) => item.parent_id === key);
+    allIndustryData.filter(
+      (item: { value: number; label: string; parent_id: number }) =>
+        item.parent_id === key
+    );
 
   const handleChangeIndustry = (value: number) => {
     setIndustry(industryData.filter((item: any) => item.value === value)[0]);
