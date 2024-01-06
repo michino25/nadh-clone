@@ -1,18 +1,18 @@
 import IndustryTable from "components/DataDisplay/IndustryTable";
 import FormIndustry from "containers/Client/components/FormIndustry";
-import { iIndustry } from "utils/models";
+import { iIndustry, iIndustryParam } from "utils/models";
 
 export default function IndustryAPI({
   data,
   updateFn,
   loading,
 }: {
-  data: any;
-  updateFn: (data: any, event?: { onSuccess: () => void }) => void;
+  data: iIndustry[];
+  updateFn: (data: iIndustryParam[], event?: { onSuccess: () => void }) => void;
   loading: boolean;
 }) {
-  const addIndustry = (formdata: any) => {
-    const newData: any = {};
+  const addIndustry = (formdata: iIndustry) => {
+    const newData: iIndustryParam = {};
     if (formdata.industry) newData.industry_id = formdata.industry.value;
     if (formdata.sector) newData.sector_id = formdata.sector.value;
     if (formdata.category) newData.category_id = formdata.category.value;
@@ -22,7 +22,7 @@ export default function IndustryAPI({
       data &&
       data.length > 0 &&
       data.map((item: iIndustry) => {
-        const transformedItem: any = {
+        const transformedItem: iIndustryParam = {
           industry_id: item.industry?.id,
           primary: item.primary,
         };
@@ -38,9 +38,9 @@ export default function IndustryAPI({
 
   const deleteIndustry = (id: string) => {
     const transformedData = data
-      .filter((item: any) => item.id !== id)
+      .filter((item: iIndustry) => item.id !== id)
       .map((item: iIndustry) => {
-        const transformedItem: any = {
+        const transformedItem: iIndustryParam = {
           industry_id: item.industry?.id,
           primary: item.primary,
         };
@@ -56,7 +56,7 @@ export default function IndustryAPI({
 
   const primaryIndustry = (id: string) => {
     const transformedData = data.map((item: iIndustry) => {
-      const transformedItem: any = {
+      const transformedItem: iIndustryParam = {
         industry_id: item.industry?.id,
         primary: item.id === id ? (item.primary || 1) * -1 : item.primary,
       };

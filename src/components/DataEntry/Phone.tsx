@@ -14,8 +14,10 @@ export default function Phone({
   required?: boolean;
   label?: string;
   name: string;
-  defaultValue?: any;
+  defaultValue: { phone_code: iCountry; number: string };
 }) {
+  console.log(defaultValue);
+
   const { data: countries } = useQuery({
     queryKey: ["countries", "phone"],
     queryFn: async () =>
@@ -45,7 +47,7 @@ export default function Phone({
       <Select style={{ width: 110 }}>
         {countries &&
           countries.length > 0 &&
-          countries.map((item: { code: string; dial_code: string }) => (
+          countries.map((item: iPhone) => (
             <Select.Option key={item.code} value={item.dial_code}>
               <div className="flex items-center">
                 <img

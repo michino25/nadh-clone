@@ -15,7 +15,7 @@ const App = ({
   closeModal: () => void;
   edit?: boolean;
   execute: (data: any, id?: string) => void;
-  onDelete?: (id: any) => void;
+  onDelete?: (id: string) => void;
   id?: string;
 }) => {
   const { data: dataContactPersons, isPending } = useQuery({

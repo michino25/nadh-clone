@@ -42,7 +42,7 @@ export default function Industry({
   const { isPending: industryIsPending, data: industryData } = useQuery({
     queryKey: ["industry"],
     queryFn: async () =>
-      await otherApi.getIndustry({ type: 1 }).then((res: any) =>
+      await otherApi.getIndustry({ type: 1 }).then((res) =>
         res.data.data.map((item: iOption2) => ({
           value: item.key,
           label: item.label,
@@ -55,7 +55,7 @@ export default function Industry({
   const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
     queryKey: ["allindustry"],
     queryFn: async () =>
-      await otherApi.getIndustry({ getAll: true }).then((res: any) =>
+      await otherApi.getIndustry({ getAll: true }).then((res) =>
         res.data.data.map(
           (item: { key: number; label: string; parent_id: number }) => ({
             value: item.key,
@@ -127,7 +127,9 @@ export default function Industry({
     );
 
   const handleChangeIndustry = (value: number) => {
-    setIndustry(industryData.filter((item: any) => item.value === value)[0]);
+    setIndustry(
+      industryData.filter((item: iOption) => item.value === value)[0]
+    );
 
     if (value) setSectorData(getChildren(value));
     else setSectorData(undefined);
@@ -138,7 +140,7 @@ export default function Industry({
   };
 
   const handleChangeSector = (value: number) => {
-    setSector(sectorData?.filter((item: any) => item.value === value)[0]);
+    setSector(sectorData?.filter((item: iOption) => item.value === value)[0]);
 
     if (value) setCategoryData(getChildren(value));
     else setCategoryData(undefined);
@@ -147,7 +149,9 @@ export default function Industry({
   };
 
   const handleChangeCategory = (value: number) => {
-    setCategory(categoryData?.filter((item: any) => item.value === value)[0]);
+    setCategory(
+      categoryData?.filter((item: iOption) => item.value === value)[0]
+    );
   };
 
   return (

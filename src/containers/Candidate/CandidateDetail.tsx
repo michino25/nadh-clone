@@ -25,7 +25,7 @@ import SkillsAndIndustry from "./components/SkillsAndIndustry";
 import dayjs from "dayjs";
 import { scrollTo } from "utils/others";
 import { AxiosError } from "axios";
-import { iFile, iNote } from "utils/models";
+import { iFile, iLocation, iNote } from "utils/models";
 
 const anchorItems = [
   {
@@ -108,7 +108,7 @@ export default function Candidates() {
 
   console.log(candidateImage);
 
-  const [address, setAddress] = useState<any[]>();
+  const [address, setAddress] = useState<iLocation[]>();
   const [form] = Form.useForm();
   const [currency, setCurrency] = useState<number>();
 
@@ -564,7 +564,7 @@ export default function Candidates() {
               <PersonalInformationForm
                 candidateData={candidateData}
                 setAddress={setAddress}
-                address={address}
+                address={address as iLocation[]}
                 reset={resetAddress}
                 setReset={setResetAddress}
               />

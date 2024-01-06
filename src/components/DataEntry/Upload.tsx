@@ -22,14 +22,27 @@ const normFile = (e: { fileList: UploadFile[] }) => {
   return e?.fileList;
 };
 
+interface iUpload {
+  label: string;
+  onChange: (id: string) => void;
+  onDelete: (uid: string) => void;
+  data: {
+    obj_table: string;
+    obj_uid: string;
+    uploadedByUserId: number;
+  };
+  imgList: UploadFile[];
+  loading: boolean;
+}
+
 export default function DataUpload({
   label,
   onChange,
   onDelete,
-  data,
+  data: dataParam,
   imgList,
   loading,
-}: any) {
+}: iUpload) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -146,7 +159,7 @@ export default function DataUpload({
       >
         <Upload
           action="https://lubrytics.com:8443/nadh-mediafile/file"
-          data={data}
+          data={dataParam}
           listType="picture-card"
           fileList={fileList}
           showUploadList={{ showDownloadIcon: true }}

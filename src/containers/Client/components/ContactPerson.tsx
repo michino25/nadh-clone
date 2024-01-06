@@ -10,7 +10,7 @@ const columns = [
     title: "Name",
     dataIndex: "name",
     key: "name",
-    render: (_: any, { name }: any) => formatName(name),
+    render: (_: string, { name }: { name: string }) => formatName(name),
   },
   {
     title: "Title",
@@ -21,7 +21,7 @@ const columns = [
     title: "Current Contact",
     dataIndex: "current",
     key: "current",
-    render: (_: any, { current }: any) => (
+    render: (_: string, { current }: { current: string }) => (
       <span className="w-2/3 block text-center">
         {current === "true" ? <CheckOutlined /> : ""}
       </span>
@@ -62,7 +62,7 @@ export default function ContactPerson({
   return (
     <>
       <CandidateTable
-        editClick={(id: any) => {
+        editClick={(id: string) => {
           setEditId(id);
           setIsEditOpen(true);
         }}

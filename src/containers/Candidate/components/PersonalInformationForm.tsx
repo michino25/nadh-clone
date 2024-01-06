@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatName } from "utils/format";
 import { DataDatePicker } from "components/DataEntry";
 import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearchAPI";
+import { iLocation } from "utils/models";
 
 export default function PersonalInformationForm({
   candidateData,
@@ -28,10 +29,10 @@ export default function PersonalInformationForm({
   setReset,
 }: {
   candidateData?: any;
-  setAddress: (data: any) => void;
-  address: any;
+  setAddress: (data: iLocation[]) => void;
+  address: iLocation[];
   reset?: boolean;
-  setReset: (data: any) => void;
+  setReset: (data: boolean) => void;
 }) {
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],

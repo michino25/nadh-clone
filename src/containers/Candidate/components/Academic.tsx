@@ -69,7 +69,7 @@ export default function Academic({
   return (
     <>
       <CandidateTable
-        editClick={(id: any) => {
+        editClick={(id: string) => {
           setEditId(id);
           setIsEditOpen(true);
         }}

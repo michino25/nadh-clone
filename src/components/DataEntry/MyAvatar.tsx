@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
-import type { RcFile } from "antd/es/upload/interface";
+import type { RcFile, UploadFile } from "antd/es/upload/interface";
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const reader = new FileReader();
@@ -21,11 +21,22 @@ const beforeUpload = (file: RcFile) => {
   return isJpgOrPng && isLt2M;
 };
 
-export const MyAvatar = ({ data, onChange, img, editing }: any) => {
+interface iUpload {
+  onChange: (id: string) => void;
+  data: {
+    obj_table: string;
+    obj_uid: string;
+    uploadedByUserId: number;
+  };
+  img: string;
+  editing: boolean;
+}
+
+export const MyAvatar = ({ data, onChange, img, editing }: iUpload) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>(img);
 
-  const handleChange = ({ file }: { file: any }) => {
+  const handleChange = ({ file }: { file: UploadFile }) => {
     if (file.status === "uploading") {
       setLoading(true);
       return;

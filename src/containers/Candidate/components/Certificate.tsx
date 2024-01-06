@@ -64,7 +64,7 @@ export default function Certificate({
   return (
     <>
       <CandidateTable
-        editClick={(id: any) => {
+        editClick={(id: string) => {
           setEditId(id);
           setIsEditOpen(true);
         }}

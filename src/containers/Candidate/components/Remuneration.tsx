@@ -1,6 +1,6 @@
 import { InputNumber } from "components/DataEntry";
 import { Col, Row, Select } from "antd";
-import { YNquestion, iOption2 } from "_constants/index";
+import { YNquestion, iOption2, iOption } from "_constants/index";
 import { useState } from "react";
 import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
@@ -18,9 +18,9 @@ export default function Remuneration({
   currency: number | undefined;
   setCurrency: (value: number) => void;
   form: any;
-  updateFn: (value: any, onSuccess: any) => void;
+  updateFn: (value: any, event: { onSuccess: () => void }) => void;
 }) {
-  const [currencyData, setCurrencyData] = useState<any[]>();
+  const [currencyData, setCurrencyData] = useState<iOption[]>();
   const [salary, setSalary] = useState(
     data.converted_salary[data.currency.name]
   );
@@ -38,15 +38,22 @@ export default function Remuneration({
 
         const result: any[] = [];
 
-        res.data.forEach((fromCurrency: any) => {
-          fromCurrency.rate.forEach((toCurrency: any) => {
-            result.push({
-              from: fromCurrency.key,
-              to: toCurrency.key,
-              rate: toCurrency.value,
-            });
-          });
-        });
+        res.data.forEach(
+          (fromCurrency: {
+            rate: { key: number; value: number }[];
+            key: number;
+          }) => {
+            fromCurrency.rate.forEach(
+              (toCurrency: { key: number; value: number }) => {
+                result.push({
+                  from: fromCurrency.key,
+                  to: toCurrency.key,
+                  rate: toCurrency.value,
+                });
+              }
+            );
+          }
+        );
 
         return result;
       }),
@@ -64,7 +71,7 @@ export default function Remuneration({
       id: value,
       name:
         currencyData && currencyData?.length > 0
-          ? currencyData.find((item) => item.value === value).label
+          ? currencyData.find((item) => item.value === value)?.label
           : "",
       salary: {
         to: (form.getFieldValue("salary_to") * rate).toFixed(0),

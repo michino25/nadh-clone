@@ -19,7 +19,7 @@ export default function ModelWorking({
   edit?: boolean;
   execute: (data: any, id?: string) => void;
   data?: any;
-  onDelete?: (id: any) => void;
+  onDelete?: (id: string) => void;
   id?: string;
 }) {
   const defaultData = data?.filter((item: any) => item.id === id)[0];

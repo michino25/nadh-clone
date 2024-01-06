@@ -56,9 +56,9 @@ export default function Address({
       }),
   });
 
-  const getCity = async (id: any) => {
+  const getCity = async (id: number) => {
     try {
-      return await otherApi.getLocation(1, id).then((res) =>
+      return await otherApi.getLocation(1, id.toString()).then((res) =>
         res.data.data.map((item: { key: number; label: string }) => ({
           value: item.key,
           label: item.label,
@@ -70,9 +70,9 @@ export default function Address({
     }
   };
 
-  const getDistrict = async (id: any) => {
+  const getDistrict = async (id: number) => {
     try {
-      return await otherApi.getLocation(2, id).then((res) =>
+      return await otherApi.getLocation(2, id.toString()).then((res) =>
         res.data.data.map((item: { key: number; label: string }) => ({
           value: item.key,
           label: item.label,

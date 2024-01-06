@@ -148,9 +148,12 @@ const DataTable = ({
 
   const [render, setRender] = useState(true);
 
-  const changeCol = async (data: any) => {
+  const changeCol = async (selectedKeys: string[]) => {
     try {
-      const res = await otherApi.changeCol(getPathname().slice(1), data);
+      const res = await otherApi.changeCol(
+        getPathname().slice(1),
+        selectedKeys
+      );
       setFilterCol(res.data.data);
     } catch (error: unknown) {
       if (error instanceof AxiosError) console.error(error);
@@ -158,7 +161,7 @@ const DataTable = ({
   };
 
   const loginMutation = useMutation({
-    mutationFn: (formData: any) => changeCol(formData),
+    mutationFn: (selectedKeys: string[]) => changeCol(selectedKeys),
   });
 
   const handleMenuSelect = ({ selectedKeys }: { selectedKeys: string[] }) => {
@@ -182,7 +185,7 @@ const DataTable = ({
     queryFn: async () =>
       await otherApi
         .getCol(getPathname().slice(1))
-        .then((res: any) => res.data.data),
+        .then((res) => res.data.data),
     enabled:
       getPathname() === "/candidates" ||
       getPathname() === "/clients" ||

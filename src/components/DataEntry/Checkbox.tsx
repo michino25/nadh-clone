@@ -7,7 +7,7 @@ interface iDataInput {
   defaultValue?: boolean;
   disabled?: boolean;
   checked?: boolean;
-  onChange?: (value: any) => void;
+  onChange?: (value: boolean) => void;
 }
 
 export default function CheckboxData({

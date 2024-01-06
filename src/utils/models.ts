@@ -549,6 +549,13 @@ export interface iIndustry {
   id?: string;
 }
 
+export interface iIndustryParam {
+  industry_id?: number | string;
+  sector_id?: number | string;
+  category_id?: number | string;
+  primary?: number;
+}
+
 interface iHistory {
   title: {
     key: number;

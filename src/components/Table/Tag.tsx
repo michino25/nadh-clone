@@ -207,7 +207,7 @@ const App = ({
 
   return (
     <>
-      {orderTag.map((tag: string, index: number, array: any[]) => {
+      {orderTag.map((tag: string, index: number, array: string[]) => {
         const col =
           tag === "page"
             ? pageCol

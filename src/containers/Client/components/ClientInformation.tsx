@@ -27,7 +27,7 @@ export default function ClientInformation({
   clientData: any;
   editable: boolean;
   setEditable: (value: boolean) => void;
-  updateFn: (data: any, event: any) => void;
+  updateFn: (data: any, event: { onSuccess: () => void }) => void;
   clientImageRefetch: () => void;
 }) {
   const { data: countries } = useQuery({
