@@ -2,6 +2,7 @@ import { convertKeytoValue } from "_constants/index";
 import { Button, Col, Form, Row } from "antd";
 import Address from "components/DataEntry/Address";
 import { useState } from "react";
+import { iAddress } from "utils/models";
 
 interface iDataInput {
   name: string;
@@ -20,7 +21,7 @@ export default function EditableForm({
   onlyCity,
 }: iDataInput) {
   const [edit, setEdit] = useState(false);
-  const [data, setdata] = useState();
+  const [data, setdata] = useState<iAddress>();
   const [loading, setLoading] = useState(false);
 
   return (
