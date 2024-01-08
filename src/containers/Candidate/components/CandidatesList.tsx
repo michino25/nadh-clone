@@ -72,7 +72,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
       }
     : getAllParams();
 
-  const { data, isError, error, isLoading } = useQuery({
+  const { data, isError, error, isFetching } = useQuery({
     queryKey: ["all_candidates", window.location.href, userDetail.id],
     queryFn: async () =>
       await candidateApi
@@ -180,7 +180,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
 
       <DataTable
         titleTable={`Candidates List`}
-        loading={isLoading}
+        loading={isFetching}
         filterSelectData={filterSelectData}
         tableName={candidateTable}
         data={data}

@@ -30,38 +30,34 @@ export default function CandidateAddStep1({
   const [address, setAddress] = useState<any>();
   const [taxCheckContent, setTaxCheckContent] = useState("");
 
-  console.log(industry);
-
   const { data: userData } = useQuery({
-    queryKey: ["User"],
-    queryFn: async () =>
-      await userApi.getUsers({}).then((res) =>
-        res.data.data.map((user: { id: string; full_name: string }) => ({
-          label: formatName(user.full_name),
-          value: user.id,
-        }))
-      ),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
 
   const { data: clientData } = useQuery({
-    queryKey: ["Client"],
-    queryFn: async () =>
-      await clientApi.getClients({}).then((res) =>
-        res.data.data.map((clients: { name: string; id: string }) => ({
-          label: formatName(clients.name),
-          value: clients.id,
-        }))
-      ),
+    queryKey: ["all_clients"],
+    queryFn: async () => clientApi.getClients({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; name: string }) => ({
+        value: item.id,
+        label: formatName(item.name),
+      })),
   });
 
   const { data: countries } = useQuery({
-    queryKey: ["countries", "phonekey"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) => res.data.data),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) => res.data.data,
   });
 
   const { data: taxCheck } = useQuery({
-    queryKey: ["conflictTax", taxCheckContent],
+    queryKey: ["conflict_tax", taxCheckContent],
     queryFn: async () => {
       try {
         await otherApi.getConflictTax(taxCheckContent);

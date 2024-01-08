@@ -41,7 +41,7 @@ export default function DashboardUserList() {
     setOpen(false);
   };
 
-  const { isLoading, error, data } = useQuery({
+  const { isFetching, error, data } = useQuery({
     queryKey: ["all_users", window.location.href],
     queryFn: async () =>
       await userApi
@@ -94,7 +94,7 @@ export default function DashboardUserList() {
         titleTable={`System Users List`}
         tableName={userTable}
         filterSelectData={filterSelectData}
-        loading={isLoading}
+        loading={isFetching}
         createBtn={undefined}
         data={data}
         rawColumns={userColumns}

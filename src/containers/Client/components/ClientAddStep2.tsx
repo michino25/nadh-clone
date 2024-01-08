@@ -23,12 +23,8 @@ export default function CandidateAddStep1({
     refetch,
   } = useQuery({
     queryKey: ["client", step1Data?.id],
-    queryFn: async () =>
-      await clientApi.getOneClient(step1Data?.id as string).then((res) => {
-        return {
-          ...res.data,
-        };
-      }),
+    queryFn: async () => await clientApi.getOneClient(step1Data?.id as string),
+    select: (res) => res.data,
   });
 
   const showConfirmSubmit = () => {

@@ -138,7 +138,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         }
     : getAllParams();
 
-  const { data, isLoading } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ["Clients", window.location.href, userDetail.id],
     queryFn: async () =>
       await clientApi
@@ -244,7 +244,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
       <DataTable
         titleTable={`Clients List`}
         tableName={clientTable}
-        loading={isLoading}
+        loading={isFetching}
         filterSelectData={filterSelectData}
         createBtn={createBtn}
         data={data}
