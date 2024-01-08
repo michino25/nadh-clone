@@ -2,8 +2,20 @@ import { Col, Row, Popover, Button } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import DisplayTag from "./DisplayTag";
 import CompetenciesInstruction from "./CompetenciesInstruction";
+import { iJob, iTag } from "utils/models";
 
-export default function JobDescription({ data, updateFn }: any) {
+export default function JobDescription({
+  data,
+  updateFn,
+}: {
+  data: iJob;
+  updateFn: (
+    value: { [key: string]: string | iTag[] },
+    onSuccess?: () => void
+  ) => void;
+}) {
+  console.log(data);
+
   const templateContent = `<p>• Is the job and budget to be signed off? Yes or No</p>
   <p>• Why is the position open?</p>
   <p>• How long have you been looking?</p>
@@ -180,13 +192,10 @@ export default function JobDescription({ data, updateFn }: any) {
 
       <DisplayTag
         data={data?.social_media}
-        updateFn={(value: any[], onSuccess: () => void) =>
-          updateFn(
-            {
-              social_media: value,
-            },
-            onSuccess
-          )
+        updateFn={(value: iTag[]) =>
+          updateFn({
+            social_media: value,
+          })
         }
       />
     </>

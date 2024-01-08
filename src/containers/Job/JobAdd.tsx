@@ -6,11 +6,11 @@ import { useState } from "react";
 import { jobApi } from "apis/index";
 import { AxiosError } from "axios";
 import IndustryState from "components/ShareComponents/IndustryState";
-import { iIndustry } from "utils/models";
+import { iAddress, iIndustry } from "utils/models";
 
 export default function JobAdd() {
   const [industry, setIndustry] = useState<iIndustry[]>([]);
-  const [, setAddress] = useState<any>();
+  const [, setAddress] = useState<iAddress>();
 
   console.log(industry);
 
@@ -118,7 +118,7 @@ export default function JobAdd() {
   };
 
   const createMutation = useMutation({
-    mutationFn: (formData: any) => createClient(formData),
+    mutationFn: (formData) => createClient(formData),
   });
 
   return (

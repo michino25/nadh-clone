@@ -221,6 +221,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
         });
     }, 500);
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.href]);
 
   const goDetail = (id: string) => {

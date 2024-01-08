@@ -23,7 +23,7 @@ import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 import dayjs from "dayjs";
 import { scrollTo } from "utils/others";
-import { iFile, iIndustry } from "utils/models";
+import { iFile, iIndustry, iTag } from "utils/models";
 import { AxiosError } from "axios";
 
 const anchorItems = [
@@ -393,9 +393,10 @@ export default function JobDetail() {
             <p className="mb-4 font-bold text-lg">Job Description</p>
             <JobDescription
               data={jobData}
-              updateFn={(value: any, onSuccess: () => void) =>
-                updateMutation2.mutate(value, { onSuccess })
-              }
+              updateFn={(
+                value: { [key: string]: string | iTag[] },
+                onSuccess?: () => void
+              ) => updateMutation2.mutate(value, { onSuccess })}
             />
           </div>
 

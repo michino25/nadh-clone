@@ -247,6 +247,78 @@ export interface iCandidate {
   }[];
 }
 
+export interface iRemuneration {
+  extra: string;
+  salary: {
+    to: number | null;
+    from: number | null;
+  };
+  benefit: {
+    bonus: number;
+    extra: string;
+    phone: number;
+    laptop: number;
+    no_holiday: number;
+    phone_text: string;
+    car_parking: number;
+    laptop_text: string;
+    lunch_check: number;
+    health_cover: number;
+    share_option: number;
+    working_hour: number;
+    car_allowance: number;
+    over_thirteen: number;
+    overtime_hour: number;
+    pension_scheme: number;
+    car_parking_text: string;
+    lunch_check_text: string;
+    health_cover_text: string;
+    share_option_text: string;
+    car_allowance_text: string;
+    over_thirteen_text: string;
+  };
+  currency: {
+    id: number;
+    name: string;
+  };
+  review_date: string;
+  future_prospect: string;
+  converted_salary: {
+    EUR: {
+      id: number;
+      name: string;
+      salary: {
+        to: number | null;
+        from: number | null;
+      };
+    };
+    JPY: {
+      id: number;
+      name: string;
+      salary: {
+        to: number | null;
+        from: number | null;
+      };
+    };
+    USD: {
+      id: number;
+      name: string;
+      salary: {
+        to: number | null;
+        from: number | null;
+      };
+    };
+    VND: {
+      id: number;
+      name: string;
+      salary: {
+        to: number | null;
+        from: number | null;
+      };
+    };
+  };
+}
+
 export interface iJob {
   id: string;
   job_id: string;
@@ -262,77 +334,8 @@ export interface iJob {
   createdAt: string;
   // location: {};
   experience_level: number;
-  remuneration: {
-    extra: string;
-    salary: {
-      to: number | null;
-      from: number | null;
-    };
-    benefit: {
-      bonus: number;
-      extra: string;
-      phone: number;
-      laptop: number;
-      no_holiday: number;
-      phone_text: string;
-      car_parking: number;
-      laptop_text: string;
-      lunch_check: number;
-      health_cover: number;
-      share_option: number;
-      working_hour: number;
-      car_allowance: number;
-      over_thirteen: number;
-      overtime_hour: number;
-      pension_scheme: number;
-      car_parking_text: string;
-      lunch_check_text: string;
-      health_cover_text: string;
-      share_option_text: string;
-      car_allowance_text: string;
-      over_thirteen_text: string;
-    };
-    currency: {
-      id: number;
-      name: string;
-    };
-    review_date: string;
-    future_prospect: string;
-    converted_salary: {
-      EUR: {
-        id: number;
-        name: string;
-        salary: {
-          to: number | null;
-          from: number | null;
-        };
-      };
-      JPY: {
-        id: number;
-        name: string;
-        salary: {
-          to: number | null;
-          from: number | null;
-        };
-      };
-      USD: {
-        id: number;
-        name: string;
-        salary: {
-          to: number | null;
-          from: number | null;
-        };
-      };
-      VND: {
-        id: number;
-        name: string;
-        salary: {
-          to: number | null;
-          from: number | null;
-        };
-      };
-    };
-  };
+  remuneration: iRemuneration;
+
   client: {
     id: string;
     name: string;
@@ -451,6 +454,7 @@ export interface iJob {
     }[];
     languages: any[];
     soft_skills: any[];
+    major: any;
     industry_years: number;
     functions_skills: any[];
     management_years: number;
@@ -477,6 +481,17 @@ export interface iJob {
     };
     primary: number;
   }[];
+
+  responsibility: string;
+  expectation: string;
+  kpi: string;
+  selling_point: string;
+  department_structure: string;
+  competency: string;
+  development_opportunity: string;
+  fill_rate: string;
+  recruitment_process: string;
+  social_media: iTag[];
 }
 
 export interface iRole {
@@ -669,4 +684,9 @@ export interface iPhone {
 
 export interface iDynamicObject {
   [key: string]: string | undefined;
+}
+
+export interface iTag {
+  platform: string;
+  url: string;
 }

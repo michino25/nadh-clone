@@ -189,7 +189,10 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
           defaultPageSize: 5,
           size: "default",
         }}
-        dataSource={data}
+        dataSource={data.map((item: any, index: number) => ({
+          ...item,
+          key: index,
+        }))}
         style={{ width: "100%" }}
       />
 

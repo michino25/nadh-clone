@@ -1,4 +1,4 @@
-import { iOption2 } from "_constants/index";
+import { iOption2, iOption3 } from "_constants/index";
 import { Col, Row, Form } from "antd";
 import CkeditorData from "components/DataEntry/CkeditorData";
 import DataInputNumber from "components/DataEntry/InputNumber";
@@ -6,7 +6,7 @@ import MultiSelectWithSearchAPI from "components/DataEntry/MultiSelectWithSearch
 import SelectLanguage from "components/DataEntry/SelectLanguage";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
 import IndustryAPI from "components/ShareComponents/IndustryAPI";
-import { iIndustry } from "utils/models";
+import { iIndustry, iIndustryParam, iJob } from "utils/models";
 import { v4 as uuidv4 } from "uuid";
 
 export default function JobRequirements({
@@ -14,8 +14,15 @@ export default function JobRequirements({
   updateFn,
   loading,
 }: {
-  data: any;
-  updateFn: (data: any, event?: { onSuccess: () => void }) => void;
+  data: iJob;
+  updateFn: (
+    data: {
+      requirement: {
+        [key: string]: string | iIndustryParam[] | iOption3[] | iOption3;
+      };
+    },
+    event?: { onSuccess: () => void }
+  ) => void;
   loading: boolean;
 }) {
   const [form] = Form.useForm();
@@ -195,7 +202,7 @@ export default function JobRequirements({
               ...item,
               id: uuidv4(),
             }))}
-            updateFn={(value: any) =>
+            updateFn={(value: iIndustryParam[]) =>
               updateFn({
                 requirement: {
                   industry: value,

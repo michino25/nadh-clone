@@ -10,12 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 import { MultiSelect } from "components/DataEntry";
 import Address from "components/DataEntry/Address";
 import SelectWithSearchAPI from "components/DataEntry/SelectWithSearchAPI";
+import { iAddress } from "utils/models";
 
 export default function CreateJobForm({
   setAddress,
   defaultClient,
 }: {
-  setAddress?: (data: any) => void;
+  setAddress?: (data: iAddress) => void;
   defaultClient?: string;
 }) {
   const { data: userData } = useQuery({

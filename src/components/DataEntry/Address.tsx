@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { otherApi } from "apis/index";
 import { iOption } from "_constants/index";
 import { useEffect, useState } from "react";
+import { iAddress } from "utils/models";
 
 const filterOption = (input: string, option?: iOption) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
@@ -12,16 +13,18 @@ export default function Address({
   onChange,
   onlyCity,
 }: {
-  defaultValue?: any;
-  onChange: (data: any) => void;
+  defaultValue?: iAddress;
+  onChange: (data: iAddress) => void;
   onlyCity?: boolean;
 }) {
   const [country, setCountry] = useState<iOption | undefined>(
-    defaultValue?.country
+    defaultValue?.country as iOption
   );
-  const [city, setCity] = useState<iOption | undefined>(defaultValue?.city);
+  const [city, setCity] = useState<iOption | undefined>(
+    defaultValue?.city as iOption
+  );
   const [district, setDistrict] = useState<iOption | undefined>(
-    defaultValue?.district
+    defaultValue?.district as iOption
   );
 
   const [address, setAddress] = useState(defaultValue?.address);
@@ -29,13 +32,15 @@ export default function Address({
   const [cityData, setCityData] = useState<iOption[]>();
   const [districtData, setDistrictData] = useState<iOption[]>();
 
-  const initData = async (defaultValue: any) => {
+  const initData = async (defaultValue: iAddress) => {
     if (defaultValue.country) {
-      setCityData(await getCity(defaultValue.country.value).then((res) => res));
+      setCityData(
+        await getCity(defaultValue.country.value as number).then((res) => res)
+      );
     }
     if (defaultValue.city) {
       setDistrictData(
-        await getDistrict(defaultValue.city.value).then((res) => res)
+        await getDistrict(defaultValue.city.value as number).then((res) => res)
       );
     }
   };
@@ -43,6 +48,7 @@ export default function Address({
   useEffect(() => {
     // console.log(defaultValue);
     if (defaultValue) initData(defaultValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: countryData, isPending: countryIsPending } = useQuery({
@@ -116,7 +122,8 @@ export default function Address({
       city,
       district,
       address,
-    });
+    } as iAddress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, city, district, address]);
 
   return (

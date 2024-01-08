@@ -166,6 +166,11 @@ export interface iOption2 {
   key: number;
 }
 
+export interface iOption3 {
+  label: string;
+  key: string;
+}
+
 export const createSelectData = (data: string[]) => {
   const selectData: iOption[] = [];
   for (let i = 0; i < data.length; i++) {
