@@ -18,19 +18,18 @@ import { MyAvatar } from "components/DataEntry/MyAvatar";
 export default function UserInfo() {
   const { data, isPending } = useQuery({
     queryKey: ["users", getUser().user_sent.id],
-    queryFn: async () =>
-      await userApi.getOneUser(getUser().user_sent.id).then((res) => res.data),
+    queryFn: async () => await userApi.getOneUser(getUser().user_sent.id),
+    select: (res) => res.data,
   });
 
   const { data: roleData, isPending: rolePending } = useQuery({
     queryKey: ["roles"],
-    queryFn: async () =>
-      await otherApi.getRoles().then((res) => {
-        return res.data.data.map((item: { name: string; id: string }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-      }),
+    queryFn: async () => await otherApi.getRoles(),
+    select: (res) =>
+      res.data.data.map((item: { name: string; id: string }) => ({
+        label: item.name,
+        value: item.id,
+      })),
   });
 
   const updateUser = async (userData: any) => {

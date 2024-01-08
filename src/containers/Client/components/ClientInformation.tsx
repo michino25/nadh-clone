@@ -31,36 +31,31 @@ export default function ClientInformation({
   clientImageRefetch: () => void;
 }) {
   const { data: countries } = useQuery({
-    queryKey: ["countries", "phonekey"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) => res.data.data),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) => res.data.data,
   });
 
   const { data: companyData, isPending: companyIsPending } = useQuery({
     queryKey: ["company"],
-    queryFn: async () =>
-      await clientApi
-        .getClients({
-          getAll: true,
-        })
-        .then((res) => {
-          return res.data.data.map((item: { id: string; name: string }) => ({
-            label: item.name,
-            value: item.id,
-          }));
-        }),
+    queryFn: async () => await clientApi.getClients({ getAll: true }),
+    select: (res) =>
+      res.data.data.map((item: { id: string; name: string }) => ({
+        label: item.name,
+        value: item.id,
+      })),
   });
 
   const { data: consultantData, isPending: consultantIsPending } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () =>
-      await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
-        return res.data.data.map((item: { id: string; full_name: string }) => ({
-          label: formatName(item.full_name),
-          value: item.id,
-        }));
-      }),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
+
   const onFinish = (values: any, onSuccess: () => void) => {
     const data = {
       ...values,

@@ -9,6 +9,7 @@ import {
   convertValuetoKey,
   experiences,
   getSelectByValue,
+  iOption2,
   statusData3,
   typeJob,
 } from "_constants/index";
@@ -23,65 +24,55 @@ export default function JobInformation({
   setEditable,
 }: any) {
   const { data: clientData, isPending: clientIsPending } = useQuery({
-    queryKey: ["company"],
-    queryFn: async () =>
-      await clientApi
-        .getClients({
-          getAll: true,
-        })
-        .then((res) => {
-          return res.data.data.map((item: { id: string; name: string }) => ({
-            label: item.name,
-            value: item.id,
-          }));
-        }),
+    queryKey: ["all_clients"],
+    queryFn: async () => clientApi.getClients({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; name: string }) => ({
+        value: item.id,
+        label: formatName(item.name),
+      })),
   });
 
   const { data: userData, isPending: userIsPending } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () =>
-      await userApi.getUsers({ page: 1, getAll: true }).then((res) => {
-        return res.data.data.map((item: { id: string; full_name: string }) => ({
-          label: formatName(item.full_name),
-          value: item.id,
-        }));
-      }),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
 
   const { data: positionData, isPending: positionIsPending } = useQuery({
-    queryKey: ["position", "info"],
-    queryFn: async () =>
-      await otherApi.getProperty("position").then((res) => {
-        return res.data.data.map((item: { key: number; label: string }) => ({
-          label: item.label,
-          value: item.key,
-        }));
-      }),
+    queryKey: ["position"],
+    queryFn: () => otherApi.getProperty("position"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key,
+      })),
   });
 
   const { data: departmentData, isPending: departmentIsPending } = useQuery({
-    queryKey: ["department", "info"],
-    queryFn: async () =>
-      await otherApi.getProperty("department").then((res) => {
-        return res.data.data.map((item: { key: number; label: string }) => ({
-          label: item.label,
-          value: item.key,
-        }));
-      }),
+    queryKey: ["department"],
+    queryFn: () => otherApi.getProperty("department"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key,
+      })),
   });
 
   const { data: contactPersonsData, isPending: contactPersonsIsPending } =
     useQuery({
       queryKey: ["contact_persons", data.client_id],
       queryFn: async () =>
-        await clientApi
-          .getContactPersonsInClient(data.client_id)
-          .then((res) => {
-            return res.data.data.map((item: { id: string; name: string }) => ({
-              label: item.name,
-              value: item.id,
-            }));
-          }),
+        await clientApi.getContactPersonsInClient(data.client_id),
+      select: (res) =>
+        res.data.data.map((item: { id: string; name: string }) => ({
+          label: item.name,
+          value: item.id,
+        })),
       enabled: !!data?.client_id,
     });
 

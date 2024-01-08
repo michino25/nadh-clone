@@ -80,16 +80,8 @@ export default function JobDetail() {
     refetch,
   } = useQuery({
     queryKey: ["job", id],
-    queryFn: async () =>
-      await jobApi.getOneJob(id as string).then((res) => {
-        return {
-          ...res.data,
-          business_line: res.data.business_line.map((item: iIndustry) => ({
-            ...item,
-            id: uuidv4(),
-          })),
-        };
-      }),
+    queryFn: async () => await jobApi.getOneJob(id as string),
+    select: (res) => res.data,
   });
 
   const [editable, setEditable] = useState(false);
@@ -209,17 +201,17 @@ export default function JobDetail() {
 
   const { data: jobImage, refetch: jobImageRefetch } = useQuery({
     queryKey: ["files", jobData?.id],
-    queryFn: () =>
-      otherApi.getFile(jobData?.id, "job").then((res) => {
-        return res.data.data.map((item: iFile) => ({
-          uid: item.id,
-          name: item.name,
-          status: "done",
-          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
-          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
-        }));
-      }),
+    queryFn: () => otherApi.getFile(jobData?.id, "job"),
     enabled: !!jobData?.id,
+    select: (res) => {
+      return res.data.data.map((item: iFile) => ({
+        uid: item.id,
+        name: item.name,
+        status: "done",
+        url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+        created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+      }));
+    },
   });
 
   const fileUpload = (id: string) => {
@@ -375,7 +367,10 @@ export default function JobDetail() {
           <div className="p-4 bg-white rounded-lg">
             <p className="mb-4 font-bold text-lg">Industry</p>
             <IndustryAPI
-              data={jobData?.business_line}
+              data={jobData?.business_line.map((item: iIndustry) => ({
+                ...item,
+                id: uuidv4(),
+              }))}
               updateFn={(value: any) =>
                 updateMutation.mutate({
                   business_line: value,

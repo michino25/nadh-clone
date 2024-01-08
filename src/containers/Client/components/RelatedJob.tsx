@@ -6,8 +6,7 @@ import { formatDate, formatName } from "utils/format";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import CreateJobForm from "containers/Job/components/CreateJobForm";
-import { useQuery } from "@tanstack/react-query";
-import { clientApi, jobApi } from "apis/index";
+import { jobApi } from "apis/index";
 import { useMutation } from "@tanstack/react-query";
 import IndustryState from "components/ShareComponents/IndustryState";
 import { iIndustry } from "utils/models";
@@ -83,17 +82,6 @@ const columns: ColumnsType<DataType> = [
 export default function RelatedJob({ data, clientId, refetch }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [industry, setIndustry] = useState<iIndustry[]>([]);
-
-  useQuery({
-    queryKey: ["clientData"],
-    queryFn: async () =>
-      clientApi.getClients({}).then((res) => {
-        return res.data.data.map((item: { id: string; name: string }) => ({
-          value: item.id,
-          label: formatName(item.name),
-        }));
-      }),
-  });
 
   const showModal = () => {
     setIsModalOpen(true);

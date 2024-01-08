@@ -95,49 +95,39 @@ export default function CandidatesList({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] =
-    useState<{ label: ReactNode; value: string }[]>();
 
-  useQuery({
+  const { data: searchData } = useQuery({
     queryKey: ["candidate", searchValue],
     queryFn: async () =>
-      await candidateApi
-        .getCandidates({
-          page: 1,
-          perPage: 20,
-          advance_search: searchValue,
-        })
-        .then((res) => {
-          setSearchData(
-            res.data.data.length &&
-              res.data.data.map((item: iCandidate) => ({
-                label: (
-                  <div key={item.candidate_id_int}>
-                    <p className="font-bold">
-                      {item.candidate_id_int} - {formatName(item.full_name)}
-                    </p>
-                    <div>
-                      <span className="font-bold">Position Applied: </span>
-                      {item.prefer_position.positions
-                        .map((item: { label: string }) => item.label)
-                        .join(", ")}
-                    </div>
-                    <div>
-                      <span className="font-bold">Industry: </span>
-                      {item.business_line.map(
-                        (item: iIndustry, index: number) => (
-                          <p key={index}>{getIndustryString(item)}</p>
-                        )
-                      )}
-                    </div>
-                  </div>
-                ),
-                value: item.id,
-              }))
-          );
-
-          return res.data;
-        }),
+      await candidateApi.getCandidates({
+        page: 1,
+        perPage: 20,
+        advance_search: searchValue,
+      }),
+    select: (res) =>
+      res.data.data.length &&
+      res.data.data.map((item: iCandidate) => ({
+        label: (
+          <div key={item.candidate_id_int}>
+            <p className="font-bold">
+              {item.candidate_id_int} - {formatName(item.full_name)}
+            </p>
+            <div>
+              <span className="font-bold">Position Applied: </span>
+              {item.prefer_position.positions
+                .map((item: { label: string }) => item.label)
+                .join(", ")}
+            </div>
+            <div>
+              <span className="font-bold">Industry: </span>
+              {item.business_line.map((item: iIndustry, index: number) => (
+                <p key={index}>{getIndustryString(item)}</p>
+              ))}
+            </div>
+          </div>
+        ),
+        value: item.id,
+      })),
   });
 
   const showDrawer = () => {
@@ -311,14 +301,16 @@ export default function CandidatesList({
           value={[]}
           onChange={(value) => setSelectedItems([...value, ...selectedItems])}
           style={{ width: "100%" }}
-          options={searchData?.map((item) => ({
-            ...item,
-            disabled:
-              selectedItems.includes(item.value) ||
-              candidate_flows
-                .map((item: { candidate_id: string }) => item.candidate_id)
-                .includes(item.value),
-          }))}
+          options={searchData?.map(
+            (item: { label: ReactNode; value: string }) => ({
+              ...item,
+              disabled:
+                selectedItems.includes(item.value) ||
+                candidate_flows
+                  .map((item: { candidate_id: string }) => item.candidate_id)
+                  .includes(item.value),
+            })
+          )}
           onSearch={setSearchValue}
           onBlur={() => setSearchValue("")}
         />
@@ -334,8 +326,10 @@ export default function CandidatesList({
               <div>
                 {searchData &&
                   searchData.length &&
-                  searchData.find((candidate) => candidate.value === item)
-                    ?.label}
+                  searchData.find(
+                    (candidate: { label: ReactNode; value: string }) =>
+                      candidate.value === item
+                  )?.label}
               </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"

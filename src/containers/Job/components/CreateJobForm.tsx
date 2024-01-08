@@ -19,25 +19,23 @@ export default function CreateJobForm({
   defaultClient?: string;
 }) {
   const { data: userData } = useQuery({
-    queryKey: ["userData"],
-    queryFn: async () =>
-      userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: { id: string; full_name: string }) => ({
-          value: item.id,
-          label: formatName(item.full_name),
-        }))
-      ),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
 
   const { data: clientData } = useQuery({
-    queryKey: ["clientData"],
-    queryFn: async () =>
-      clientApi.getClients({}).then((res) =>
-        res.data.data.map((item: { id: string; name: string }) => ({
-          value: item.id,
-          label: formatName(item.name),
-        }))
-      ),
+    queryKey: ["all_clients"],
+    queryFn: async () => clientApi.getClients({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; name: string }) => ({
+        value: item.id,
+        label: formatName(item.name),
+      })),
   });
 
   return (

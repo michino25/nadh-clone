@@ -85,7 +85,7 @@ export default function CkeditorData({
               </>
             ) : (
               <button
-                className="cursor-text w-full text-left border-gray-200 border rounded-lg p-3 hover:border-blue-500"
+                className="cursor-text w-full text-left border-gray-200 border rounded-lg p-3 hover:border-[#4096ff]"
                 onClick={() => {
                   setEdit(true);
                   setNote(data || "");

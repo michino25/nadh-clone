@@ -129,13 +129,17 @@ export default function SelectLanguage({
         )}
       />
 
-      <p className="font-semibold px-5 mt-5 text-sm">List of Languages</p>
-      <div className="mb-5 mt-2 px-5 flex w-full flex-wrap">
+      <p className="font-semibold px-4 mt-5 text-sm">List of Languages</p>
+      <div className="mb-5 mt-2 px-6 flex w-full flex-wrap">
         {defaultValue?.map((item, index) => (
-          <p key={index} className="my-1 flex items-center w-1/2">
+          <p
+            key={index}
+            className="my-2 flex items-center font-medium text-sm text-gray-600 w-1/2"
+          >
             {item.split("_")[1]}
             <DeleteOutlined
-              className="text-red-500 cursor-pointer mx-2 text-base"
+              className="cursor-pointer mx-2"
+              style={{ color: "red" }}
               onClick={() =>
                 updateFn(defaultValue.filter((lang) => lang !== item))
               }

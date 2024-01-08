@@ -20,8 +20,8 @@ const App = ({
 }) => {
   const { data: dataContactPersons, isPending } = useQuery({
     queryKey: ["ContactPerson", id],
-    queryFn: () =>
-      clientApi.getContactPersons(id as string).then((res) => res.data),
+    queryFn: () => clientApi.getContactPersons(id as string),
+    select: (res) => res.data,
     enabled: !!id,
   });
 
