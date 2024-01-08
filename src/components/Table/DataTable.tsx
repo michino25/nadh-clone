@@ -182,10 +182,8 @@ const DataTable = ({
     data: colData,
   } = useQuery({
     queryKey: ["col", getPathname()],
-    queryFn: async () =>
-      await otherApi
-        .getCol(getPathname().slice(1))
-        .then((res) => res.data.data),
+    queryFn: async () => await otherApi.getCol(getPathname().slice(1)),
+    select: (res) => res.data.data,
     enabled:
       getPathname() === "/candidates" ||
       getPathname() === "/clients" ||

@@ -11,8 +11,8 @@ const _userApi = {
     return axios().get(url);
   },
 
-  updateUser(id: number, params: any) {
-    const url = "api/users/" + id + "/password";
+  updateUser(id: number, params: any, option?: string) {
+    const url = "api/users/" + id + (option ? "/" + option : "");
     return axios().put(url, params);
   },
 

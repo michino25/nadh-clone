@@ -82,7 +82,12 @@ export default function CandidatesList({
   filterStatus,
   setFilterStatus,
   addCandidateFlow,
-}: any) {
+}: {
+  data: any;
+  filterStatus: string;
+  setFilterStatus: (value: string) => void;
+  addCandidateFlow: (value: any, event?: { onSuccess: () => void }) => void;
+}) {
   const [viewProfile, setViewProfile] = useState<iRecruitmentFlows>();
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -206,7 +211,7 @@ export default function CandidatesList({
       closable
       onClose={(e) => {
         e.preventDefault();
-        setFilterStatus();
+        setFilterStatus("");
       }}
     >
       {tagName}: {tagContent}

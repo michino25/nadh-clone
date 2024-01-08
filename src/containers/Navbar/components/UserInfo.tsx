@@ -5,7 +5,6 @@ import Input from "components/DataEntry/Input";
 import Birthday from "components/DataEntry/Birthday";
 import DataRadio from "components/DataEntry/Radio";
 import DataSelect from "components/DataEntry/Select";
-import DataUpload from "components/DataEntry/Upload";
 import DataDatePicker from "components/DataEntry/DatePicker";
 
 import { getUser } from "utils/getUser";
@@ -14,6 +13,7 @@ import ChangePassword from "./ChangePassword";
 import { otherApi, userApi } from "apis/index";
 import { createSelectData, gender } from "_constants/index";
 import { AxiosError } from "axios";
+import { MyAvatar } from "components/DataEntry/MyAvatar";
 
 export default function UserInfo() {
   const { data, isPending } = useQuery({
@@ -32,8 +32,6 @@ export default function UserInfo() {
         }));
       }),
   });
-
-  console.log(roleData);
 
   const updateUser = async (userData: any) => {
     try {
@@ -80,7 +78,40 @@ export default function UserInfo() {
       <Form layout="vertical" className="w-full" onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
-            <DataUpload label="Avatar" />
+            <Form.Item label="Avatar">
+              <MyAvatar
+                editing={false}
+                img={
+                  data.mediafiles.avatar
+                    ? "https://lubrytics.com:8443/nadh-mediafile/file/" +
+                      data.mediafiles.avatar
+                    : ""
+                }
+                data={{
+                  type: "avatar",
+                  uploadedByUserId: getUser().user_sent.user_id,
+                }}
+                onChange={(id) =>
+                  updateMutation.mutate(
+                    {
+                      mediafiles: {
+                        avatar: id,
+                      },
+                    },
+                    {
+                      onSuccess: () => {
+                        const storeUser = getUser();
+                        storeUser.user_sent.avatar = id;
+                        localStorage.setItem(
+                          "userData",
+                          JSON.stringify(storeUser)
+                        );
+                      },
+                    }
+                  )
+                }
+              />
+            </Form.Item>
           </Col>
 
           <Col span={12}>

@@ -46,14 +46,14 @@ export default function Address({
   }, []);
 
   const { data: countryData, isPending: countryIsPending } = useQuery({
-    queryKey: ["countryData", "address2"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) => {
-        return res.data.data.map((item: { key: number; label: string }) => ({
-          value: item.key,
-          label: item.label,
-        }));
-      }),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) => {
+      return res.data.data.map((item: { key: number; label: string }) => ({
+        value: item.key,
+        label: item.label,
+      }));
+    },
   });
 
   const getCity = async (id: number) => {

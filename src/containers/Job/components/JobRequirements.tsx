@@ -144,7 +144,6 @@ export default function JobRequirements({
               )}
               allowClear
               propertyName="soft_skills"
-              disableSelected
             />
           </Col>
           <Col span={12}>

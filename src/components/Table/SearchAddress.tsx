@@ -36,25 +36,23 @@ export default function SearchAddress({ closeFn }: { closeFn: () => void }) {
   }, [window.location.href]);
 
   const { data: countryData, isPending } = useQuery({
-    queryKey: ["countries"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          value: item.key,
-          label: item.label,
-        }))
-      ),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        value: item.key,
+        label: item.label,
+      })),
   });
 
   const { data: cityDataVN } = useQuery({
     queryKey: ["cityVN"],
-    queryFn: async () =>
-      await otherApi.getLocation(1, "1280").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          value: item.key,
-          label: item.label,
-        }))
-      ),
+    queryFn: async () => await otherApi.getLocation(1, "1280"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        value: item.key,
+        label: item.label,
+      })),
   });
 
   // console.log(countryData);

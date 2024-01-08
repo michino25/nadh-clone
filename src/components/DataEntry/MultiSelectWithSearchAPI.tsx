@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { iOption, iOption2 } from "_constants/index";
+import { iOption2 } from "_constants/index";
 import { Form, Select } from "antd";
 import type { SelectProps } from "antd";
 import { otherApi } from "apis/index";
@@ -11,7 +11,6 @@ interface iData {
   required: boolean;
   allowClear?: boolean;
   OptGroup?: boolean;
-  disableSelected?: boolean;
   placeholder?: string;
   defaultValue?: string[];
   value?: string[];
@@ -27,13 +26,11 @@ export default function MultiSelectWithSearchAPI({
   placeholder,
   allowClear = false,
   OptGroup = false,
-  disableSelected = false,
   value,
   setValue,
   propertyName,
 }: iData) {
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState();
 
   const [debouncedValue, setDebouncedValue] = useState("");
   useEffect(() => {
@@ -43,47 +40,34 @@ export default function MultiSelectWithSearchAPI({
     return () => clearTimeout(timeoutId);
   }, [searchValue]);
 
-  useQuery({
+  const { data: searchData } = useQuery({
     queryKey: [propertyName, debouncedValue, OptGroup],
     queryFn: async () =>
-      await otherApi
-        .getProperty(propertyName, debouncedValue, OptGroup)
-        .then((res) => {
-          if (OptGroup)
-            setSearchData(
-              res.data.data.map(
-                (parent: { label: string; children: iOption2[] }) => ({
-                  label: parent.label,
-                  options: parent.children.map((item: iOption2) => ({
-                    label: item.label,
-                    value: item.key + "_" + item.label,
-                  })),
-                })
-              )
-            );
-          else
-            setSearchData(
-              res.data.data.map((item: iOption2) => ({
-                label: item.label,
-                value: item.key + "_" + item.label,
-              }))
-            );
-
-          return res.data;
-        }),
+      await otherApi.getProperty(propertyName, debouncedValue, OptGroup),
+    select: (res) => {
+      if (OptGroup)
+        return res.data.data.map(
+          (parent: { label: string; children: iOption2[] }) => ({
+            label: parent.label,
+            options: parent.children.map((item: iOption2) => ({
+              label: item.label,
+              value: item.key + "_" + item.label,
+            })),
+          })
+        );
+      else
+        return res.data.data.map((item: iOption2) => ({
+          label: item.label,
+          value: item.key + "_" + item.label,
+        }));
+    },
   });
 
   const selectProps: SelectProps = {
     mode: "multiple",
     style: { width: "100%" },
     value: value,
-    options: disableSelected
-      ? (searchData || []).map((item: iOption) =>
-          defaultValue?.includes(item.value as string)
-            ? { ...item, disabled: true }
-            : item
-        )
-      : searchData,
+    options: searchData,
     onChange: (newValue: string[]) => {
       setValue && setValue(newValue);
     },

@@ -149,50 +149,47 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
         })
         .then((res) => {
           setTotal(res.data.count);
-
-          return res.data.data.map((client: iClient) => ({
-            ...client,
-            location: Object.values(client.address).map((location) =>
-              typeof location === "object" ? location.label : location
-            ),
-            lead_consultants: client.lead_consultants.map((item) =>
-              formatName(item.full_name)
-            ),
-            update_last_by: formatName(
-              client.meta?.lastUpdated?.user?.full_name
-            ),
-            updated_on: formatDate(
-              client.meta?.lastUpdated?.time,
-              "timestamp",
-              "date"
-            ),
-            account_status: getSelectByValue(
-              statusData4,
-              client.account_development.status.toString()
-            ).label,
-
-            client_jobs: client.jobs_count,
-            industry: client.business_line.map((item) => item.sector?.name),
-            type: getSelectByValue(clientType, client.type.toString()).label,
-            status: getSelectByValue(primaryStatus2, client.status.toString())
-              .label,
-            cpa: getSelectByValue(cpa, client.cpa.toString()).label,
-            contact_person_name:
-              client.contact_person_current &&
-              client.contact_person_current[0] &&
-              formatName(client.contact_person_current[0].full_name),
-            contact_person_title:
-              client.contact_person_current &&
-              client.contact_person_current[0] &&
-              formatName(
-                client.contact_person_current[0].extra?.contact_info?.title
-              ),
-          }));
-        })
-        .then((res) => {
           return res;
         }),
     enabled: userDetail?.id !== undefined,
+    placeholderData: (previousData) => previousData,
+    select: (res) =>
+      res.data.data.map((client: iClient) => ({
+        ...client,
+        location: Object.values(client.address).map((location) =>
+          typeof location === "object" ? location.label : location
+        ),
+        lead_consultants: client.lead_consultants.map((item) =>
+          formatName(item.full_name)
+        ),
+        update_last_by: formatName(client.meta?.lastUpdated?.user?.full_name),
+        updated_on: formatDate(
+          client.meta?.lastUpdated?.time,
+          "timestamp",
+          "date"
+        ),
+        account_status: getSelectByValue(
+          statusData4,
+          client.account_development.status.toString()
+        ).label,
+
+        client_jobs: client.jobs_count,
+        industry: client.business_line.map((item) => item.sector?.name),
+        type: getSelectByValue(clientType, client.type.toString()).label,
+        status: getSelectByValue(primaryStatus2, client.status.toString())
+          .label,
+        cpa: getSelectByValue(cpa, client.cpa.toString()).label,
+        contact_person_name:
+          client.contact_person_current &&
+          client.contact_person_current[0] &&
+          formatName(client.contact_person_current[0].full_name),
+        contact_person_title:
+          client.contact_person_current &&
+          client.contact_person_current[0] &&
+          formatName(
+            client.contact_person_current[0].extra?.contact_info?.title
+          ),
+      })),
   });
 
   useEffect(() => {

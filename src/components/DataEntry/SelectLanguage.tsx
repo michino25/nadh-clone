@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { iOption, iOption2 } from "_constants/index";
-import { Button, Divider, Select, notification } from "antd";
+import { Modal, Button, Divider, Select, notification } from "antd";
 import { otherApi } from "apis/index";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
@@ -20,7 +20,6 @@ export default function SelectLanguage({
   updateFn,
 }: iData) {
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState<iOption[]>();
 
   const [debouncedValue, setDebouncedValue] = useState("");
   useEffect(() => {
@@ -30,19 +29,15 @@ export default function SelectLanguage({
     return () => clearTimeout(timeoutId);
   }, [searchValue]);
 
-  useQuery({
+  const { data: searchData } = useQuery({
     queryKey: ["language", debouncedValue],
-    queryFn: async () =>
-      await otherApi.getProperty("language", debouncedValue).then((res) => {
-        setSearchData(
-          res.data.data.map((item: iOption2) => ({
-            label: item.label,
-            value: item.key + "_" + item.label,
-          }))
-        );
-
-        return res.data;
-      }),
+    queryFn: async () => await otherApi.getProperty("language", debouncedValue),
+    select: (res) => {
+      return res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      }));
+    },
   });
 
   const addProperty = async (data: string) => {
@@ -70,9 +65,17 @@ export default function SelectLanguage({
     mutationFn: (data: any) => addProperty(data),
   });
 
+  const showConfirmSubmit = (value: string) => {
+    Modal.confirm({
+      title: "Confirm to create language",
+      content: `Do you want to create '${value}' as new language ?`,
+      onOk: () => createMutation.mutate(value),
+    });
+  };
+
   const addItem = () => {
     const value = searchValue;
-    createMutation.mutate(value);
+    showConfirmSubmit(value);
   };
 
   return (
@@ -83,7 +86,7 @@ export default function SelectLanguage({
 
       <Select
         mode="multiple"
-        placeholder="Select Language"
+        placeholder="Select or add your languages"
         value={[]}
         onChange={(value) =>
           updateFn([
@@ -114,11 +117,11 @@ export default function SelectLanguage({
 
                 <Button
                   type="text"
-                  className="w-full"
+                  className="w-full text-left px-2"
                   icon={<PlusOutlined />}
                   onClick={addItem}
                 >
-                  Add item
+                  Add language
                 </Button>
               </>
             )}
@@ -126,21 +129,18 @@ export default function SelectLanguage({
         )}
       />
 
-      <p className="font-semibold my-5 text-base">List of Languages</p>
-      <div className="my-5 flex w-full flex-wrap">
+      <p className="font-semibold px-5 mt-5 text-sm">List of Languages</p>
+      <div className="mb-5 mt-2 px-5 flex w-full flex-wrap">
         {defaultValue?.map((item, index) => (
-          <div
-            key={index}
-            className="mt-3 pb-3 flex items-baseline w-1/2 md:w-1/3 xl:w-1/5"
-          >
-            <div>{item.split("_")[1]}</div>
+          <p key={index} className="my-1 flex items-center w-1/2">
+            {item.split("_")[1]}
             <DeleteOutlined
-              className="hover:text-red-500 cursor-pointer py-1 px-2"
+              className="text-red-500 cursor-pointer mx-2 text-base"
               onClick={() =>
                 updateFn(defaultValue.filter((lang) => lang !== item))
               }
             />
-          </div>
+          </p>
         ))}
       </div>
     </>

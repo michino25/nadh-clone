@@ -42,7 +42,7 @@ export default function DashboardUserList() {
   };
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["User", window.location.href],
+    queryKey: ["all_users", window.location.href],
     queryFn: async () =>
       await userApi
         .getUsers({
@@ -51,16 +51,18 @@ export default function DashboardUserList() {
         })
         .then((res) => {
           setTotal(res.data.count);
-
-          return res.data.data.map((user: iUser) => ({
-            ...user,
-            full_name: formatName(user.full_name),
-            phone: (user.phone as { number: string }).number,
-            type: (user.role as { name: string }).name,
-            status: user.status ? "Active" : "Inactive",
-            created: formatDate(user.createdAt, "ISOdate", "date"),
-          }));
+          return res;
         }),
+    select: (res) =>
+      res.data.data.map((user: iUser) => ({
+        ...user,
+        full_name: formatName(user.full_name),
+        phone: (user.phone as { number: string }).number,
+        type: (user.role as { name: string }).name,
+        status: user.status ? "Active" : "Inactive",
+        created: formatDate(user.createdAt, "ISOdate", "date"),
+      })),
+    placeholderData: (previousData) => previousData,
   });
 
   useEffect(() => {

@@ -19,23 +19,22 @@ export default function Phone({
   console.log(defaultValue);
 
   const { data: countries } = useQuery({
-    queryKey: ["countries", "phone"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) =>
-        res.data.data
-          .map((item: iCountry) => ({
-            ...item.extra,
-          }))
-          .sort((a: iPhone, b: iPhone) => {
-            if (a.dial_code < b.dial_code) {
-              return -1;
-            }
-            if (a.dial_code > b.dial_code) {
-              return 1;
-            }
-            return 0;
-          })
-      ),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) =>
+      res.data.data
+        .map((item: iCountry) => ({
+          ...item.extra,
+        }))
+        .sort((a: iPhone, b: iPhone) => {
+          if (a.dial_code < b.dial_code) {
+            return -1;
+          }
+          if (a.dial_code > b.dial_code) {
+            return 1;
+          }
+          return 0;
+        }),
   });
 
   const prefixSelector = (

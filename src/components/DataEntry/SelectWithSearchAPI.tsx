@@ -27,7 +27,6 @@ export default function SelectWithSearchAPI({
   propertyName,
 }: iData) {
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState();
 
   const [debouncedValue, setDebouncedValue] = useState("");
   useEffect(() => {
@@ -37,19 +36,16 @@ export default function SelectWithSearchAPI({
     return () => clearTimeout(timeoutId);
   }, [searchValue]);
 
-  useQuery({
+  const { data: searchData } = useQuery({
     queryKey: [propertyName, debouncedValue],
     queryFn: async () =>
-      await otherApi.getProperty(propertyName, debouncedValue).then((res) => {
-        setSearchData(
-          res.data.data.map((item: iOption2) => ({
-            label: item.label,
-            value: item.key + "_" + item.label,
-          }))
-        );
-
-        return res.data;
-      }),
+      await otherApi.getProperty(propertyName, debouncedValue),
+    select: (res) => {
+      return res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      }));
+    },
   });
 
   const addProperty = async (data: any) => {
@@ -103,11 +99,11 @@ export default function SelectWithSearchAPI({
 
             <Button
               type="text"
-              className="w-full"
+              className="w-full text-left px-2"
               icon={<PlusOutlined />}
               onClick={addItem}
             >
-              Add item
+              Add {label.toLowerCase()}
             </Button>
           </>
         )}

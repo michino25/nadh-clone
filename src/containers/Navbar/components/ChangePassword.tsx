@@ -14,7 +14,11 @@ export default function ChangePassword() {
 
   const updateUser = async (userData: any) => {
     try {
-      await userApi.updateUser(getUser()?.user_sent.user_id, userData);
+      await userApi.updateUser(
+        getUser()?.user_sent.user_id,
+        userData,
+        "password"
+      );
 
       // success
       // console.log(res.data);

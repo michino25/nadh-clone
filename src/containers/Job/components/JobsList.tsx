@@ -18,6 +18,7 @@ import Tag from "components/Table/Tag";
 import useFilter from "src/hooks/useFilter";
 import type { ColumnsType } from "antd/es/table";
 import numeral from "numeral";
+import { AxiosResponse } from "axios";
 
 const customColumns: ColumnsType = jobColumns;
 customColumns[5] = {
@@ -151,7 +152,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   delete allParams["salary"];
 
   const { data, isLoading } = useQuery({
-    queryKey: ["Jobs", window.location.href, userDetail.id],
+    queryKey: ["all_jobs", window.location.href, userDetail.id],
     queryFn: async () =>
       await jobApi
         .getJobs({
@@ -161,55 +162,54 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
         })
         .then((res) => {
           setTotal(res.data.count);
-
-          return res.data.data.map((job: iJob) => ({
-            ...job,
-            title: job.title.label,
-            end_date: formatDate(job.end_date, "ISOdate", "date"),
-            target_date: formatDate(job.target_date, "ISOdate", "date"),
-            client: job.client.name,
-            search_consultants:
-              job.client.lead_consultants[0].consultant.full_name,
-            location: Object.values(job.location).map(
-              (location: { label: string } | undefined) =>
-                typeof location === "object" && location !== null
-                  ? location.label
-                  : ""
-            ),
-            industry_year: job.requirement.industry_years,
-            salary:
-              job?.remuneration?.salary?.from || job?.remuneration?.salary?.to
-                ? [
-                    job?.remuneration?.currency.name,
-                    job?.remuneration?.salary?.from?.toFixed(0) || "0",
-                    job?.remuneration?.salary?.to?.toFixed(0) || "max",
-                  ]
-                : ["Negotiation"],
-            industry: job.business_line.map((business: iIndustry) =>
-              typeof business === "object" && business !== null
-                ? business.category?.name ||
-                  business.sector?.name ||
-                  business.industry?.name
-                : ""
-            ),
-            mapping_by: job.related_users.map((item) => item.full_name),
-            status: getLabelByValue(statusData3, job.status.toString()),
-            experience_level: getLabelByValue(
-              experiences,
-              job.experience_level.toString()
-            ),
-            candidate_flows_status: getLabelByValue(
-              statusData2,
-              (
-                job.candidate_flows[job.candidate_flows.length - 1]?.status || 1
-              ).toString()
-            ),
-          }));
-        })
-        .then((res) => {
           return res;
         }),
     enabled: userDetail?.id !== undefined,
+    placeholderData: (previousData) => previousData,
+    select: (res: AxiosResponse) => {
+      return res.data.data.map((job: iJob) => ({
+        ...job,
+        title: job.title.label,
+        end_date: formatDate(job.end_date, "ISOdate", "date"),
+        target_date: formatDate(job.target_date, "ISOdate", "date"),
+        client: job.client.name,
+        search_consultants: job.client.lead_consultants[0].consultant.full_name,
+        location: Object.values(job.location).map(
+          (location: { label: string } | undefined) =>
+            typeof location === "object" && location !== null
+              ? location.label
+              : ""
+        ),
+        industry_year: job.requirement.industry_years,
+        salary:
+          job?.remuneration?.salary?.from || job?.remuneration?.salary?.to
+            ? [
+                job?.remuneration?.currency.name,
+                job?.remuneration?.salary?.from?.toFixed(0) || "0",
+                job?.remuneration?.salary?.to?.toFixed(0) || "max",
+              ]
+            : ["Negotiation"],
+        industry: job.business_line.map((business: iIndustry) =>
+          typeof business === "object" && business !== null
+            ? business.category?.name ||
+              business.sector?.name ||
+              business.industry?.name
+            : ""
+        ),
+        mapping_by: job.related_users.map((item) => item.full_name),
+        status: getLabelByValue(statusData3, job.status.toString()),
+        experience_level: getLabelByValue(
+          experiences,
+          job.experience_level.toString()
+        ),
+        candidate_flows_status: getLabelByValue(
+          statusData2,
+          (
+            job.candidate_flows[job.candidate_flows.length - 1]?.status || 1
+          ).toString()
+        ),
+      }));
+    },
   });
 
   useEffect(() => {
@@ -236,25 +236,23 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
   };
 
   const { data: userData } = useQuery({
-    queryKey: ["userData"],
-    queryFn: async () =>
-      userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: { id: string; full_name: string }) => ({
-          value: item.id,
-          label: formatName(item.full_name),
-        }))
-      ),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
 
   const { data: clientData } = useQuery({
-    queryKey: ["clientData"],
-    queryFn: async () =>
-      clientApi.getClients({}).then((res) =>
-        res.data.data.map((item: { id: string; name: string }) => ({
-          value: item.id,
-          label: formatName(item.name),
-        }))
-      ),
+    queryKey: ["all_clients"],
+    queryFn: async () => clientApi.getClients({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; name: string }) => ({
+        value: item.id,
+        label: formatName(item.name),
+      })),
   });
 
   const filterSelectData = {

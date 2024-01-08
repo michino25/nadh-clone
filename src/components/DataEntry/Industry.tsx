@@ -41,28 +41,26 @@ export default function Industry({
 
   const { isPending: industryIsPending, data: industryData } = useQuery({
     queryKey: ["industry"],
-    queryFn: async () =>
-      await otherApi.getIndustry({ type: 1 }).then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          value: item.key,
-          label: item.label,
-        }))
-      ),
+    queryFn: async () => await otherApi.getIndustry({ type: 1 }),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        value: item.key,
+        label: item.label,
+      })),
   });
 
   // console.log(industryData);
 
   const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
-    queryKey: ["allindustry"],
-    queryFn: async () =>
-      await otherApi.getIndustry({ getAll: true }).then((res) =>
-        res.data.data.map(
-          (item: { key: number; label: string; parent_id: number }) => ({
-            value: item.key,
-            label: item.label,
-            parent_id: item.parent_id,
-          })
-        )
+    queryKey: ["all_industries"],
+    queryFn: async () => await otherApi.getIndustry({ getAll: true }),
+    select: (res) =>
+      res.data.data.map(
+        (item: { key: number; label: string; parent_id: number }) => ({
+          value: item.key,
+          label: item.label,
+          parent_id: item.parent_id,
+        })
       ),
   });
 
