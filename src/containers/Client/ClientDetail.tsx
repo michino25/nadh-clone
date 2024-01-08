@@ -69,19 +69,16 @@ export default function Clients() {
     refetch,
   } = useQuery({
     queryKey: ["client", id],
-    queryFn: async () =>
-      await clientApi.getOneClient(id as string).then((res) => res.data),
+    queryFn: async () => await clientApi.getOneClient(id as string),
+    select: (res) => res.data,
   });
 
   const { data: accountDevelopmentsData, refetch: accountDevelopmentRefetch } =
     useQuery({
       queryKey: ["accountDevelopments", clientData?.id_int],
       queryFn: async () =>
-        await otherApi
-          .getAccountDevelopments(clientData?.id_int as string)
-          .then((res) => {
-            return res.data;
-          }),
+        await otherApi.getAccountDevelopments(clientData?.id_int as string),
+      select: (res) => res.data,
       enabled: !!clientData,
     });
 
@@ -135,17 +132,17 @@ export default function Clients() {
 
   const { data: clientImage, refetch: clientImageRefetch } = useQuery({
     queryKey: ["files", clientData?.id],
-    queryFn: () =>
-      otherApi.getFile(clientData?.id, "client").then((res) => {
-        return res.data.data.map((item: iFile) => ({
-          uid: item.id,
-          name: item.name,
-          status: "done",
-          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
-          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
-        }));
-      }),
+    queryFn: () => otherApi.getFile(clientData?.id, "client"),
     enabled: !!clientData?.id,
+    select: (res) => {
+      return res.data.data.map((item: iFile) => ({
+        uid: item.id,
+        name: item.name,
+        status: "done",
+        url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+        created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+      }));
+    },
   });
 
   const fileUpload = (id: string) => {
@@ -299,7 +296,6 @@ export default function Clients() {
           </div>
 
           <div id="relatedjob" className="p-4 bg-white rounded-lg">
-            <p className="mb-4 font-bold text-lg">Related Job Codes</p>
             <div className="flex space-x-2">
               <RelatedJob
                 data={clientData.jobs}

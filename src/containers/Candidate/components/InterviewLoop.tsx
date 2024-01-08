@@ -1,7 +1,6 @@
 import {
   getIndustryString,
   getLabelByValue,
-  iOption,
   statusData2,
   statusData3,
 } from "_constants/index";
@@ -29,7 +28,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { jobApi, otherApi, userApi } from "apis/index";
@@ -87,22 +86,19 @@ export default function InterviewLoop({
   }, [currentFlowItem, flowData]);
 
   const { data: userData } = useQuery({
-    queryKey: ["userData"],
-    queryFn: async () =>
-      userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: { user_id: string; full_name: string }) => ({
-          value: item.user_id,
-          label: formatName(item.full_name),
-        }))
-      ),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { user_id: string; full_name: string }) => ({
+        value: item.user_id,
+        label: formatName(item.full_name),
+      })),
   });
+
   const { data: compareData } = useQuery({
     queryKey: ["compare", allData.id, jobID],
-    queryFn: async () =>
-      await otherApi.getCompare(allData.id, jobID).then((res) => {
-        // console.log(!res.data.addresses[0].city);
-        return res.data;
-      }),
+    queryFn: async () => await otherApi.getCompare(allData.id, jobID),
+    select: (res) => res.data,
     enabled: !!jobID,
   });
 
@@ -272,54 +268,43 @@ export default function InterviewLoop({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
   const [searchValue, setSearchValue] = useState("");
-  const [searchData, setSearchData] = useState<iOption[]>();
 
-  useQuery({
+  const { data: searchData } = useQuery({
     queryKey: ["job", searchValue],
     queryFn: async () =>
-      await jobApi
-        .getJobs(
-          searchValue
-            ? {
-                advance_search: searchValue,
-              }
-            : {
-                page: 1,
-                perPage: 20,
-              }
-        )
-        .then((res) => {
-          console.log(res.data.data);
-          setSearchData(
-            res.data.data.length &&
-              res.data.data.map((item: iJob) => ({
-                label: (
-                  <div key={item.job_id}>
-                    <p className="font-bold">
-                      {item.job_id} - {item.title.label} - {item.target_date}
-                    </p>
-                    <div>
-                      <span className="font-bold">Client Name: </span>
-                      {item.client.code}
-                    </div>
-                    <div>
-                      <span className="font-bold">Industry: </span>
-                      {item.business_line.map(
-                        (item: iIndustry, index: number) => (
-                          <p key={index}>{getIndustryString(item)}</p>
-                        )
-                      )}
-                    </div>
-                  </div>
-                ),
-                value: item.id,
-              }))
-          );
-
-          return res;
-        }),
+      await jobApi.getJobs(
+        searchValue
+          ? {
+              advance_search: searchValue,
+            }
+          : {
+              page: 1,
+              perPage: 20,
+            }
+      ),
+    select: (res) =>
+      res.data.data.length &&
+      res.data.data.map((item: iJob) => ({
+        label: (
+          <div key={item.job_id}>
+            <p className="font-bold">
+              {item.job_id} - {item.title.label} - {item.target_date}
+            </p>
+            <div>
+              <span className="font-bold">Client Name: </span>
+              {item.client.code}
+            </div>
+            <div>
+              <span className="font-bold">Industry: </span>
+              {item.business_line.map((item: iIndustry, index: number) => (
+                <p key={index}>{getIndustryString(item)}</p>
+              ))}
+            </div>
+          </div>
+        ),
+        value: item.id,
+      })),
   });
 
   const showModal = () => {
@@ -642,14 +627,16 @@ export default function InterviewLoop({
           style={{ width: "100%" }}
           options={
             searchData?.length
-              ? searchData?.map((item) => ({
-                  ...item,
-                  disabled:
-                    selectedItems.includes(item.value as string) ||
-                    data
-                      .map((item: { job_id: string }) => item.job_id)
-                      .includes(item.value),
-                }))
+              ? searchData?.map(
+                  (item: { label: ReactNode; value: string }) => ({
+                    ...item,
+                    disabled:
+                      selectedItems.includes(item.value as string) ||
+                      data
+                        .map((item: { job_id: string }) => item.job_id)
+                        .includes(item.value),
+                  })
+                )
               : []
           }
           onSearch={setSearchValue}
@@ -664,8 +651,10 @@ export default function InterviewLoop({
               <div>
                 {searchData &&
                   searchData.length &&
-                  searchData.find((candidate) => candidate.value === item)
-                    ?.label}
+                  searchData.find(
+                    (candidate: { label: ReactNode; value: string }) =>
+                      candidate.value === item
+                  )?.label}
               </div>
               <DeleteOutlined
                 className="hover:text-red-500 cursor-pointer p-4"

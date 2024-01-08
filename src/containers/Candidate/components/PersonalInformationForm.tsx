@@ -36,13 +36,13 @@ export default function PersonalInformationForm({
 }) {
   const { data: dataDegree } = useQuery({
     queryKey: ["degree"],
-    queryFn: async () =>
-      await otherApi.getProperty("degree").then((res) => {
-        return res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }));
-      }),
+    queryFn: async () => await otherApi.getProperty("degree"),
+    select: (res) => {
+      return res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      }));
+    },
   });
 
   return (

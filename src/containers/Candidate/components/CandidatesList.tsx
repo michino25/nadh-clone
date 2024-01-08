@@ -73,7 +73,7 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
     : getAllParams();
 
   const { data, isError, error, isLoading } = useQuery({
-    queryKey: ["Candidates", window.location.href, userDetail.id],
+    queryKey: ["all_candidates", window.location.href, userDetail.id],
     queryFn: async () =>
       await candidateApi
         .getCandidates({
@@ -154,16 +154,13 @@ export default function CandidatesList({ userDetail }: { userDetail: iUser }) {
   };
 
   const { data: langData, isPending: langPending } = useQuery({
-    queryKey: ["langData"],
-    queryFn: async () =>
-      otherApi.getOneProperty().then((res) =>
-        res.data
-          .filter((item: any) => item.name === "language")[0]
-          .values.map((item: iOption2) => ({
-            label: item.label,
-            value: item.key.toString(),
-          }))
-      ),
+    queryKey: ["language"],
+    queryFn: async () => await otherApi.getProperty("language"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key.toString(),
+      })),
   });
 
   // console.log(langData);

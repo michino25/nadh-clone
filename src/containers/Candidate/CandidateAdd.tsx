@@ -36,37 +36,37 @@ export default function CadidateAdd() {
   }, [currentStep]);
 
   const { data: candidateId } = useQuery({
-    queryKey: ["Candidates", 1],
+    queryKey: ["candidate", "newest"],
     queryFn: async () =>
-      await candidateApi
-        .getCandidates({
-          perPage: 1,
-          page: 1,
-          creator_id: "",
-        })
-        .then((res) => res.data.data[0].id),
+      await candidateApi.getCandidates({
+        perPage: 1,
+        page: 1,
+        creator_id: "",
+      }),
+    select: (res) => res.data.data[0].id,
   });
 
   const { data: candidateData, refetch } = useQuery({
     queryKey: ["candidate", candidateId],
     queryFn: async () =>
-      await candidateApi.getOneCandidate(candidateId as string).then((res) => {
-        return {
-          ...res.data,
-          addresses: res.data.addresses.map((addressItem: iAddress) => ({
-            address: addressItem.address,
-            country: addressItem.country
-              ? addressItem.country.key + "_" + addressItem.country.label
-              : null,
-            city: addressItem.city
-              ? addressItem.city.key + "_" + addressItem.city.label
-              : null,
-            district: addressItem.district
-              ? addressItem.district.key + "_" + addressItem.district.label
-              : null,
-          })),
-        };
-      }),
+      await candidateApi.getOneCandidate(candidateId as string),
+    select: (res) => {
+      return {
+        ...res.data,
+        addresses: res.data.addresses.map((addressItem: iAddress) => ({
+          address: addressItem.address,
+          country: addressItem.country
+            ? addressItem.country.key + "_" + addressItem.country.label
+            : null,
+          city: addressItem.city
+            ? addressItem.city.key + "_" + addressItem.city.label
+            : null,
+          district: addressItem.district
+            ? addressItem.district.key + "_" + addressItem.district.label
+            : null,
+        })),
+      };
+    },
   });
 
   const [currency, setCurrency] = useState<number>(

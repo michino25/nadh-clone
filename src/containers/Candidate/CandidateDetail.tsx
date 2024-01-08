@@ -76,8 +76,8 @@ export default function Candidates() {
     refetch,
   } = useQuery({
     queryKey: ["candidate", id],
-    queryFn: async () =>
-      await candidateApi.getOneCandidate(id as string).then((res) => res.data),
+    queryFn: async () => await candidateApi.getOneCandidate(id as string),
+    select: (res) => res.data,
   });
 
   useEffect(() => {
@@ -91,18 +91,15 @@ export default function Candidates() {
 
   const { data: candidateImage, refetch: candidateImageRefetch } = useQuery({
     queryKey: ["files", candidateData?.id],
-    queryFn: () =>
-      otherApi.getFile(candidateData?.id, "candidates").then((res) => {
-        console.log(res.data.data);
-
-        return res.data.data.map((item: iFile) => ({
-          uid: item.id,
-          name: item.name,
-          status: "done",
-          url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
-          created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
-        }));
-      }),
+    queryFn: () => otherApi.getFile(candidateData?.id, "candidates"),
+    select: (res) =>
+      res.data.data.map((item: iFile) => ({
+        uid: item.id,
+        name: item.name,
+        status: "done",
+        url: `https://lubrytics.com:8443/nadh-mediafile/file/${item.id}`,
+        created_at: formatDate(item.created_at, "ISOdate", "date&hour"),
+      })),
     enabled: !!candidateData?.id,
   });
 

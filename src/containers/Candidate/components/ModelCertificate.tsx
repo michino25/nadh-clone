@@ -36,24 +36,22 @@ export default function ModelCertificate({
 
   const { data: schoolData } = useQuery({
     queryKey: ["school"],
-    queryFn: () =>
-      otherApi.getProperty("school").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("school"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const { data: degreeData } = useQuery({
     queryKey: ["degree"],
-    queryFn: () =>
-      otherApi.getProperty("certificate").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("certificate"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const onFinish = (values: any) => {

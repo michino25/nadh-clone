@@ -71,7 +71,7 @@ export default function ContactPerson({
           handler: () => setIsAddOpen(true),
         }}
         data={data}
-        titleTable=""
+        titleTable="CONTACT PERSON"
         rawColumns={columns}
       />
 

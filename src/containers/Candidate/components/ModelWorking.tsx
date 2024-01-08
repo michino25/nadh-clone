@@ -41,24 +41,22 @@ export default function ModelWorking({
 
   const { data: companyData } = useQuery({
     queryKey: ["company"],
-    queryFn: () =>
-      otherApi.getProperty("company").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("company"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const { data: positionData } = useQuery({
     queryKey: ["position"],
-    queryFn: () =>
-      otherApi.getProperty("position").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("position"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const onFinish = (values: any) => {

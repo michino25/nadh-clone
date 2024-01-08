@@ -40,14 +40,13 @@ export default function AccountDevelopment({
   const [saveBtn, setSaveBtn] = useState(false);
 
   const { data: userData } = useQuery({
-    queryKey: ["userData"],
-    queryFn: async () =>
-      userApi.getUsers({}).then((res) =>
-        res.data.data.map((item: { id: string; full_name: string }) => ({
-          value: item.id,
-          label: formatName(item.full_name),
-        }))
-      ),
+    queryKey: ["all_users"],
+    queryFn: async () => userApi.getUsers({}),
+    select: (res) =>
+      res.data.data.map((item: { id: string; full_name: string }) => ({
+        value: item.id,
+        label: formatName(item.full_name),
+      })),
   });
 
   const updateFlow = async (formData: any) => {

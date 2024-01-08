@@ -38,35 +38,32 @@ export default function ModelAcademic({
 
   const { data: schoolData } = useQuery({
     queryKey: ["school"],
-    queryFn: () =>
-      otherApi.getProperty("school").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("school"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const { data: majorData } = useQuery({
     queryKey: ["major"],
-    queryFn: () =>
-      otherApi.getProperty("major").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("major"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const { data: degreeData } = useQuery({
     queryKey: ["degree"],
-    queryFn: () =>
-      otherApi.getProperty("degree").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          label: item.label,
-          value: item.key + "_" + item.label,
-        }))
-      ),
+    queryFn: () => otherApi.getProperty("degree"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        label: item.label,
+        value: item.key + "_" + item.label,
+      })),
   });
 
   const onFinish = (values: any) => {

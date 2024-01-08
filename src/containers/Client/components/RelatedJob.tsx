@@ -181,7 +181,9 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
 
   return (
     <div className="flex-col w-full">
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-between mb-3 mt-1">
+        <p className="mb-4 font-bold text-lg">Related Job Codes</p>
+
         <Button
           type="primary"
           onClick={showModal}

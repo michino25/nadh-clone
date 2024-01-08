@@ -4,18 +4,15 @@ import { clientApi } from "apis/index";
 
 export default function CandidateAddFinish() {
   const { data, isPending } = useQuery({
-    queryKey: ["Candidates", 1],
+    queryKey: ["client", "newest"],
     queryFn: async () =>
-      await clientApi
-        .getClients({
-          perPage: 1,
-          page: 1,
-          creator_id: "",
-        })
-        .then((res) => res.data.data[0]),
+      await clientApi.getClients({
+        perPage: 1,
+        page: 1,
+        creator_id: "",
+      }),
+    select: (res) => res.data.data[0],
   });
-
-  console.log(data);
 
   if (isPending) return <Skeleton className="p-12" active />;
 

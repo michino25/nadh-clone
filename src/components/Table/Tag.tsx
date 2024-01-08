@@ -105,16 +105,15 @@ const App = ({
   };
 
   const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
-    queryKey: ["allindustry"],
-    queryFn: async () =>
-      await otherApi.getIndustry({ getAll: true }).then((res) =>
-        res.data.data.map(
-          (item: { key: number; label: string; parent_id: string }) => ({
-            value: item.key,
-            label: item.label,
-            parent_id: item.parent_id,
-          })
-        )
+    queryKey: ["all_industries"],
+    queryFn: async () => await otherApi.getIndustry({ getAll: true }),
+    select: (res) =>
+      res.data.data.map(
+        (item: { key: number; label: string; parent_id: number }) => ({
+          value: item.key,
+          label: item.label,
+          parent_id: item.parent_id,
+        })
       ),
   });
 
@@ -153,25 +152,23 @@ const App = ({
   };
 
   const { isPending: cityIsPending, data: cityData } = useQuery({
-    queryKey: ["city"],
-    queryFn: async () =>
-      await otherApi.getLocation(1, "1280").then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          value: item.key.toString(),
-          label: item.label,
-        }))
-      ),
+    queryKey: ["cityVN"],
+    queryFn: async () => await otherApi.getLocation(1, "1280"),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        value: item.key.toString(),
+        label: item.label,
+      })),
   });
 
   const { data: countryData, isPending: countryIsPending } = useQuery({
-    queryKey: ["country"],
-    queryFn: async () =>
-      await otherApi.getCountries().then((res) =>
-        res.data.data.map((item: iOption2) => ({
-          value: item.key.toString(),
-          label: item.label,
-        }))
-      ),
+    queryKey: ["all_countries"],
+    queryFn: async () => await otherApi.getCountries(),
+    select: (res) =>
+      res.data.data.map((item: iOption2) => ({
+        value: item.key.toString(),
+        label: item.label,
+      })),
   });
 
   const cityHandler = (paramItem: string) => {
