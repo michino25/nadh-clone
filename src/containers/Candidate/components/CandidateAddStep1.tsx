@@ -4,6 +4,7 @@ import { candidateApi } from "apis/index";
 import PersonalInformationForm from "./PersonalInformationForm";
 import { useState } from "react";
 import { AxiosError } from "axios";
+import { iLocation } from "utils/models";
 
 export default function CandidateAddStep1({
   nextStep,
@@ -11,7 +12,7 @@ export default function CandidateAddStep1({
   nextStep: () => void;
 }) {
   // const navigate = useNavigate();
-  const [address, setAddress] = useState<any[]>();
+  const [address, setAddress] = useState<iLocation[]>();
 
   const createCandidate = async (userData: any) => {
     try {
@@ -117,7 +118,7 @@ export default function CandidateAddStep1({
   return (
     <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
       <PersonalInformationForm
-        address={address}
+        address={address as iLocation[]}
         setAddress={setAddress}
         setReset={() => {}}
       />

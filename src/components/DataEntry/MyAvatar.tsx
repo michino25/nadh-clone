@@ -24,8 +24,7 @@ const beforeUpload = (file: RcFile) => {
 interface iUpload {
   onChange: (id: string) => void;
   data: {
-    obj_table: string;
-    obj_uid: string;
+    type: string;
     uploadedByUserId: number;
   };
   img: string;

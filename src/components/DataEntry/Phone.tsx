@@ -14,7 +14,7 @@ export default function Phone({
   required?: boolean;
   label?: string;
   name: string;
-  defaultValue: { phone_code: iCountry; number: string };
+  defaultValue?: { phone_code: iCountry; number: string };
 }) {
   console.log(defaultValue);
 
