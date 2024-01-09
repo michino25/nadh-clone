@@ -33,7 +33,7 @@ export default function MultiSelect({
     onChange: (newValue: string[]) => {
       setValue && setValue(newValue);
     },
-    placeholder: placeholder || "Select Item...",
+    placeholder: placeholder || `Select ${label}...`,
     maxTagCount: "responsive",
     allowClear,
   };

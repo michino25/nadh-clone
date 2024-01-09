@@ -28,7 +28,7 @@ export default function DataInputNumber({
   };
 
   const handleFormatter = (value: string | number | undefined) => {
-    return !noformat ? numeral(value).format("0,0") : `${value}`;
+    return !noformat && value ? numeral(value).format("0,0") : `${value}`;
   };
 
   return (

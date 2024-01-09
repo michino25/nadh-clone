@@ -1,4 +1,4 @@
-import { Button, Table, Checkbox } from "antd";
+import { Table, Checkbox } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { DeleteOutlined } from "@ant-design/icons";
 import { iIndustry } from "utils/models";
@@ -54,9 +54,12 @@ export default function IndustryTable({
       key: "id",
       dataIndex: "id",
       render: (id: string) => (
-        <Button type="text" onClick={() => deleteItem(id)}>
-          <DeleteOutlined />
-        </Button>
+        <div className="w-full flex justify-center">
+          <DeleteOutlined
+            className="text-[red] p-3 hover:bg-gray-200/30 rounded-lg"
+            onClick={() => deleteItem(id)}
+          />
+        </div>
       ),
     },
   ];

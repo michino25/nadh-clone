@@ -1,7 +1,6 @@
 import { getLabelByValue, statusData3 } from "_constants/index";
 import { Modal, Table, Button, Form, Col, Row, notification } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Link } from "react-router-dom";
 import { formatDate, formatName } from "utils/format";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
@@ -23,9 +22,13 @@ const columns: ColumnsType<DataType> = [
     dataIndex: "job_id",
     key: "job_id",
     render: (data: string, { job_id }: DataType) => (
-      <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
+      <Button
+        type="link"
+        className="font-medium"
+        href={"/job-detail/" + job_id}
+      >
         {data}
-      </Link>
+      </Button>
     ),
   },
   {
@@ -33,9 +36,13 @@ const columns: ColumnsType<DataType> = [
     dataIndex: "title",
     key: "title",
     render: (data: { label: string }, { job_id }: DataType) => (
-      <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
+      <Button
+        type="link"
+        className="font-medium"
+        href={"/job-detail/" + job_id}
+      >
         {data.label}
-      </Link>
+      </Button>
     ),
   },
   {
@@ -72,9 +79,13 @@ const columns: ColumnsType<DataType> = [
     dataIndex: "id",
     key: "id",
     render: (_: string, { job_id }: DataType) => (
-      <Link type="link" className="font-medium" to={"/job-detail/" + job_id}>
+      <Button
+        type="link"
+        className="font-medium"
+        href={"/job-detail/" + job_id}
+      >
         <EyeOutlined />
-      </Link>
+      </Button>
     ),
   },
 ];
@@ -167,6 +178,9 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
     mutationFn: (formData: any) => createClient(formData),
   });
 
+  const [saveBtn, setSaveBtn] = useState(false);
+  const [firstLoad, setFirstLoad] = useState(false);
+
   return (
     <div className="flex-col w-full">
       <div className="flex justify-between mb-3 mt-1">
@@ -178,7 +192,7 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
           className="flex items-center"
         >
           <PlusOutlined />
-          New Job
+          New Job Order Received
         </Button>
       </div>
 
@@ -193,7 +207,7 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
           ...item,
           key: index,
         }))}
-        style={{ width: "100%" }}
+        scroll={{ x: true }}
       />
 
       <Modal
@@ -209,6 +223,10 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
           layout="vertical"
           className="w-full"
           onFinish={onFinish}
+          onValuesChange={() => {
+            if (!firstLoad) setFirstLoad(true);
+            else setSaveBtn(true);
+          }}
           preserve={false}
         >
           <CreateJobForm defaultClient={clientId} />
@@ -218,11 +236,13 @@ export default function RelatedJob({ data, clientId, refetch }: any) {
             </Col>
           </Row>
 
-          <Form.Item className="flex justify-end space-x-2 mt-3">
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
+          {saveBtn && (
+            <Form.Item className="flex justify-end space-x-2 mt-3">
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>

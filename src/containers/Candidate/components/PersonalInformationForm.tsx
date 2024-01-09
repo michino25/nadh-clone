@@ -92,20 +92,6 @@ export default function PersonalInformationForm({
         <Col xs={24} lg={12}>
           <Birthday defaultValue={candidateData?.dob || ""} />
         </Col>
-        <Col span={12}>
-          <DataSelect
-            label="Highest Education"
-            placeholder="Highest Education"
-            name="highest_education"
-            defaultValue={
-              candidateData?.highest_education?.key &&
-              candidateData?.highest_education.key +
-                "_" +
-                candidateData?.highest_education.label
-            }
-            data={dataDegree ? dataDegree : []}
-          />
-        </Col>
       </Row>
 
       <Row gutter={16}>
@@ -137,7 +123,6 @@ export default function PersonalInformationForm({
             placeholder="Ready to move"
             name="relocating_willingness"
             allowClear={false}
-            required
             defaultValue={
               candidateData?.relocating_willingness.toString() || "1"
             }
@@ -165,7 +150,6 @@ export default function PersonalInformationForm({
               label="Created by"
               placeholder="Created by"
               name="user_name"
-              required
               defaultValue={formatName(candidateData?.creator.full_name)}
               disabled
             />
@@ -216,6 +200,35 @@ export default function PersonalInformationForm({
       </Row>
 
       <Row gutter={16}>
+        <Col span={24}>
+          <MultiSelectWithSearchAPI
+            label="Nationality"
+            name="nationality"
+            required={false}
+            defaultValue={candidateData?.nationality.map(
+              (item: iOption2) => item.key + "_" + item.label
+            )}
+            allowClear
+            propertyName="nationality"
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={12}>
+          <DataSelect
+            label="Highest Education"
+            placeholder="Highest Education"
+            name="highest_education"
+            defaultValue={
+              candidateData?.highest_education?.key &&
+              candidateData?.highest_education.key +
+                "_" +
+                candidateData?.highest_education.label
+            }
+            data={dataDegree ? dataDegree : []}
+          />
+        </Col>
         <Col span={12}>
           <MultiSelectWithSearchAPI
             label="Position Applied"
@@ -226,18 +239,6 @@ export default function PersonalInformationForm({
             )}
             allowClear
             propertyName="position"
-          />
-        </Col>
-        <Col span={12}>
-          <MultiSelectWithSearchAPI
-            label="Nationality"
-            name="nationality"
-            required={false}
-            defaultValue={candidateData?.nationality.map(
-              (item: iOption2) => item.key + "_" + item.label
-            )}
-            allowClear
-            propertyName="nationality"
           />
         </Col>
       </Row>

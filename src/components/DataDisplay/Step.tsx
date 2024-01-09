@@ -9,5 +9,5 @@ export default function Step({ current, data }: iData) {
   const stepData: { title: string }[] = data.map((item: string) => ({
     title: item,
   }));
-  return <Steps current={current} items={stepData} />;
+  return <Steps size="small" current={current} items={stepData} />;
 }

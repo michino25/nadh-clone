@@ -33,7 +33,7 @@ const columns: ColumnsType<DataType> = [
     title: "Detail",
     key: "tags",
     dataIndex: "tags",
-    width: "40%",
+    // width: "30%",
     render: (_, { action, previous_value, current_value, field }: DataType) => {
       const type = action.split("_")[1];
       let content: ReactNode = "";
@@ -113,6 +113,7 @@ export default function ActivityLogsTable({ data }: any) {
       }}
       dataSource={customData}
       style={{ width: "100%" }}
+      scroll={{ x: true }}
     />
   );
 }

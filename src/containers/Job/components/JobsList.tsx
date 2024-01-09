@@ -180,7 +180,7 @@ export default function JobsList({ userDetail }: { userDetail: iUser }) {
               ? location.label
               : ""
         ),
-        industry_year: job.requirement.industry_years,
+        industry_year: job.requirement.industry_years || "",
         salary:
           job?.remuneration?.salary?.from || job?.remuneration?.salary?.to
             ? [

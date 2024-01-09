@@ -128,9 +128,13 @@ export default function Address({
 
   return (
     <div className="flex-col w-full justify-between items-center">
-      <div className="flex w-full space-x-3">
+      <div className="flex w-full flex-wrap">
         <Form.Item
-          className={onlyCity ? "w-1/2 mb-3" : "w-1/3 mb-3"}
+          className={
+            onlyCity
+              ? "w-full md:w-1/2 mb-3 md:pr-2"
+              : "w-full md:w-1/3 mb-3 md:pr-2"
+          }
           rules={[
             {
               required: true,
@@ -152,7 +156,9 @@ export default function Address({
         </Form.Item>
 
         <Form.Item
-          className={onlyCity ? "w-1/2 mb-3" : "w-1/3 mb-3"}
+          className={
+            onlyCity ? "w-full md:w-1/2 mb-3" : "w-full md:w-1/3 mb-3 md:pr-2"
+          }
           initialValue={city ? (city.value as number) : undefined}
         >
           <Select
@@ -169,7 +175,7 @@ export default function Address({
         </Form.Item>
 
         <Form.Item
-          className={"w-1/3 mb-3"}
+          className={"w-full md:w-1/3 mb-3"}
           hidden={onlyCity}
           initialValue={district ? (district.value as number) : undefined}
         >

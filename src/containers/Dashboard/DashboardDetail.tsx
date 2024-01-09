@@ -19,7 +19,7 @@ export default function DashboardDetail({
     <Drawer
       title={formatName(userDetail.full_name) + "'s Works"}
       placement="bottom"
-      width={500}
+      height={500}
       closable={false}
       onClose={onClose}
       open={open}

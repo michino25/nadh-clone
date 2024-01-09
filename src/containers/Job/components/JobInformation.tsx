@@ -76,7 +76,7 @@ export default function JobInformation({
         await clientApi.getContactPersonsInClient(data.client_id),
       select: (res) =>
         res.data.data.map((item: { id: string; name: string }) => ({
-          label: item.name,
+          label: formatName(item.name),
           value: item.id,
         })),
       enabled: !!data?.client_id,
@@ -276,7 +276,7 @@ export default function JobInformation({
           />
         </Descriptions.Item>
 
-        <Descriptions.Item label="Address">
+        <Descriptions.Item label="Location">
           <EditableAddressForm
             editing={editable}
             setEditing={setEditable}
@@ -340,7 +340,7 @@ export default function JobInformation({
               data.recruiters[0]
                 ? {
                     value: data.recruiters[0]?.key,
-                    label: data.recruiters[0]?.label,
+                    label: formatName(data.recruiters[0]?.label),
                   }
                 : {}
             }

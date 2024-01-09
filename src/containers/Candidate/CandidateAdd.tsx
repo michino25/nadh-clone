@@ -27,7 +27,7 @@ const step = [
 ];
 
 export default function CadidateAdd() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 

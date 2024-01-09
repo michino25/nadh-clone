@@ -36,11 +36,13 @@ export default function IndustryState({
       <FormIndustry
         saveData={(data) => setIndustry([...(industry as iIndustry[]), data])}
       />
-      <IndustryTable
-        data={industry}
-        deleteItem={deleteItem}
-        primaryItem={primaryItem}
-      />
+      {industry.length > 0 && (
+        <IndustryTable
+          data={industry}
+          deleteItem={deleteItem}
+          primaryItem={primaryItem}
+        />
+      )}
     </>
   );
 }

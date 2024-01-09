@@ -80,7 +80,7 @@ export default function SelectWithSearchAPI({
 
   const selectProps: SelectProps = {
     style: { width: "100%" },
-    placeholder: placeholder || "Select Item...",
+    placeholder: placeholder || `Select ${label}...`,
     options: searchData,
     onBlur: () =>
       setTimeout(() => {

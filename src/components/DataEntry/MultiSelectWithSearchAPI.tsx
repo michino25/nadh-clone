@@ -71,7 +71,7 @@ export default function MultiSelectWithSearchAPI({
     onChange: (newValue: string[]) => {
       setValue && setValue(newValue);
     },
-    placeholder: placeholder || "Select Item...",
+    placeholder: placeholder || `Select ${label}...`,
     onBlur: () => setSearchValue(""),
     onSearch: setSearchValue,
     filterOption: false,

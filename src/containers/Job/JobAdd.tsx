@@ -123,6 +123,9 @@ export default function JobAdd() {
     mutationFn: (formData: iDic) => createClient(formData),
   });
 
+  const [saveBtn, setSaveBtn] = useState(false);
+  const [firstLoad, setFirstLoad] = useState(false);
+
   return (
     <div className="px-12 pb-2">
       <div className="">
@@ -133,7 +136,15 @@ export default function JobAdd() {
       <p className="mb-4 font-bold text-xl">Create Job</p>
 
       <div className="p-4 my-6 bg-white rounded-lg">
-        <Form layout="vertical" className="w-full" onFinish={showConfirmSubmit}>
+        <Form
+          onValuesChange={() => {
+            if (!firstLoad) setFirstLoad(true);
+            else setSaveBtn(true);
+          }}
+          layout="vertical"
+          className="w-full"
+          onFinish={showConfirmSubmit}
+        >
           <CreateJobForm setAddress={setAddress} />
           <Row gutter={16}>
             <Col span={24}>
@@ -141,11 +152,13 @@ export default function JobAdd() {
             </Col>
           </Row>
 
-          <Form.Item className="flex justify-end space-x-2 mt-3">
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
+          {saveBtn && (
+            <Form.Item className="flex justify-end space-x-2 mt-3">
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          )}
         </Form>
       </div>
     </div>

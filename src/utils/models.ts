@@ -4,7 +4,7 @@ export interface iUser {
   user_id?: number;
   full_name?: string;
   user_name?: string;
-  phone?: string | { number: string };
+  phone?: string | { number: string; dial_code: string };
   email?: string;
   dob?: string | null;
   status?: string;

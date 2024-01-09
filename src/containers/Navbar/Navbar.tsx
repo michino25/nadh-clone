@@ -78,12 +78,10 @@ export default function Navbar() {
   }, []);
 
   const suffix = (
-    <button
+    <CloseCircleOutlined
       onClick={() => setSearchShow(false)}
       className="hover:text-blue-500"
-    >
-      <CloseCircleOutlined />
-    </button>
+    />
   );
 
   return (
@@ -105,14 +103,10 @@ export default function Navbar() {
         <div className="flex items-center justify-end gap-2 text-white relative">
           {/* Search icon */}
           {!searchShow ? (
-            <button
+            <SearchOutlined
               onClick={() => setSearchShow(true)}
-              tabIndex={-1}
-              className="anticon anticon-search pointer"
-              style={{ fontSize: "20px" }}
-            >
-              <SearchOutlined />
-            </button>
+              className="pointer text-xl"
+            />
           ) : (
             <Input.Search
               placeholder="Search..."
@@ -124,13 +118,7 @@ export default function Navbar() {
 
           {/* Noti icon */}
           <Popover content={<Empty />} title="Notification">
-            <button
-              tabIndex={-1}
-              className="anticon anticon-bell pointer mx-3"
-              style={{ fontSize: "20px", marginBottom: "2px" }}
-            >
-              <BellOutlined />
-            </button>
+            <BellOutlined className="pointer mx-3 text-xl" />
           </Popover>
 
           {/* User */}
@@ -140,7 +128,7 @@ export default function Navbar() {
               className="text-white hover:text-gray-200"
             >
               <Flex align="center" gap="middle">
-                <Flex align="center" vertical>
+                <Flex align="center" vertical className="text-sm">
                   <p className="uppercase font-bold whitespace-nowrap">
                     {user?.user_sent.full_name}
                   </p>

@@ -80,6 +80,8 @@ export default function Remuneration({
     form.setFieldValue("salary_from", newSalary.salary.from);
   };
 
+  console.log(data.benefit);
+
   return (
     <>
       <Row gutter={16} align={"middle"}>
@@ -107,8 +109,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.over_thirteen}
-            defaultRadio={data?.benefit.over_thirteen_text}
+            defaultRadio={data?.benefit.over_thirteen}
+            defaultInput={data?.benefit.over_thirteen_text}
             label="Over x month"
             name="over_thirteen"
           />
@@ -116,8 +118,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.lunch_check}
-            defaultRadio={data?.benefit.lunch_check_text}
+            defaultRadio={data?.benefit.lunch_check}
+            defaultInput={data?.benefit.lunch_check_text}
             label="Lunch check"
             name="lunch_check"
           />
@@ -127,8 +129,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.car_parking}
-            defaultRadio={data?.benefit.car_parking_text}
+            defaultRadio={data?.benefit.car_parking}
+            defaultInput={data?.benefit.car_parking_text}
             label="Parking check"
             name="car_parking"
           />
@@ -136,8 +138,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.car_allowance}
-            defaultRadio={data?.benefit.car_allowance_text}
+            defaultRadio={data?.benefit.car_allowance}
+            defaultInput={data?.benefit.car_allowance_text}
             label="Car allowance"
             name="car_allowance"
           />
@@ -147,8 +149,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.phone}
-            defaultRadio={data?.benefit.phone_text}
+            defaultRadio={data?.benefit.phone}
+            defaultInput={data?.benefit.phone_text}
             label="Phone allowance"
             name="phone"
           />
@@ -156,8 +158,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.laptop}
-            defaultRadio={data?.benefit.laptop_text}
+            defaultRadio={data?.benefit.laptop}
+            defaultInput={data?.benefit.laptop_text}
             label="Laptop"
             name="laptop"
           />
@@ -167,8 +169,8 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.share_option}
-            defaultRadio={data?.benefit.share_option_text}
+            defaultRadio={data?.benefit.share_option}
+            defaultInput={data?.benefit.share_option_text}
             label="Share options"
             name="share_option"
           />
@@ -176,31 +178,10 @@ export default function Remuneration({
         <Col span={12}>
           <DataRadioNote
             data={YNquestion}
-            defaultInput={data?.benefit.health_cover}
-            defaultRadio={data?.benefit.health_cover_text}
+            defaultRadio={data?.benefit.health_cover}
+            defaultInput={data?.benefit.health_cover_text}
             label="Health cover"
             name="health_cover"
-          />
-        </Col>
-      </Row>
-
-      <h5 className="font-medium">Expected salary</h5>
-
-      <Row gutter={16}>
-        <Col span={12}>
-          <InputNumber
-            label={`From (${salary.name})`}
-            placeholder="Salary From"
-            name="salary_from"
-            defaultValue={salary.salary.from}
-          />
-        </Col>
-        <Col span={12}>
-          <InputNumber
-            label={`To (${salary.name})`}
-            placeholder="Salary To"
-            name="salary_to"
-            defaultValue={salary.salary.to}
           />
         </Col>
       </Row>
@@ -271,6 +252,27 @@ export default function Remuneration({
                 { onSuccess }
               )
             }
+          />
+        </Col>
+      </Row>
+
+      <h5 className="font-medium">Expected salary</h5>
+
+      <Row gutter={16}>
+        <Col span={12}>
+          <InputNumber
+            label={`From (${salary.name})`}
+            placeholder="Salary From"
+            name="salary_from"
+            defaultValue={salary.salary.from}
+          />
+        </Col>
+        <Col span={12}>
+          <InputNumber
+            label={`To (${salary.name})`}
+            placeholder="Salary To"
+            name="salary_to"
+            defaultValue={salary.salary.to}
           />
         </Col>
       </Row>

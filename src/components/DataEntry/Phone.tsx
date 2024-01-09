@@ -70,7 +70,7 @@ export default function Phone({
       label={label}
       name={[name, "number"]}
       initialValue={defaultValue?.number}
-      className="w-full mb-3"
+      className="w-full mb-5"
       rules={[
         {
           pattern: new RegExp(/[2-9]{1}\d{2}/),

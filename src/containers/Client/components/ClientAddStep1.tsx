@@ -197,7 +197,7 @@ export default function CandidateAddStep1({
           <Phone name="phone" label="Phone Number" required />
         </Col>
         <Col span={12}>
-          <Phone name="fax" label="Fax" required />
+          <Phone name="fax" label="Fax" />
         </Col>
       </Row>
 

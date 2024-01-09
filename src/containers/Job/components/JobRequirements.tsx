@@ -196,7 +196,9 @@ export default function JobRequirements({
 
       <Row gutter={16}>
         <Col span={24}>
-          <h5 className="pb-4 font-medium">Expected Candidate's Industries</h5>
+          <h5 className="pb-3 font-semibold text-gray-600">
+            Expected Candidate's Industries
+          </h5>
           <IndustryAPI
             data={data.requirement?.industry.map((item: iIndustry) => ({
               ...item,
@@ -210,6 +212,7 @@ export default function JobRequirements({
               })
             }
             loading={loading}
+            label=""
           />
         </Col>
       </Row>

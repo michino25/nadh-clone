@@ -131,26 +131,24 @@ export default function Remuneration({
     }
 
     const dataUpdate: {
-      remuneration: Record<string, string | iDic>;
+      remuneration: iDic;
     } = {
       remuneration: {
         benefit: {
           ...(key.includes(id.replace("_text", "")) &&
-          (data.benefit as Record<string, string | number>)[id] !==
-            formValues[id]
+          (data.benefit as iDic)[id] !== formValues[id]
             ? {
                 [id]: formValues[id],
               }
             : {}),
 
-          ...(key1.includes(id) &&
-          (data.benefit as Record<string, string | number>)[id] !==
-            formValues[id]
+          ...(key1.includes(id) && (data.benefit as iDic)[id] !== formValues[id]
             ? {
                 [id]: formValues[id],
               }
             : {}),
         },
+
         ...(id === "notice_days" && data.notice_days !== formValues[id]
           ? {
               [id]: formValues[id],
@@ -195,10 +193,17 @@ export default function Remuneration({
   };
 
   const onValuesChange = (changeItems: iDic) => {
+    const firstKey = Object.keys(changeItems)[0];
+    const hasMatchingKey = key.includes(firstKey);
+
     const data = {
       remuneration: {
         benefit: {
-          ...(key.includes(Object.keys(changeItems)[0]) ? changeItems : {}),
+          ...(hasMatchingKey
+            ? {
+                [firstKey]: parseInt(changeItems[firstKey]),
+              }
+            : {}),
         },
       },
     };

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   Tag,
   Flex,
@@ -31,7 +30,15 @@ const rawColumns = [
     render: (
       value: string,
       { candidate: { candidate_id } }: iRecruitmentFlows
-    ) => <Link to={"/candidate-detail/" + candidate_id}>{value}</Link>,
+    ) => (
+      <Button
+        className="font-medium"
+        type="link"
+        href={"/candidate-detail/" + candidate_id}
+      >
+        {value}
+      </Button>
+    ),
   },
   {
     title: "Name",
@@ -40,7 +47,13 @@ const rawColumns = [
       value: string,
       { candidate: { candidate_id } }: iRecruitmentFlows
     ) => (
-      <Link to={"/candidate-detail/" + candidate_id}>{formatName(value)}</Link>
+      <Button
+        className="font-medium"
+        type="link"
+        href={"/candidate-detail/" + candidate_id}
+      >
+        {formatName(value)}
+      </Button>
     ),
   },
   {
@@ -186,7 +199,7 @@ export default function CandidatesList({
       render: (_: string, data) => {
         return (
           <Button
-            type="text"
+            type="link"
             onClick={() => {
               setViewProfile(data);
               showDrawer();
@@ -278,6 +291,7 @@ export default function CandidatesList({
         okText="Pick"
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <Descriptions column={1} layout="horizontal">
           <Descriptions.Item label="Job Title">
@@ -320,7 +334,7 @@ export default function CandidatesList({
         <p className="font-semibold my-5 text-base">
           {selectedItems.length} Candidates Picked
         </p>
-        <div className="max-h-[400px] overflow-y-scroll mt-5">
+        <div className="max-h-[400px] overflow-y-auto mt-5">
           {selectedItems.map((item, index) => (
             <div
               key={index}
@@ -335,7 +349,7 @@ export default function CandidatesList({
                   )?.label}
               </div>
               <DeleteOutlined
-                className="hover:text-red-500 cursor-pointer p-4"
+                className="text-[red] cursor-pointer p-4"
                 onClick={() =>
                   setSelectedItems(
                     selectedItems.filter((candidate) => candidate !== item)

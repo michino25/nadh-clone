@@ -157,7 +157,7 @@ export default function ClientsList({ userDetail }: { userDetail: iUser }) {
       res.data.data.map((client: iClient) => ({
         ...client,
         location: Object.values(client.address).map((location) =>
-          typeof location === "object" ? location.label : location
+          typeof location === "object" ? location.label : ""
         ),
         lead_consultants: client.lead_consultants.map((item) =>
           formatName(item.full_name)

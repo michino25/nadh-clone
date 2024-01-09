@@ -368,7 +368,9 @@ export default function ClientInformation({
               }
             />
           </Descriptions.Item>
-          <Descriptions.Item label="Search Consultant">-</Descriptions.Item>
+          <Descriptions.Item label="Search Consultant">
+            {formatName(clientData.relate_consultants[0]?.label || "-")}
+          </Descriptions.Item>
           <Descriptions.Item label="Updated By">
             {formatName(clientData.creator.full_name)}
           </Descriptions.Item>

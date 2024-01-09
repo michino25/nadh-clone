@@ -40,10 +40,9 @@ export default function CandidateTable({
       dataIndex: "id",
       render: (id: string) => (
         <Button
-          type="text"
+          type="link"
           onClick={() => {
             editClick(id);
-            console.log("hello");
           }}
         >
           <EditOutlined />
@@ -72,7 +71,7 @@ export default function CandidateTable({
           defaultPageSize: 5,
           size: "default",
         }}
-        scroll={{ x: true }}
+        scroll={{ x: "max-content" }}
         columns={tableColumns}
         dataSource={data.map((item: any, index: number) => ({
           ...item,

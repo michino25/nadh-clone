@@ -6,9 +6,11 @@ export default function IndustryAPI({
   data,
   updateFn,
   loading,
+  label,
 }: {
   data: iIndustry[];
   updateFn: (data: iIndustryParam[], event?: { onSuccess: () => void }) => void;
+  label?: string;
   loading: boolean;
 }) {
   const addIndustry = (formdata: iIndustry) => {
@@ -72,7 +74,7 @@ export default function IndustryAPI({
 
   return (
     <>
-      <FormIndustry saveData={addIndustry} />
+      <FormIndustry saveData={addIndustry} label={label} />
       <IndustryTable
         data={data}
         loading={loading}

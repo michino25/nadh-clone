@@ -57,7 +57,10 @@ export default function DashboardUserList() {
       res.data.data.map((user: iUser) => ({
         ...user,
         full_name: formatName(user.full_name),
-        phone: (user.phone as { number: string }).number,
+        phone:
+          (user.phone as { number: string; dial_code: string }).dial_code +
+          " " +
+          (user.phone as { number: string; dial_code: string }).number,
         type: (user.role as { name: string }).name,
         status: user.status ? "Active" : "Inactive",
         created: formatDate(user.createdAt, "ISOdate", "date"),

@@ -242,13 +242,13 @@ const DataTable = ({
       key: "id",
       dataIndex: "id",
       render: (id: string) => (
-        <button
-          onClick={() => {
-            showDetail(id);
-          }}
-        >
-          <EyeOutlined />
-        </button>
+        <Button type="link" className="w-full flex justify-center">
+          <EyeOutlined
+            onClick={() => {
+              showDetail(id);
+            }}
+          />
+        </Button>
       ),
     });
   }

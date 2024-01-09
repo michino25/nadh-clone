@@ -85,23 +85,22 @@ const App = ({
   };
 
   const fromToHandler = (
-    tagName: string,
-    nextTagName: string,
+    fromTagName: string,
+    toTagName: string,
     type: string
   ) => {
-    const valueNext = nextTagName
-      ? " to " +
-        (type === "number"
-          ? numeral(getAllParams()[nextTagName]).format("0,0")
-          : getAllParams()[nextTagName])
+    const from = getAllParams()[fromTagName];
+    const to = getAllParams()[toTagName];
+
+    const fromValue = from
+      ? " from " + (type === "number" ? numeral(from).format("0,0") : from)
       : "";
-    return (
-      (tagName.match(/_(from)$/) ? "from " : "to ") +
-      (type === "number"
-        ? numeral(getAllParams()[tagName]).format("0,0")
-        : getAllParams()[tagName]) +
-      valueNext
-    );
+
+    const toValue = to
+      ? " to " + (type === "number" ? numeral(to).format("0,0") : to)
+      : "";
+
+    return fromValue + " " + toValue;
   };
 
   const { isPending: allIndustryIsPending, data: allIndustryData } = useQuery({
@@ -234,8 +233,8 @@ const App = ({
               tagName(
                 col.title,
                 fromToHandler(
-                  tag,
-                  index !== array.length - 1 ? array[index + 1] : "",
+                  tag.replace(/_(from|to)$/, "") + "_from",
+                  tag.replace(/_(from|to)$/, "") + "_to",
                   col.type
                 ),
                 tag,

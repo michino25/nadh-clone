@@ -29,7 +29,7 @@ export default function CreateJobForm({
       })),
   });
 
-  const { data: clientData } = useQuery({
+  const { data: clientData, isLoading } = useQuery({
     queryKey: ["all_clients"],
     queryFn: async () => clientApi.getClients({}),
     select: (res) =>
@@ -100,7 +100,12 @@ export default function CreateJobForm({
             placeholder="Client's Name"
             name="client_id"
             required
-            data={clientData}
+            data={
+              defaultClient && isLoading
+                ? [{ value: defaultClient, label: "Client's Name" }]
+                : clientData
+            }
+            loading={!!defaultClient && isLoading}
             defaultValue={defaultClient}
             disable={!!defaultClient}
           />
@@ -116,7 +121,7 @@ export default function CreateJobForm({
           />
         </Col>
         <Col span={12}>
-          <Form.Item label="Address" name="address">
+          <Form.Item label="Location" name="address">
             <Address
               onChange={(value) => setAddress && setAddress(value)}
               onlyCity

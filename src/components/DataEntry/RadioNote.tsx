@@ -1,13 +1,14 @@
 import { Form, Radio, Input } from "antd";
 import { iOption } from "_constants/index";
+import { useState } from "react";
 
 interface iRadio {
   label: string;
   data: iOption[];
   name: string;
   required?: boolean;
-  defaultRadio?: number | undefined;
-  defaultInput?: string | undefined;
+  defaultRadio: number;
+  defaultInput: string;
   disabled?: boolean;
 }
 
@@ -20,6 +21,7 @@ export default function DataRadioNote({
   defaultInput,
   disabled,
 }: iRadio) {
+  const [isYes, setIsYes] = useState(defaultRadio === 1);
   return (
     <>
       <Form.Item
@@ -34,16 +36,14 @@ export default function DataRadioNote({
         ]}
         className={defaultRadio?.toString() === "1" ? "mb-2" : ""}
       >
-        <Radio.Group disabled={disabled}>
-          {data.map((item: iOption) => (
-            <Radio key={item.value} value={item.value}>
-              {item.label}
-            </Radio>
-          ))}
-        </Radio.Group>
+        <Radio.Group
+          options={data}
+          disabled={disabled}
+          onChange={(e) => setIsYes(e.target.value === "1")}
+        />
       </Form.Item>
 
-      {defaultRadio?.toString() === "1" && (
+      {(defaultRadio?.toString() === "1" || isYes) && (
         <div className="lg:w-1/3 sm:w-1/2 w-full">
           <Form.Item
             name={name + "_text"}

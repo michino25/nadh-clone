@@ -6,9 +6,10 @@ import Industry from "components/DataEntry/Industry";
 
 interface iDataInput {
   saveData: (data: any) => void;
+  label?: string;
 }
 
-const App = ({ saveData }: iDataInput) => {
+const App = ({ saveData, label }: iDataInput) => {
   const [industry, setIndustry] = useState<iOption>();
   const [sector, setSector] = useState<iOption>();
   const [category, setCategory] = useState<iOption>();
@@ -18,7 +19,7 @@ const App = ({ saveData }: iDataInput) => {
 
   return (
     <>
-      <Form.Item label="Industry" className="mb-0">
+      <Form.Item label={label ?? "Industry"} className="mb-0">
         <div className="flex-col w-full justify-between items-center">
           <div className="flex w-full space-x-3">
             <Industry
