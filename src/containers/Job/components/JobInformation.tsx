@@ -16,13 +16,19 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import EditableForm from "components/EditableForm/EditableDateForm";
 import EditableMultiSelectForm from "components/EditableForm/EditableMultiSelectForm";
+import { iDic } from "utils/models";
 
 export default function JobInformation({
   data,
   updateMutation,
   editable,
   setEditable,
-}: any) {
+}: {
+  data: iDic;
+  updateMutation: (data: iDic, event: { onSuccess: () => void }) => void;
+  editable: boolean;
+  setEditable: (value: boolean) => void;
+}) {
   const { data: clientData, isPending: clientIsPending } = useQuery({
     queryKey: ["all_clients"],
     queryFn: async () => clientApi.getClients({}),
@@ -76,15 +82,16 @@ export default function JobInformation({
       enabled: !!data?.client_id,
     });
 
-  const onFinish = (values: any, onSuccess: () => void) => {
+  const onFinish = (values: iDic, onSuccess: () => void) => {
+    console.log(values);
     const data = {
       ...values,
     };
-    updateMutation.mutate(data, { onSuccess });
+    updateMutation(data, { onSuccess });
     console.log("Received values of form: ", data);
   };
 
-  const onFinishDate = (values: any, onSuccess: () => void) => {
+  const onFinishDate = (values: iDic, onSuccess: () => void) => {
     const date = dayjs(values.extend_date.$d.toLocaleDateString()).format(
       "YYYY-MM-DD"
     );
@@ -93,12 +100,12 @@ export default function JobInformation({
       extend_date: date,
     };
 
-    updateMutation.mutate(data, { onSuccess });
+    updateMutation(data, { onSuccess });
     console.log("Received values of form: ", data);
   };
 
   const onFinishSelect = (
-    values: any,
+    values: iDic,
     onSuccess: () => void,
     option?: string
   ) => {
@@ -112,12 +119,12 @@ export default function JobInformation({
         [Object.keys(values)[0]]: [values[Object.keys(values)[0]]],
       };
 
-    updateMutation.mutate(values, { onSuccess });
+    updateMutation(values, { onSuccess });
     console.log("Received values of form: ", values);
   };
 
   const onFinishAddress = (
-    values: any,
+    values: iDic,
     onSuccess: () => void,
     option: string
   ) => {
@@ -132,7 +139,7 @@ export default function JobInformation({
 
     const transferData = { [option]: data };
     // console.log("Received values of form: ", { [option]: [data] });
-    updateMutation.mutate(transferData, { onSuccess });
+    updateMutation(transferData, { onSuccess });
   };
 
   return (

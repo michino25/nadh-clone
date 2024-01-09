@@ -22,7 +22,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { candidateApi } from "apis/index";
 import { DeleteOutlined } from "@ant-design/icons";
-import { iCandidate, iIndustry, iRecruitmentFlows } from "utils/models";
+import { iCandidate, iDic, iIndustry, iRecruitmentFlows } from "utils/models";
 
 const rawColumns = [
   {
@@ -83,10 +83,13 @@ export default function CandidatesList({
   setFilterStatus,
   addCandidateFlow,
 }: {
-  data: any;
+  data: iDic;
   filterStatus: string;
   setFilterStatus: (value: string) => void;
-  addCandidateFlow: (value: any, event?: { onSuccess: () => void }) => void;
+  addCandidateFlow: (
+    value: string[],
+    event?: { onSuccess: () => void }
+  ) => void;
 }) {
   const [viewProfile, setViewProfile] = useState<iRecruitmentFlows>();
   const [open, setOpen] = useState(false);
@@ -171,7 +174,7 @@ export default function CandidatesList({
 
   let columns: ColumnsType<iRecruitmentFlows> = [];
   if (Array.isArray(rawColumns)) {
-    columns = rawColumns.map((column: any) => ({
+    columns = rawColumns.map((column: iDic) => ({
       ...column,
       dataIndex: column.key,
     }));

@@ -6,19 +6,27 @@ import { otherApi } from "apis/index";
 import { useQuery } from "@tanstack/react-query";
 import DataRadioNote from "components/DataEntry/RadioNote";
 import CkeditorData from "components/DataEntry/CkeditorData";
+import { iDic, iRemuneration, iSalary } from "utils/models";
 
 export default function Remuneration({
   data,
   updateFn,
 }: {
-  data: any;
-  updateFn: (value: any, event?: { onSuccess: () => void }) => void;
+  data: iRemuneration;
+  updateFn: (
+    value: {
+      remuneration: Record<string, number | string | iDic>;
+    },
+    event?: { onSuccess: () => void }
+  ) => void;
 }) {
   const [form] = Form.useForm();
   const [currencySelect, setCurrencySelect] = useState<number>();
-  const [salary, setSalary] = useState(
-    data.converted_salary[data.currency.name]
+  const [salary, setSalary] = useState<iSalary>(
+    (data.converted_salary as Record<string, iSalary>)[data.currency.name]
   );
+
+  console.log(data);
 
   const { data: currencyData } = useQuery({
     queryKey: ["exchange_currencies"],
@@ -122,24 +130,34 @@ export default function Remuneration({
       return;
     }
 
-    const dataUpdate: any = {
+    const dataUpdate: {
+      remuneration: Record<string, string | iDic>;
+    } = {
       remuneration: {
         benefit: {
           ...(key.includes(id.replace("_text", "")) &&
-          data.benefit[id] !== formValues[id]
+          (data.benefit as Record<string, string | number>)[id] !==
+            formValues[id]
             ? {
                 [id]: formValues[id],
               }
             : {}),
 
-          ...(key1.includes(id) && data.benefit[id] !== formValues[id]
+          ...(key1.includes(id) &&
+          (data.benefit as Record<string, string | number>)[id] !==
+            formValues[id]
             ? {
                 [id]: formValues[id],
               }
             : {}),
         },
-        ...((id === "notice_days" || id === "review_date") &&
-        data[id] !== formValues[id]
+        ...(id === "notice_days" && data.notice_days !== formValues[id]
+          ? {
+              [id]: formValues[id],
+            }
+          : {}),
+
+        ...(id === "review_date" && data.review_date !== formValues[id]
           ? {
               [id]: formValues[id],
             }
@@ -176,9 +194,7 @@ export default function Remuneration({
     }
   };
 
-  const onValuesChange = (changeItems: any) => {
-    console.log(changeItems);
-
+  const onValuesChange = (changeItems: iDic) => {
     const data = {
       remuneration: {
         benefit: {
@@ -221,7 +237,7 @@ export default function Remuneration({
               label={`From (${salary.name})`}
               placeholder="Salary From"
               name="salary_from"
-              defaultValue={salary.salary.from}
+              defaultValue={salary.salary.from || 0}
             />
           </Col>
           <Col span={12}>
@@ -229,7 +245,7 @@ export default function Remuneration({
               label={`To (${salary.name})`}
               placeholder="Salary To"
               name="salary_to"
-              defaultValue={salary.salary.to}
+              defaultValue={salary.salary.to || 0}
             />
           </Col>
         </Row>

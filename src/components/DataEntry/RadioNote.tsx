@@ -6,7 +6,7 @@ interface iRadio {
   data: iOption[];
   name: string;
   required?: boolean;
-  defaultRadio?: string | undefined;
+  defaultRadio?: number | undefined;
   defaultInput?: string | undefined;
   disabled?: boolean;
 }
@@ -25,14 +25,14 @@ export default function DataRadioNote({
       <Form.Item
         label={label}
         name={name}
-        initialValue={defaultRadio}
+        initialValue={defaultRadio?.toString()}
         rules={[
           {
             required: required,
             message: `Please input your your ${label}!`,
           },
         ]}
-        className={defaultRadio === "1" ? "mb-2" : ""}
+        className={defaultRadio?.toString() === "1" ? "mb-2" : ""}
       >
         <Radio.Group disabled={disabled}>
           {data.map((item: iOption) => (
@@ -43,7 +43,7 @@ export default function DataRadioNote({
         </Radio.Group>
       </Form.Item>
 
-      {defaultRadio === "1" && (
+      {defaultRadio?.toString() === "1" && (
         <div className="lg:w-1/3 sm:w-1/2 w-full">
           <Form.Item
             name={name + "_text"}

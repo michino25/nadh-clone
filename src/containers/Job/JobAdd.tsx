@@ -6,7 +6,7 @@ import { useState } from "react";
 import { jobApi } from "apis/index";
 import { AxiosError } from "axios";
 import IndustryState from "components/ShareComponents/IndustryState";
-import { iAddress, iIndustry } from "utils/models";
+import { iAddress, iDic, iIndustry } from "utils/models";
 
 export default function JobAdd() {
   const [industry, setIndustry] = useState<iIndustry[]>([]);
@@ -14,7 +14,9 @@ export default function JobAdd() {
 
   console.log(industry);
 
-  const showConfirmSubmit = (values: any) => {
+  const showConfirmSubmit = (values: iDic) => {
+    console.log(values);
+
     Modal.confirm({
       title: "Confirm to create job",
       content: "Are you sure you want to create new job ?",
@@ -22,7 +24,7 @@ export default function JobAdd() {
     });
   };
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: iDic) => {
     const transformedObject = {
       quantity: values.quantity,
       type: parseInt(values.type),
@@ -44,13 +46,13 @@ export default function JobAdd() {
       ...(values.address.country && {
         location: {
           country: {
-            key: values.address.country.value.toString(),
-            label: values.address.country.label,
+            key: values.address.country?.value?.toString(),
+            label: values.address.country?.label,
           },
           ...(values.address.city && {
             city: {
-              key: values.address.city.value.toString(),
-              label: values.address.city.label,
+              key: values.address.city?.value?.toString(),
+              label: values.address.city?.label,
             },
           }),
         },
@@ -67,7 +69,7 @@ export default function JobAdd() {
     createMutation.mutate(transformedObject);
   };
 
-  const createClient = async (userData: any) => {
+  const createClient = async (userData: iDic) => {
     try {
       const res = await jobApi.createJob(userData);
 
@@ -118,7 +120,7 @@ export default function JobAdd() {
   };
 
   const createMutation = useMutation({
-    mutationFn: (formData) => createClient(formData),
+    mutationFn: (formData: iDic) => createClient(formData),
   });
 
   return (

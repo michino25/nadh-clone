@@ -276,6 +276,7 @@ export interface iRemuneration {
     share_option_text: string;
     car_allowance_text: string;
     over_thirteen_text: string;
+    notice_days: number;
   };
   currency: {
     id: number;
@@ -283,40 +284,23 @@ export interface iRemuneration {
   };
   review_date: string;
   future_prospect: string;
+  notice_days: number;
   converted_salary: {
-    EUR: {
-      id: number;
-      name: string;
-      salary: {
-        to: number | null;
-        from: number | null;
-      };
-    };
-    JPY: {
-      id: number;
-      name: string;
-      salary: {
-        to: number | null;
-        from: number | null;
-      };
-    };
-    USD: {
-      id: number;
-      name: string;
-      salary: {
-        to: number | null;
-        from: number | null;
-      };
-    };
-    VND: {
-      id: number;
-      name: string;
-      salary: {
-        to: number | null;
-        from: number | null;
-      };
-    };
+    EUR: iSalary;
+    JPY: iSalary;
+    USD: iSalary;
+    VND: iSalary;
   };
+}
+
+export interface iSalary {
+  id: number;
+  name: string;
+  salary: {
+    to: number | string | null;
+    from: number | string | null;
+  };
+  current_salary?: number | string | null;
 }
 
 export interface iJob {
@@ -690,3 +674,5 @@ export interface iTag {
   platform: string;
   url: string;
 }
+
+export type iDic = Record<string, any>;

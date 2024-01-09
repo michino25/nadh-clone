@@ -23,7 +23,7 @@ import IndustryAPI from "components/ShareComponents/IndustryAPI";
 
 import dayjs from "dayjs";
 import { scrollTo } from "utils/others";
-import { iFile, iIndustry, iTag } from "utils/models";
+import { iDic, iFile, iIndustry, iIndustryParam, iTag } from "utils/models";
 import { AxiosError } from "axios";
 
 const anchorItems = [
@@ -100,7 +100,7 @@ export default function JobDetail() {
     }
   }, [isPending, id]);
 
-  const addFlow = async (data: any) => {
+  const addFlow = async (data: iDic) => {
     setLoading(true);
     try {
       await otherApi.addCandidateFlows(jobData.id, data);
@@ -129,10 +129,10 @@ export default function JobDetail() {
   };
 
   const addFlowMutation = useMutation({
-    mutationFn: (formData: any) => addFlow(formData),
+    mutationFn: (formData: iDic) => addFlow(formData),
   });
 
-  const updateJob2 = async (data: any) => {
+  const updateJob2 = async (data: iDic) => {
     setLoading(true);
     try {
       await jobApi.updateJob(jobData.job_id, data);
@@ -161,10 +161,10 @@ export default function JobDetail() {
   };
 
   const updateMutation2 = useMutation({
-    mutationFn: (formData: any) => updateJob2(formData),
+    mutationFn: (formData: iDic) => updateJob2(formData),
   });
 
-  const updateJob = async (data: any) => {
+  const updateJob = async (data: iDic) => {
     setLoading(true);
     try {
       await jobApi.updateJob(
@@ -196,7 +196,7 @@ export default function JobDetail() {
   };
 
   const updateMutation = useMutation({
-    mutationFn: (formData: any) => updateJob(formData),
+    mutationFn: (formData: iDic) => updateJob(formData),
   });
 
   const { data: jobImage, refetch: jobImageRefetch } = useQuery({
@@ -249,7 +249,7 @@ export default function JobDetail() {
   };
 
   const deleteFileMutation = useMutation({
-    mutationFn: async (formData: any) => {
+    mutationFn: async (formData: string) => {
       try {
         await otherApi.deleteFile(formData);
 
@@ -358,7 +358,7 @@ export default function JobDetail() {
             <p className="mb-4 font-bold text-lg">Job Information</p>
             <JobInformation
               data={jobData}
-              updateMutation={updateMutation}
+              updateMutation={updateMutation.mutate}
               editable={editable}
               setEditable={setEditable}
             />
@@ -371,7 +371,7 @@ export default function JobDetail() {
                 ...item,
                 id: uuidv4(),
               }))}
-              updateFn={(value: any) =>
+              updateFn={(value: iIndustryParam[]) =>
                 updateMutation.mutate({
                   business_line: value,
                 })
